@@ -150,7 +150,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260624-github-pages-4";
+  const PORTAL_BUILD_VERSION = "20260624-live-sync-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -230,6 +230,15 @@
       var u = (typeof getUser === "function") ? getUser() : null;
       return (u && u.email) || "";
     } catch (e) { return ""; }
+  }
+  function syncAuthHeaders(extra) {
+    var headers = Object.assign({}, extra || {});
+    try {
+      var u = (typeof getUser === "function") ? getUser() : null;
+      if (u && u.syncToken) headers["x-pm-token"] = u.syncToken;
+      if (u && u.email) headers["x-pm-actor"] = u.email;
+    } catch (e) {}
+    return headers;
   }
   function syncIsAdmin() {
     try {
@@ -346,7 +355,7 @@
       try {
         var res = await fetch(endpoint, {
           method: "POST",
-          headers: { "content-type": "application/json", "x-pm-actor": syncActor() },
+          headers: syncAuthHeaders({ "content-type": "application/json", "x-pm-actor": syncActor() }),
           body: JSON.stringify({ action: "saveState", actor: syncActor(), state: this.snapshot(keys) }),
           signal: timeout.signal
         });
@@ -1601,6 +1610,13 @@
   }
   async function verifyLogin(email, password) {
     var bootstrap = await bootstrapAdminAccess(email, password);
+    if (bootstrap && bootstrap.ok && window.PM_SYNC && PM_SYNC.login && PM_SYNC.online && PM_SYNC.online()) {
+      var bootstrapRemote = await PM_SYNC.login(email, password);
+      if (bootstrapRemote && bootstrapRemote.remote) return bootstrapRemote;
+      if (PM_SYNC.online && PM_SYNC.online() && !(PM_SYNC.isLocalDev && PM_SYNC.isLocalDev())) {
+        return { ok: false, status: "approved", request: bootstrap.request, reason: "sync_unavailable" };
+      }
+    }
     if (bootstrap) return bootstrap;
     if (window.PM_SYNC && PM_SYNC.login && PM_SYNC.online && PM_SYNC.online()) {
       var remote = await PM_SYNC.login(email, password);
