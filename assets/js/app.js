@@ -150,7 +150,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260624-live-sync-1";
+  const PORTAL_BUILD_VERSION = "20260624-live-sync-2";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -169,6 +169,7 @@
   }
   function isSyncOnline() { return !!syncEndpoint() && /^https?:$/i.test(location.protocol) && typeof fetch === "function"; }
   function isLocalDevHost() { return /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname || ""); }
+  function requiresRemoteSync() { return /^https?:$/i.test(location.protocol || "") && !isLocalDevHost(); }
   function isGitHubPagesHost() { return /github\.io$/i.test(location.hostname || ""); }
   function portalArchivePresentation(keys, reason, fromVersion) {
     try {
@@ -264,6 +265,9 @@
     interval: null,
     online: isSyncOnline,
     isLocalDev: isLocalDevHost,
+    requiresRemote: requiresRemoteSync,
+    configured: function () { return !!syncEndpoint(); },
+    lastError: "",
     dirtyKeys: function () {
       try {
         var rows = JSON.parse(localStorage.getItem(SYNC_DIRTY_KEY) || "[]");
@@ -329,16 +333,21 @@
       var timeout = withTimeout(opts.timeout || 4500);
       try {
         var res = await fetch(endpoint, { cache: "no-store", signal: timeout.signal });
-        if (!res.ok) return false;
+        if (!res.ok) {
+          this.lastError = "pull_http_" + res.status;
+          return false;
+        }
         var data = await res.json();
         if (data && data.state) {
           var changed = !!(data.updatedAt && data.updatedAt !== this.remoteUpdatedAt);
           this.applyState(data.state, { quiet: !!opts.quiet, source: "pull", changed: changed });
           if (data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
           this.lastPullAt = new Date().toISOString();
+          this.lastError = "";
           return true;
         }
       } catch (e) {
+        this.lastError = "pull_failed";
         return false;
       } finally {
         if (timeout.done) timeout.done();
@@ -356,17 +365,22 @@
         var res = await fetch(endpoint, {
           method: "POST",
           headers: syncAuthHeaders({ "content-type": "application/json", "x-pm-actor": syncActor() }),
-          body: JSON.stringify({ action: "saveState", actor: syncActor(), state: this.snapshot(keys) }),
+          body: JSON.stringify({ action: "saveState", actor: syncActor(), baseUpdatedAt: this.remoteUpdatedAt || "", state: this.snapshot(keys) }),
           signal: timeout.signal
         });
-        if (!res.ok) return false;
+        if (!res.ok) {
+          this.lastError = "push_http_" + res.status;
+          return false;
+        }
         var data = await res.json();
         if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         this.clearDirty(keys);
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "push" });
         this.lastPushAt = new Date().toISOString();
+        this.lastError = "";
         return true;
       } catch (e) {
+        this.lastError = "push_failed";
         return false;
       } finally {
         if (timeout.done) timeout.done();
@@ -401,12 +415,17 @@
           body: JSON.stringify({ action: "accountRequest", request: payload || {} }),
           signal: timeout.signal
         });
-        if (!res.ok) return null;
+        if (!res.ok) {
+          this.lastError = "request_http_" + res.status;
+          return null;
+        }
         var data = await res.json();
         if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "request" });
+        this.lastError = "";
         return data && data.request ? data.request : null;
       } catch (e) {
+        this.lastError = "request_failed";
         return null;
       } finally {
         if (timeout.done) timeout.done();
@@ -424,7 +443,10 @@
           body: JSON.stringify({ action: "login", email: email, password: password }),
           signal: timeout.signal
         });
-        if (!res.ok) return null;
+        if (!res.ok) {
+          this.lastError = "login_http_" + res.status;
+          return null;
+        }
         var data = await res.json();
         if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "login" });
@@ -433,6 +455,7 @@
           return data;
         }
       } catch (e) {
+        this.lastError = "login_failed";
         return null;
       } finally {
         if (timeout.done) timeout.done();
@@ -442,7 +465,18 @@
     startAutoRefresh: function () {
       if (this.interval || !this.online()) return;
       var self = this;
-      this.interval = setInterval(function () { self.pull({ quiet: true, timeout: 3500 }); }, 30000);
+      var run = function () {
+        self.pull({ quiet: true, timeout: 3500 });
+        self.flushDirty();
+      };
+      this.interval = setInterval(run, 5000);
+      if (!window.__pmSyncFocusBound) {
+        window.__pmSyncFocusBound = true;
+        window.addEventListener("focus", run);
+        document.addEventListener("visibilitychange", function () {
+          if (!document.hidden) run();
+        });
+      }
     }
   };
 
@@ -634,7 +668,6 @@
       var nextRole = internal ? "internal" : normalizeRole(payload.partnerType || payload.role || "dealer", payload.email);
       var existing = this.findByEmail(payload.email);
       var list = this.list();
-      var needsNotification = !internal && !(existing && existing.status !== "approved" && existing.notificationLoggedAt);
       if (existing && existing.status !== "approved") {
         Object.assign(existing, payload, {
           status: internal ? "approved" : "pending",
@@ -658,10 +691,8 @@
         });
         list.unshift(existing);
       }
-      if (needsNotification && existing.status === "pending") existing.notificationLoggedAt = now;
       writeStore(REQUEST_KEY, list.slice(0, 300));
       if (window.PM_AUDIT) PM_AUDIT.add("account_request", existing.email, { status: existing.status, company: existing.company || "" });
-      if (needsNotification && existing.status === "pending" && window.PM_MAIL && PM_MAIL.logRequest) PM_MAIL.logRequest(existing);
       if (internal) {
         if (window.PM_ADMINS) PM_ADMINS.grant(existing.email, { source: "internal_account_request", name: requestName(existing) });
         if (window.PM_PARTNERS) {
@@ -787,7 +818,7 @@
       "Verwerken in de adminomgeving:",
       adminPortalUrl(),
       "",
-      "Let op: GitHub Pages is statisch. Deze mailmelding zorgt dat PlasmaMade de aanvraag ook buiten de browseropslag ontvangt."
+      "Deze melding is uitsluitend bedoeld voor beheer via het Partner Center."
     ].join("\n");
   }
   window.PM_MAIL = {
@@ -795,8 +826,7 @@
     requestBody: requestMailText,
     requestHref: function (req) {
       return "mailto:" + encodeURIComponent("bjonkeren@plasmamade.com") +
-        "?cc=" + encodeURIComponent("sales@plasmamade.com") +
-        "&subject=" + encodeURIComponent(requestMailSubject(req)) +
+        "?subject=" + encodeURIComponent(requestMailSubject(req)) +
         "&body=" + encodeURIComponent(requestMailText(req));
     },
     logRequest: function (req) {
@@ -805,7 +835,6 @@
         id: makeId("mail"),
         type: "account_request_notification",
         to: "bjonkeren@plasmamade.com",
-        cc: "sales@plasmamade.com",
         subject: requestMailSubject(req),
         body: requestMailText(req),
         requestId: req.id || "",

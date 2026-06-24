@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-live-sync-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260624-live-sync-2">
 <style>
 .adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
 .adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
@@ -355,10 +355,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-live-sync-1"></script>
-<script src="assets/js/data.js?v=20260624-live-sync-1"></script>
+<script src="assets/js/i18n.js?v=20260624-live-sync-2"></script>
+<script src="assets/js/data.js?v=20260624-live-sync-2"></script>
 <!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
-<script src="assets/js/studio.js?v=20260624-live-sync-1"></script>
+<script src="assets/js/studio.js?v=20260624-live-sync-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
@@ -624,27 +624,24 @@ window.PM_PAGE_INIT = function () {
     var open = rows.filter(function (r) { return r.status === "pending"; }).length;
     var staticMode = !(window.PM_SYNC && PM_SYNC.online && PM_SYNC.online());
     var staticNote = staticMode
-      ? '<div class="admin-item admin-item--notice"><div class="admin-item__top"><div><b>GitHub Pages melding actief</b><div class="admin-item__meta">Aanvragen uit deze browser verschijnen direct hieronder. Externe aanvragers kunnen vanaf hun statuspagina de melding naar bjonkeren@plasmamade.com en sales@plasmamade.com sturen.</div></div><span class="badge badge--green-soft">Actief</span></div></div>'
+      ? '<div class="admin-item admin-item--notice"><div class="admin-item__top"><div><b>Centrale sync niet actief</b><div class="admin-item__meta">Deze pagina kan alleen aanvragen uit elke browser tonen wanneer de Partner Center API gekoppeld is. Zonder API blijft GitHub Pages lokaal en worden nieuwe online aanvragen geblokkeerd.</div></div><span class="badge badge--warn">API vereist</span></div></div>'
       : '';
     document.getElementById("request-count").textContent = open + " open";
     var requestRows = rows.length ? rows.slice(0, 8).map(function (r) {
       var name = ((r.firstName || "") + " " + (r.lastName || "")).trim() || r.email || "Partner";
       var mailInfo = r.approvalMailAt ? '<div class="admin-item__meta">Bevestigingsmail voorbereid: ' + esc(PM_fmtDate(r.approvalMailAt)) + '</div>' : '';
-      var notifyInfo = r.notificationLoggedAt ? '<div class="admin-item__meta">Adminmelding voorbereid: ' + esc(PM_fmtDate(r.notificationLoggedAt)) + '</div>' : '';
       var actions = r.status === "approved"
         ? '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--ghost" data-req-mail="' + esc(r.id) + '">Mail opnieuw openen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>'
-        : '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren</button><button class="btn btn--ghost" data-req-notify="' + esc(r.id) + '">Adminmelding openen</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
+        : '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
       return '<div class="admin-item">' +
         '<div class="admin-item__top"><div><b>' + esc(name) + '</b><div class="admin-item__meta">' + esc(r.company || "-") + ' - ' + esc(r.email || "-") + '<br>' + esc(r.country || "-") + ' - ' + esc(r.functionTitle || "-") + '</div></div>' + statusBadge(r.status) + '</div>' +
         '<div class="admin-item__meta">' + esc(r.reason || "Geen toelichting opgegeven.") + '</div>' +
-        notifyInfo +
         mailInfo +
         '<div class="admin-item__actions">' + actions + '</div></div>';
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen accountaanvragen.</p>';
     document.getElementById("account-requests").innerHTML = staticNote + requestRows;
     document.querySelectorAll("[data-req-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("request", b.getAttribute("data-req-view")); }); });
     document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.approve(b.getAttribute("data-req-approve")); if (req && window.PM_MAIL) { PM_MAIL.logApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); } PM_toast("Account goedgekeurd. De bevestigingsmail staat klaar bij Mail opnieuw openen."); renderRequests(); adminRenderPartners(); renderAudit(); }); });
-    document.querySelectorAll("[data-req-notify]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-notify"); }); if (req && window.PM_MAIL) { PM_MAIL.openRequest(req); PM_REQUESTS.update(req.id, { notificationLoggedAt: new Date().toISOString() }); PM_toast("Adminmelding geopend"); renderRequests(); renderAudit(); } }); });
     document.querySelectorAll("[data-req-mail]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-mail"); }); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); PM_toast("Bevestigingsmail geopend"); renderRequests(); renderAudit(); } }); });
     document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid.", function (reason) { PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
     document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor blokkade:", "Tijdelijk geblokkeerd.", function (reason) { PM_REQUESTS.suspend(b.getAttribute("data-req-suspend"), reason || ""); PM_toast("Account geblokkeerd"); renderRequests(); renderAudit(); }, { ok: "Blokkeren", multiline: true, rows: 3 }); }); });
@@ -1217,7 +1214,7 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260624-live-sync-1"></script>
-<script src="assets/js/app.js?v=20260624-live-sync-1"></script>
+<script src="assets/js/sync-config.js?v=20260624-live-sync-2"></script>
+<script src="assets/js/app.js?v=20260624-live-sync-2"></script>
 </body>
 </html>

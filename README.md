@@ -35,3 +35,5 @@ https://plasmamade.github.io/partner-center/?syncEndpoint=https://your-api-domai
 ```
 
 When the endpoint is set, the portal stops behaving as a local-only GitHub Pages site and uses the central API for login, account requests and data changes.
+
+Production note: on GitHub Pages, account requests are blocked until a sync endpoint is configured. This prevents requests from being saved only in one browser while admins in another browser see nothing.

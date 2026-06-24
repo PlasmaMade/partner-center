@@ -366,14 +366,36 @@ function mergeRowsByOwner(existingRows, incomingRows, ownerEmail, fieldName) {
   return Array.from(byId.values()).sort((a, b) => String(b.updatedAt || b.createdAt || b.updated || "").localeCompare(String(a.updatedAt || a.createdAt || a.updated || "")));
 }
 
-function applyStatePatch(db, patch, auth) {
+function rowIdentity(key, row) {
+  if (!row || typeof row !== "object") return "";
+  if (key === "pm_partners" || key === "pm_admin_grants") return normEmail(row.email);
+  if (key === "pm_account_requests") return row.id ? String(row.id) : normEmail(row.email);
+  return row.id ? String(row.id) : (row.email ? normEmail(row.email) : "");
+}
+
+function mergeAdminRows(key, existingRows, incomingRows) {
+  const byId = new Map();
+  const add = (row, preferIncoming) => {
+    const id = rowIdentity(key, row);
+    if (!id) return;
+    if (!byId.has(id) || preferIncoming) byId.set(id, Object.assign({}, row));
+  };
+  (Array.isArray(existingRows) ? existingRows : []).forEach((row) => add(row, false));
+  (Array.isArray(incomingRows) ? incomingRows : []).forEach((row) => add(row, true));
+  return Array.from(byId.values()).sort((a, b) => String(b.updatedAt || b.createdAt || b.updated || b.submittedAt || "").localeCompare(String(a.updatedAt || a.createdAt || a.updated || a.submittedAt || "")));
+}
+
+function applyStatePatch(db, patch, auth, baseUpdatedAt) {
   ensureBootstrapState(db);
   const state = db.state;
   const incoming = patch && typeof patch === "object" ? patch : {};
   const actorAdmin = !!(auth && auth.admin && isAdminUser(state, auth.email));
+  const staleAdminSave = !!(actorAdmin && baseUpdatedAt && db.updatedAt && baseUpdatedAt !== db.updatedAt);
   if (actorAdmin) {
     CENTRAL_STATE_KEYS.forEach((key) => {
-      if (Object.prototype.hasOwnProperty.call(incoming, key)) state[key] = incoming[key];
+      if (!Object.prototype.hasOwnProperty.call(incoming, key)) return;
+      if (staleAdminSave && ARRAY_STATE_KEYS.has(key)) state[key] = mergeAdminRows(key, state[key], incoming[key]);
+      else state[key] = incoming[key];
     });
   } else {
     if (Object.prototype.hasOwnProperty.call(incoming, "pm_designs")) {
@@ -383,7 +405,7 @@ function applyStatePatch(db, patch, auth) {
       state.pm_support_tickets = mergeRowsByOwner(state.pm_support_tickets, incoming.pm_support_tickets, auth.email, "email").slice(0, 1000);
     }
   }
-  addAudit(state, "remote_state_saved", auth.email, { admin: actorAdmin, keys: Object.keys(incoming).filter((key) => CENTRAL_STATE_KEYS.includes(key)) }, auth.email);
+  addAudit(state, "remote_state_saved", auth.email, { admin: actorAdmin, staleMerge: staleAdminSave, keys: Object.keys(incoming).filter((key) => CENTRAL_STATE_KEYS.includes(key)) }, auth.email);
   db.updatedAt = nowIso();
 }
 
@@ -547,7 +569,7 @@ async function handleApi(req, res) {
         sendJson(req, res, 401, { ok: false, error: "invalid_or_missing_token" });
         return;
       }
-      applyStatePatch(db, body.state || {}, auth);
+      applyStatePatch(db, body.state || {}, auth, body.baseUpdatedAt || "");
       saveDb(db);
       sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, state: db.state });
       return;

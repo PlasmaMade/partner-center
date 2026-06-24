@@ -7,7 +7,7 @@
 <meta name="description" content="PlasmaMade Partner Center - alles wat partners, dealers en installateurs nodig hebben om PlasmaMade te begrijpen, presenteren, verkopen en promoten.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-live-sync-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260624-live-sync-2">
 </head>
 <body data-page="login">
 <div class="login-wrap">
@@ -147,8 +147,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-live-sync-1"></script>
-<script src="assets/js/data.js?v=20260624-live-sync-1"></script>
+<script src="assets/js/i18n.js?v=20260624-live-sync-2"></script>
+<script src="assets/js/data.js?v=20260624-live-sync-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var t = window.PM_t;
@@ -316,7 +316,15 @@ window.PM_PAGE_INIT = function () {
     }
     var requestBtn = document.getElementById("request-submit");
     requestBtn.disabled = true;
-    requestBtn.textContent = "Aanvraag opslaan...";
+    requestBtn.textContent = "Aanvraag indienen...";
+    var remoteRequired = !!(window.PM_SYNC && PM_SYNC.requiresRemote && PM_SYNC.requiresRemote());
+    var remoteOnline = !!(window.PM_SYNC && PM_SYNC.online && PM_SYNC.online());
+    if (remoteRequired && !remoteOnline) {
+      requestBtn.disabled = false;
+      requestBtn.textContent = "Aanvraag indienen";
+      showAlert("Centrale synchronisatie is nog niet gekoppeld. Een aanvraag wordt niet lokaal opgeslagen, omdat je hem dan in een andere browser niet terugziet. Koppel eerst de Partner Center API.", "warn");
+      return;
+    }
     var credentials = await PM_SECURITY.createPassword(reqPassword);
     var payload = {
       firstName: document.getElementById("req-first").value.trim(),
@@ -333,12 +341,11 @@ window.PM_PAGE_INIT = function () {
       passwordHash: credentials.passwordHash,
       passwordSetAt: new Date().toISOString()
     };
-    var remoteRequired = !!(window.PM_SYNC && PM_SYNC.online && PM_SYNC.online() && !(PM_SYNC.isLocalDev && PM_SYNC.isLocalDev()));
     var req = (window.PM_SYNC && PM_SYNC.submitRequest) ? await PM_SYNC.submitRequest(payload) : null;
     if (!req && remoteRequired) {
       requestBtn.disabled = false;
       requestBtn.textContent = "Aanvraag indienen";
-      showAlert("De aanvraag kon niet centraal worden verzonden. De portal draait nu statisch via GitHub Pages; de aanvraag wordt lokaal opgeslagen zodra centrale sync uit staat.", "warn");
+      showAlert("De aanvraag kon niet centraal worden opgeslagen. Controleer de Partner Center API-koppeling en probeer opnieuw.", "warn");
       return;
     }
     if (!req) req = PM_REQUESTS.create(payload);
@@ -378,7 +385,7 @@ window.PM_PAGE_INIT = function () {
   });
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260624-live-sync-1"></script>
-<script src="assets/js/app.js?v=20260624-live-sync-1"></script>
+<script src="assets/js/sync-config.js?v=20260624-live-sync-2"></script>
+<script src="assets/js/app.js?v=20260624-live-sync-2"></script>
 </body>
 </html>
