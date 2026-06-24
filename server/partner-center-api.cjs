@@ -14,6 +14,12 @@ const PORT = Number(process.env.PORT || process.env.PM_PORT || 8787);
 const TOKEN_TTL_SECONDS = Number(process.env.PM_TOKEN_TTL_SECONDS || 60 * 60 * 12);
 const MAX_BODY_BYTES = Number(process.env.PM_MAX_BODY_MB || 25) * 1024 * 1024;
 const SERVER_SECRET = process.env.PM_SYNC_SECRET || "change-this-secret-before-production";
+const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
+const MAIN_STATE_ID = process.env.PM_SYNC_STATE_ID || "main";
+const STORAGE_MODE = DATABASE_URL ? "postgres" : "file";
+const PG_SSLMODE = String(process.env.PGSSLMODE || process.env.PM_DATABASE_SSL || "").trim().toLowerCase();
+let pgPool = null;
+let pgSchemaReady = null;
 
 const CENTRAL_STATE_KEYS = [
   "pm_admin_grants",
@@ -154,6 +160,86 @@ function saveDb(db) {
   const tmp = DATA_FILE + ".tmp";
   fs.writeFileSync(tmp, JSON.stringify(db, null, 2));
   fs.renameSync(tmp, DATA_FILE);
+}
+
+function normalizeDb(input, fallbackUpdatedAt) {
+  const parsed = input && typeof input === "object" ? input : {};
+  const rawState = parsed.state && typeof parsed.state === "object" ? parsed.state : parsed;
+  return {
+    updatedAt: parsed.updatedAt || fallbackUpdatedAt || nowIso(),
+    state: Object.assign(blankState(), rawState || {})
+  };
+}
+
+function getPgPool() {
+  if (!DATABASE_URL) return null;
+  if (pgPool) return pgPool;
+  let Pool;
+  try {
+    ({ Pool } = require("pg"));
+  } catch (e) {
+    const err = new Error("The pg package is required when DATABASE_URL is set. Run npm install before starting the API.");
+    err.code = "pg_dependency_missing";
+    throw err;
+  }
+  const config = {
+    connectionString: DATABASE_URL,
+    max: Number(process.env.PM_DATABASE_POOL_SIZE || 5)
+  };
+  if (PG_SSLMODE !== "disable") config.ssl = { rejectUnauthorized: false };
+  pgPool = new Pool(config);
+  return pgPool;
+}
+
+async function ensurePgSchema() {
+  if (!DATABASE_URL) return;
+  if (!pgSchemaReady) {
+    pgSchemaReady = getPgPool().query(`
+      CREATE TABLE IF NOT EXISTS partner_center_state (
+        id text PRIMARY KEY,
+        data jsonb NOT NULL,
+        updated_at timestamptz NOT NULL DEFAULT now()
+      )
+    `).catch((err) => {
+      pgSchemaReady = null;
+      throw err;
+    });
+  }
+  await pgSchemaReady;
+}
+
+async function loadDbAsync() {
+  if (!DATABASE_URL) return loadDb();
+  await ensurePgSchema();
+  const result = await getPgPool().query(
+    "SELECT data, updated_at FROM partner_center_state WHERE id = $1",
+    [MAIN_STATE_ID]
+  );
+  if (!result.rows.length) {
+    const db = { updatedAt: nowIso(), state: blankState() };
+    await saveDbAsync(db);
+    return db;
+  }
+  const row = result.rows[0];
+  return normalizeDb(row.data, row.updated_at && row.updated_at.toISOString ? row.updated_at.toISOString() : nowIso());
+}
+
+async function saveDbAsync(db) {
+  const normalized = normalizeDb(db);
+  if (!DATABASE_URL) {
+    saveDb(normalized);
+    return normalized;
+  }
+  await ensurePgSchema();
+  await getPgPool().query(
+    `INSERT INTO partner_center_state (id, data, updated_at)
+     VALUES ($1, $2::jsonb, $3::timestamptz)
+     ON CONFLICT (id) DO UPDATE
+     SET data = EXCLUDED.data,
+         updated_at = EXCLUDED.updated_at`,
+    [MAIN_STATE_ID, JSON.stringify(normalized), normalized.updatedAt]
+  );
+  return normalized;
 }
 
 function sameJson(a, b) {
@@ -532,11 +618,31 @@ async function handleApi(req, res) {
     res.end();
     return;
   }
-  const db = loadDb();
-  ensureBootstrapState(db);
+  let db;
+  try {
+    db = await loadDbAsync();
+    ensureBootstrapState(db);
+  } catch (e) {
+    sendJson(req, res, 503, {
+      ok: false,
+      error: "storage_unavailable",
+      storage: STORAGE_MODE,
+      detail: process.env.NODE_ENV === "production" ? undefined : String(e && e.stack || e)
+    });
+    return;
+  }
   if (req.method === "GET") {
-    saveDb(db);
-    sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, state: db.state });
+    try {
+      await saveDbAsync(db);
+      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, state: db.state });
+    } catch (e) {
+      sendJson(req, res, 503, {
+        ok: false,
+        error: "storage_unavailable",
+        storage: STORAGE_MODE,
+        detail: process.env.NODE_ENV === "production" ? undefined : String(e && e.stack || e)
+      });
+    }
     return;
   }
   if (req.method !== "POST") {
@@ -553,13 +659,13 @@ async function handleApi(req, res) {
   try {
     if (body.action === "accountRequest") {
       const request = createAccountRequest(db, body.request || {});
-      saveDb(db);
+      await saveDbAsync(db);
       sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, request, state: db.state });
       return;
     }
     if (body.action === "login") {
       const result = login(db, body.email, body.password);
-      saveDb(db);
+      await saveDbAsync(db);
       sendJson(req, res, 200, Object.assign({ updatedAt: db.updatedAt, state: db.state }, result));
       return;
     }
@@ -570,7 +676,7 @@ async function handleApi(req, res) {
         return;
       }
       applyStatePatch(db, body.state || {}, auth, body.baseUpdatedAt || "");
-      saveDb(db);
+      await saveDbAsync(db);
       sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, state: db.state });
       return;
     }
@@ -611,10 +717,32 @@ function serveStatic(req, res, pathname) {
   });
 }
 
+async function handleHealth(req, res) {
+  try {
+    const db = await loadDbAsync();
+    ensureBootstrapState(db);
+    await saveDbAsync(db);
+    sendJson(req, res, 200, {
+      ok: true,
+      name: "PlasmaMade Partner Center API",
+      storage: STORAGE_MODE,
+      updatedAt: db.updatedAt
+    });
+  } catch (e) {
+    sendJson(req, res, 503, {
+      ok: false,
+      name: "PlasmaMade Partner Center API",
+      storage: STORAGE_MODE,
+      error: "storage_unavailable",
+      detail: process.env.NODE_ENV === "production" ? undefined : String(e && e.stack || e)
+    });
+  }
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, "http://127.0.0.1");
   if (url.pathname === "/api/health") {
-    sendJson(req, res, 200, { ok: true, name: "PlasmaMade Partner Center API", updatedAt: loadDb().updatedAt });
+    handleHealth(req, res);
     return;
   }
   if (url.pathname === "/api/sync") {
@@ -626,5 +754,5 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   const secretWarning = SERVER_SECRET === "change-this-secret-before-production" ? " (set PM_SYNC_SECRET before production)" : "";
-  console.log("PlasmaMade Partner Center API listening on http://127.0.0.1:" + PORT + secretWarning);
+  console.log("PlasmaMade Partner Center API listening on http://127.0.0.1:" + PORT + " using " + STORAGE_MODE + " storage" + secretWarning);
 });

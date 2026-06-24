@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: plasmamade-partner-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PM_ALLOWED_ORIGINS
+        value: https://plasmamade.github.io,https://plasmamade.com,https://www.plasmamade.com
+      - key: PM_SYNC_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
