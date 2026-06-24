@@ -6,6 +6,11 @@ const STORE_NAME = "plasmamade-partner-center";
 const STORE_KEY = "portal-state";
 const LOCAL_STATE_PATH = path.join(process.cwd(), ".netlify", "portal-state.local.json");
 let memoryState = null;
+const BOOTSTRAP_ADMIN = {
+  email: "bjonkeren@plasmamade.com",
+  passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
+  passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e"
+};
 
 const ARRAY_KEYS = new Set([
   "pm_admin_grants",
@@ -185,10 +190,12 @@ function mergeIncomingState(base, incoming, actorIsAdmin) {
 }
 
 function adminEmails() {
-  return String(process.env.PM_ADMIN_EMAILS || "")
+  const emails = String(process.env.PM_ADMIN_EMAILS || "")
     .split(",")
     .map(normalizeEmail)
     .filter(Boolean);
+  if (!emails.includes(BOOTSTRAP_ADMIN.email)) emails.push(BOOTSTRAP_ADMIN.email);
+  return emails;
 }
 
 function envAdminPassword() {
@@ -225,6 +232,10 @@ function hashPassword(password, salt) {
 function verifyPassword(password, row) {
   if (!row || !row.passwordHash || !row.passwordSalt) return false;
   return hashPassword(password, row.passwordSalt) === row.passwordHash;
+}
+
+function verifyBootstrapAdmin(email, password) {
+  return normalizeEmail(email) === BOOTSTRAP_ADMIN.email && verifyPassword(password, BOOTSTRAP_ADMIN);
 }
 
 function findByEmail(rows, email) {
@@ -321,7 +332,7 @@ function submitAccountRequest(state, payload) {
 function login(state, email, password) {
   const e = normalizeEmail(email);
   const envPassword = envAdminPassword();
-  if (adminEmails().includes(e) && envPassword && String(password || "") === envPassword) {
+  if ((adminEmails().includes(e) && envPassword && String(password || "") === envPassword) || verifyBootstrapAdmin(e, password)) {
     return {
       ok: true,
       status: "approved",
