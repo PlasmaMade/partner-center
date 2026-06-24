@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<script>
+localStorage.setItem("pm_partner_auth", JSON.stringify({
+  name: "Bjorn Jonkeren",
+  email: "bjonkeren@plasmamade.com",
+  company: "PlasmaMade",
+  role: "internal",
+  approvalStatus: "approved",
+  admin: true,
+  joinedAt: new Date().toISOString()
+}));
+localStorage.setItem("pm_admin_grants", JSON.stringify([
+  { id: "qa_admin", email: "bjonkeren@plasmamade.com", grantedAt: new Date().toISOString(), grantedBy: "qa" }
+]));
+localStorage.setItem("pm_partners", JSON.stringify([
+  {
+    id: "qa_partner",
+    name: "Demo Partner",
+    email: "demo.partner@example.com",
+    company: "Demo Partner BV",
+    phone: "+31 522 000000",
+    country: "Nederland",
+    role: "dealer",
+    status: "active",
+    source: "qa",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    lastActiveAt: new Date().toISOString()
+  }
+]));
+localStorage.setItem("pm_account_requests", JSON.stringify([
+  {
+    id: "qa_request",
+    firstName: "Demo",
+    lastName: "Aanvrager",
+    email: "demo.request@example.com",
+    company: "Demo Request BV",
+    functionTitle: "Marketing",
+    country: "Nederland",
+    phone: "+31 522 111111",
+    partnerType: "dealer",
+    status: "pending",
+    reason: "Testaanvraag voor accountweergave.",
+    submittedAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+]));
+location.replace("admin.html");
+</script>
