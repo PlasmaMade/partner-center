@@ -150,7 +150,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260624-live-sync-2";
+  const PORTAL_BUILD_VERSION = "20260624-render-api-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";

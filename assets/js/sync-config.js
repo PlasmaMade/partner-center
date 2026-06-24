@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var DEFAULT_ENDPOINT = "";
+  var DEFAULT_ENDPOINT = "https://partner-center.onrender.com/api/sync";
   var endpoint = DEFAULT_ENDPOINT;
 
   try {
