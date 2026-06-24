@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Studio - PlasmaMade Partner Center</title>
+<meta name="description" content="Ontwerp in de vaste huisstijl met de ingebouwde PlasmaMade Design Studio.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.studio{display:flex;height:calc(100vh - var(--topbar-h));background:var(--bg)}
+
+/* ---------- Left panel ---------- */
+.studio__left{width:312px;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;flex-shrink:0}
+.st-ptabs{display:flex;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.st-ptab{flex:1 0 16%;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px;font-size:10.5px;font-weight:600;color:var(--muted)}
+.st-ptab svg{width:17px;height:17px}
+.st-ptab.active{color:var(--green-700);box-shadow:inset 0 -2px 0 var(--green)}
+.st-pbody{flex:1;overflow-y:auto;padding:14px}
+.st-grouplbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9aa6b2;margin:16px 0 9px}
+.st-grouplbl:first-child{margin-top:0}
+.st-tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.st-tpl{display:flex;flex-direction:column;gap:6px;text-align:left}
+.st-tpl-thumb{background:var(--green-grad);border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;color:#fff;font-size:24px;font-weight:800;width:100%;overflow:hidden;position:relative}
+.st-tpl-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.st-tpl-loading{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:st-spin 1s linear infinite}
+@keyframes st-spin{to{transform:rotate(360deg)}}
+.st-tpl:hover .st-tpl-thumb{outline:2px solid var(--green)}
+.st-tpl-name{font-size:11.5px;font-weight:600;color:var(--ink);line-height:1.2}
+.st-add{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-weight:600;font-size:13.5px;color:var(--ink);margin-bottom:8px;background:var(--surface)}
+.st-add:hover{border-color:var(--green);color:var(--green-700);background:var(--green-50)}
+.st-add svg{width:17px;height:17px;color:var(--green);flex-shrink:0}
+.st-img-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.st-img{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#f8f9fa;padding:0;cursor:pointer;position:relative}
+.st-img:hover{outline:2px solid var(--green)}
+.st-img img{width:100%;height:100%;object-fit:contain;padding:4px}
+.st-upl{display:block}
+.st-upl-add{width:100%;height:100%;padding:0;background:none}
+.st-upl-add img{width:100%;height:100%;object-fit:contain;padding:4px}
+.st-upl-del{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:6px;background:rgba(13,17,23,.65);color:#fff;display:grid;place-items:center;opacity:0;transition:opacity .15s}
+.st-upl:hover .st-upl-del{opacity:1}
+.st-upl-del svg{width:11px;height:11px}
+.st-hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+.st-swatches{display:flex;flex-wrap:wrap;gap:6px}
+.st-sw{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer}
+.st-sw.active{border-color:var(--ink)}
+
+/* lagen */
+.st-layerlist{display:flex;flex-direction:column;gap:4px}
+.st-layer{display:flex;align-items:center;gap:7px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;cursor:pointer;background:var(--surface)}
+.st-layer:hover{border-color:var(--green)}
+.st-layer.active{border-color:var(--green);background:var(--green-50)}
+.st-layer.hid{opacity:.45}
+.st-layer-ic{width:26px;height:26px;border-radius:7px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0}
+.st-layer-ic svg{width:14px;height:14px}
+.st-layer-name{flex:1;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-layer button{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;color:var(--muted);flex-shrink:0}
+.st-layer button:hover{background:var(--green-100);color:var(--green-700)}
+.st-layer button.on{color:var(--green-700)}
+.st-layer button svg{width:13px;height:13px}
+
+/* ---------- Center ---------- */
+.studio__center{flex:1;display:flex;flex-direction:column;min-width:0}
+.studio__bar{min-height:58px;display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--line);flex-shrink:0;flex-wrap:wrap}
+.studio__bar .spacer{flex:1;min-width:8px}
+.studio__bar input#st-name{border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-weight:600;width:170px;font-family:inherit}
+.studio__bar input#st-name:focus{border-color:var(--green);outline:none}
+.studio__bar .select{padding-top:9px;padding-bottom:9px;max-width:230px}
+.st-status{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap}
+.st-status i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
+.st-status.ok{color:var(--green-700);background:var(--green-50);border-color:var(--green-100)}
+.st-status.ok i{background:var(--green)}
+.st-status.warn{color:#9a681d;background:#fff7e8;border-color:#f1d39b}
+.st-status.warn i{background:var(--warn)}
+.st-status-detail{display:none;margin:0;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--surface);font-size:13px;color:var(--muted);line-height:1.45}
+.st-status-detail.show{display:flex;align-items:flex-start;gap:10px}
+.st-status-detail svg{width:17px;height:17px;color:var(--green-700);flex-shrink:0;margin-top:1px}
+.st-status-detail b{color:var(--ink)}
+.st-status-detail.warn{background:#fff8ec;color:#70501f}
+.st-status-detail.bad{background:#fff3f2;color:#8b2f2c}
+.st-status-detail.bad svg{color:var(--danger)}
+.st-barbtn{display:flex;align-items:center;gap:6px;padding:9px 13px;border-radius:9px;font-weight:600;font-size:13px;color:var(--ink);border:1px solid var(--line);background:var(--surface)}
+.st-barbtn:hover{border-color:var(--green);color:var(--green-700)}
+.st-barbtn:disabled{opacity:.4;pointer-events:none}
+.st-barbtn svg{width:16px;height:16px}
+.st-barbtn.icononly{padding:9px 10px}
+.st-barbtn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.st-barbtn.primary:hover{background:var(--green-600);color:#fff}
+.st-export{position:relative}
+.st-export-menu{position:absolute;top:46px;right:0;background:var(--surface);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow-lg);padding:6px;display:none;z-index:60;min-width:230px}
+.st-export-menu.open{display:block}
+.st-export-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:10px 12px;border-radius:8px;font-weight:600;font-size:13px;text-align:left;color:var(--ink)}
+.st-export-menu button:hover{background:var(--green-50);color:var(--green-700)}
+.st-export-menu svg{width:16px;height:16px;color:var(--green)}
+.st-export-menu .sep{height:1px;background:var(--line);margin:5px 4px}
+
+.studio__canvas-wrap{flex:1;overflow:auto;display:flex;padding:34px;background:repeating-conic-gradient(#edf0f2 0% 25%,#f6f8f9 0% 50%) 50%/26px 26px;position:relative}
+#st-stage{position:relative;margin:auto;flex-shrink:0;box-shadow:var(--shadow-lg)}
+.st-surface{position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;background:#fff}
+.st-el{position:absolute;cursor:move;user-select:none}
+.st-el.locked{pointer-events:none}
+.st-text{outline:none;white-space:pre-wrap;word-break:break-word;font-family:'Libre Franklin',sans-serif}
+.st-el[contenteditable=true]{cursor:text;outline:2px solid var(--green);z-index:50;position:absolute}
+
+/* selectie-chrome */
+.st-selbox{position:absolute;pointer-events:none;outline:2px solid var(--green);outline-offset:1px;z-index:40}
+.st-h{position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--green);pointer-events:auto;z-index:41}
+.st-h-nw{left:-8px;top:-8px;cursor:nwse-resize}
+.st-h-ne{right:-8px;top:-8px;cursor:nesw-resize}
+.st-h-sw{left:-8px;bottom:-8px;cursor:nesw-resize}
+.st-h-se{right:-8px;bottom:-8px;cursor:nwse-resize}
+.st-h-side{width:10px;height:22px;border-radius:6px}
+.st-h-e{right:-6px;top:calc(50% - 11px);cursor:ew-resize}
+.st-h-w{left:-6px;top:calc(50% - 11px);cursor:ew-resize}
+.st-rot{position:absolute;left:calc(50% - 13px);top:-40px;width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid var(--green);color:var(--green-700);display:grid;place-items:center;pointer-events:auto;cursor:grab;z-index:41}
+.st-rot svg{width:13px;height:13px}
+.st-rotbadge{position:absolute;transform:translateX(-50%);background:var(--black);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;z-index:60;pointer-events:none}
+.st-lockbadge{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;background:var(--black);color:#fff;display:grid;place-items:center;z-index:41}
+.st-lockbadge svg{width:11px;height:11px}
+
+/* zwevende selectie-toolbar */
+.st-quickbar{position:absolute;display:flex;align-items:center;gap:2px;background:var(--black);border-radius:11px;padding:4px;box-shadow:var(--shadow-lg);z-index:70;pointer-events:auto;white-space:nowrap}
+.st-quickbar button{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:#fff;background:none;transition:background .12s}
+.st-quickbar button:hover{background:rgba(255,255,255,.18)}
+.st-quickbar button.danger:hover{background:var(--danger)}
+.st-quickbar button svg{width:16px;height:16px}
+.st-quickbar .qb-sep{width:1px;height:18px;background:rgba(255,255,255,.2);margin:0 3px;flex-shrink:0}
+.st-selbox.st-group{outline-style:dashed;outline-color:var(--green)}
+
+/* bijsnijden (crop) */
+.st-crop-ov{position:absolute;inset:0;background:rgba(13,17,23,.55);z-index:55;pointer-events:none}
+.st-crop-frame{position:absolute;z-index:56;outline:2px solid #fff;box-shadow:0 0 0 9999px rgba(13,17,23,.55)}
+.st-crop-frame img{position:absolute;max-width:none}
+.st-crop-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);background-size:33.33% 33.33%}
+.st-crop-h{position:absolute;width:16px;height:16px;border:3px solid #fff;z-index:57;pointer-events:auto}
+.st-crop-h-nw{left:-3px;top:-3px;border-right:none;border-bottom:none;cursor:nwse-resize}
+.st-crop-h-ne{right:-3px;top:-3px;border-left:none;border-bottom:none;cursor:nesw-resize}
+.st-crop-h-sw{left:-3px;bottom:-3px;border-right:none;border-top:none;cursor:nesw-resize}
+.st-crop-h-se{right:-3px;bottom:-3px;border-left:none;border-top:none;cursor:nwse-resize}
+.st-crop-bar{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;display:flex;gap:8px;z-index:58;background:var(--black);padding:7px 9px;border-radius:11px;box-shadow:var(--shadow-lg)}
+.st-crop-bar button{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-weight:600;font-size:13px;color:#fff}
+.st-crop-bar button.ok{background:var(--green)}
+.st-crop-bar button.ok:hover{background:var(--green-600)}
+.st-crop-bar button.cancel:hover{background:rgba(255,255,255,.16)}
+.st-crop-bar svg{width:15px;height:15px}
+
+/* hulplijnen + marquee */
+.st-guide{position:absolute;background:#e040a0;z-index:90;display:none;pointer-events:none}
+.st-guide-v{top:0;bottom:0;width:1.5px;margin-left:-0.75px}
+.st-guide-h{left:0;right:0;height:1.5px;margin-top:-0.75px}
+.st-marquee{position:absolute;border:1.5px solid var(--green);background:rgba(19,165,56,.08);z-index:90;pointer-events:none}
+
+/* onderbalk: pagina's + zoom */
+.studio__foot{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--surface);border-top:1px solid var(--line);flex-shrink:0;min-height:64px}
+.st-pages{display:flex;align-items:flex-start;gap:8px;flex:1;overflow-x:auto;padding:2px}
+.st-page{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;flex-shrink:0}
+.st-page-thumb{width:52px;border:2px solid var(--line);border-radius:7px;overflow:hidden;background:#fff;display:grid;place-items:center;color:var(--muted);font-size:13px;min-height:30px;max-height:64px}
+.st-page-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.st-page.active .st-page-thumb{border-color:var(--green)}
+.st-page-num{font-size:10px;font-weight:700;color:var(--muted)}
+.st-page.active .st-page-num{color:var(--green-700)}
+.st-page-acts{position:absolute;top:-12px;left:50%;transform:translateX(-50%);display:flex;gap:2px;background:var(--black);border-radius:7px;padding:2px 4px;z-index:5}
+.st-page-acts button{color:#fff;font-size:12px;font-weight:700;width:18px;height:18px;display:grid;place-items:center;border-radius:4px}
+.st-page-acts button:hover{background:rgba(255,255,255,.2)}
+.st-page-add{width:36px;height:36px;border:1px dashed #b9c1ca;border-radius:9px;display:grid;place-items:center;color:var(--muted);flex-shrink:0;align-self:center}
+.st-page-add:hover{border-color:var(--green);color:var(--green-700)}
+.st-page-add svg{width:16px;height:16px}
+.st-zoom{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.st-zoom button{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink);background:var(--surface)}
+.st-zoom button:hover{border-color:var(--green);color:var(--green-700)}
+.st-zoom button svg{width:15px;height:15px}
+.st-zoom #st-zoom-val{font-size:12px;font-weight:700;color:var(--muted);min-width:42px;text-align:center}
+
+/* ---------- Right (properties) ---------- */
+.studio__right{width:292px;background:var(--surface);border-left:1px solid var(--line);overflow-y:auto;flex-shrink:0;padding:18px}
+.st-props-empty{text-align:center;color:var(--muted);padding:26px 8px}
+.st-props-empty svg{width:38px;height:38px;color:#cbd2da;margin-bottom:10px}
+.st-props-head{display:flex;align-items:center;justify-content:space-between;font-weight:700;margin-bottom:14px;font-size:15px}
+.st-del{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:var(--danger);border:1px solid var(--line);background:var(--surface)}
+.st-del:hover{background:#fdecea;border-color:var(--danger)}
+.st-del.st-neutral{color:var(--muted)}
+.st-del.st-neutral:hover{background:var(--green-50);border-color:var(--green);color:var(--green-700)}
+.st-del svg{width:16px;height:16px}
+.st-field{margin-bottom:13px}
+.st-field>label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.st-field textarea,.st-field input[type=text]{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-family:inherit;font-size:13px;resize:vertical;outline:none}
+.st-field textarea:focus,.st-field input[type=text]:focus{border-color:var(--green)}
+.st-field input[type=range]{width:calc(100% - 56px);vertical-align:middle;accent-color:var(--green)}
+.st-val{font-size:11px;color:var(--muted);font-weight:600;margin-left:6px}
+.st-seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.st-seg button{flex:1;padding:8px 4px;font-weight:600;font-size:12px;color:var(--muted)}
+.st-seg button.active{background:var(--green);color:#fff}
+.st-check{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;cursor:pointer}
+.st-check input{accent-color:var(--green)}
+.st-checkrow{display:flex;flex-wrap:wrap;gap:10px}
+.st-layers{display:flex;gap:6px;margin-top:10px}
+.st-layers button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 4px;border:1px solid var(--line);border-radius:9px;font-size:11.5px;font-weight:600;color:var(--ink)}
+.st-layers button:hover,.st-layers button.on{border-color:var(--green);color:var(--green-700)}
+.st-layers svg{width:14px;height:14px;flex-shrink:0}
+.st-numrow{display:flex;gap:6px}
+.st-num{flex:1;display:flex;flex-direction:column;gap:3px}
+.st-num span{font-size:10px;font-weight:700;color:#9aa6b2;text-align:center}
+.st-num input{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 4px;font-size:12px;font-weight:600;text-align:center;outline:none;font-family:inherit}
+.st-num input:focus{border-color:var(--green)}
+.st-alignrow{display:flex;gap:5px}
+.st-alignrow button{flex:1;height:32px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--ink)}
+.st-alignrow button:hover{border-color:var(--green);color:var(--green-700)}
+.st-alignrow svg{width:15px;height:15px}
+
+/* ---------- Modals ---------- */
+.st-modal{position:fixed;inset:0;background:rgba(13,17,23,.5);backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:30px}
+.st-modal.open{display:flex}
+.st-modal__card{background:var(--surface);border-radius:16px;width:100%;max-width:820px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-lg)}
+.st-modal__head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.st-modal__head h3{font-size:17px}
+.st-modal__close{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:var(--muted);border:1px solid var(--line)}
+.st-modal__close:hover{color:var(--ink);border-color:#d4d9df}
+.st-modal__close svg{width:17px;height:17px}
+.st-modal__body{padding:22px;overflow-y:auto}
+.st-saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.st-saved-thumb{width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f4f6f8;display:grid;place-items:center;color:var(--muted);font-size:12px;padding:0;cursor:pointer;text-align:center;position:relative}
+.st-saved-thumb:hover{outline:2px solid var(--green)}
+.st-saved-thumb img{width:100%;height:100%;object-fit:cover}
+.st-saved-pages{position:absolute;right:6px;bottom:6px;background:var(--black);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:12px}
+.st-saved-meta{margin-top:9px}
+.st-saved-meta b{font-size:13px;display:block}
+.st-saved-meta span{font-size:11px;color:var(--muted)}
+.st-saved-act{display:flex;gap:6px;margin-top:9px;align-items:center}
+.st-preview-img{max-width:100%;max-height:72vh;border-radius:10px;box-shadow:var(--shadow);display:block;margin:0 auto 18px}
+.st-prev-lbl{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-align:center}
+.st-loading{padding:54px;text-align:center;color:var(--muted)}
+.st-keys{width:100%;border-collapse:collapse;font-size:13.5px}
+.st-keys td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.st-keys td:first-child{width:190px}
+.st-keys kbd{display:inline-block;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 7px;font-size:11.5px;font-weight:700;font-family:inherit;margin-right:3px}
+
+/* contextmenu */
+.st-ctx{position:fixed;background:var(--surface);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow-lg);padding:5px;z-index:400;min-width:190px}
+.st-ctx button{display:flex;align-items:center;gap:9px;width:100%;padding:8px 11px;border-radius:8px;font-weight:600;font-size:13px;text-align:left;color:var(--ink)}
+.st-ctx button:hover{background:var(--green-50);color:var(--green-700)}
+.st-ctx svg{width:15px;height:15px;color:var(--green)}
+.st-ctx-sep{height:1px;background:var(--line);margin:4px 6px}
+
+@media(max-width:1180px){ .studio__left{width:262px}.studio__right{width:252px} }
+@media(max-width:900px){
+  .studio{height:auto;flex-direction:column}
+  .studio__left,.studio__right{width:100%;border-right:none;border-left:none;border-bottom:1px solid var(--line)}
+  .studio__canvas-wrap{padding:16px;min-height:52vh}
+  .st-pbody{max-height:300px}
+}
+</style>
+</head>
+<body data-page="studio">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content" style="padding:0;max-width:none">
+      <div class="studio">
+        <!-- LEFT -->
+        <div class="studio__left">
+          <div id="st-panel-tabs" class="st-ptabs"></div>
+          <div id="st-panel-body" class="st-pbody"></div>
+        </div>
+        <!-- CENTER -->
+        <div class="studio__center">
+          <div class="studio__bar">
+            <button class="st-barbtn" id="st-new" data-i18n-title="studio.newTitle" title="Nieuw ontwerp">Nieuw</button>
+            <button class="st-barbtn" id="st-open" data-i18n-title="studio.myDesigns" title="Mijn ontwerpen">Openen</button>
+            <select class="select" id="st-format" data-i18n-title="studio.formatTitle" data-i18n-al="studio.formatTitle" title="Canvasformaat"></select>
+            <input id="st-name" data-i18n-ph="studio.namePh" data-i18n-al="studio.namePh" placeholder="Naam ontwerp">
+            <span class="st-status" id="st-status"><i></i><span>Concept</span></span>
+            <button class="st-barbtn icononly" id="st-undo" data-i18n-title="studio.undo" data-i18n-al="studio.undo" title="Ongedaan maken (Ctrl+Z)"></button>
+            <button class="st-barbtn icononly" id="st-redo" data-i18n-title="studio.redo" data-i18n-al="studio.redo" title="Opnieuw (Ctrl+Y)"></button>
+            <div class="spacer"></div>
+            <button class="st-barbtn" id="st-preview">Voorbeeld</button>
+            <button class="st-barbtn" id="st-save">Opslaan</button>
+            <button class="st-barbtn primary" id="st-submit">Indienen ter goedkeuring</button>
+            <div class="st-export">
+              <button class="st-barbtn primary" id="st-export-btn">Exporteren</button>
+              <div class="st-export-menu" id="st-export-menu">
+                <button data-fmt="png">Download als PNG</button>
+                <button data-fmt="png3x">PNG - hoge resolutie (3x)</button>
+                <button data-fmt="jpg">Download als JPG</button>
+                <button data-fmt="pdf">Download als PDF (alle pagina's)</button>
+                <div class="sep"></div>
+                <button data-fmt="clip">Kopieer naar klembord</button>
+              </div>
+            </div>
+          </div>
+          <div class="st-status-detail" id="st-status-detail"></div>
+          <div class="studio__canvas-wrap" id="st-canvas-wrap">
+            <div id="st-stage"><div id="st-surface" class="st-surface"></div></div>
+          </div>
+          <div class="studio__foot">
+            <div class="st-pages" id="st-pages"></div>
+            <div class="st-zoom">
+              <button id="st-zoom-out" data-i18n-title="studio.zoomOut" data-i18n-al="studio.zoomOut" title="Zoom uit"></button>
+              <span id="st-zoom-val">100%</span>
+              <button id="st-zoom-in" data-i18n-title="studio.zoomIn" data-i18n-al="studio.zoomIn" title="Zoom in"></button>
+              <button id="st-zoom-fit" data-i18n-title="studio.zoomFit" data-i18n-al="studio.zoomFit" title="Passend in venster"></button>
+              <button id="st-shortcuts" data-i18n-title="studio.shortcuts" data-i18n-al="studio.shortcuts" title="Sneltoetsen"></button>
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT -->
+        <div class="studio__right">
+          <div id="st-props"></div>
+        </div>
+      </div>
+
+      <!-- OPEN MODAL -->
+      <div class="st-modal" id="st-open-modal" role="dialog" aria-modal="true" aria-labelledby="st-open-title">
+        <div class="st-modal__card">
+          <div class="st-modal__head"><h3 id="st-open-title" data-i18n="studio.myDesigns">Mijn ontwerpen</h3><button class="st-modal__close" type="button" data-i18n-al="studio.close" aria-label="Sluiten" data-close="st-open-modal"></button></div>
+          <div class="st-modal__body" id="st-open-body"></div>
+        </div>
+      </div>
+      <!-- PREVIEW MODAL -->
+      <div class="st-modal" id="st-preview-modal" role="dialog" aria-modal="true" aria-labelledby="st-preview-title">
+        <div class="st-modal__card">
+          <div class="st-modal__head"><h3 id="st-preview-title" data-i18n="studio.previewTitle">Voorbeeld</h3><button class="st-modal__close" type="button" data-i18n-al="studio.close" aria-label="Sluiten" data-close="st-preview-modal"></button></div>
+          <div class="st-modal__body" id="st-preview-body"></div>
+        </div>
+      </div>
+      <!-- SHORTCUTS MODAL -->
+      <div class="st-modal" id="st-keys-modal" role="dialog" aria-modal="true" aria-labelledby="st-keys-title">
+        <div class="st-modal__card" style="max-width:560px">
+          <div class="st-modal__head"><h3 id="st-keys-title" data-i18n="studio.shortcuts">Sneltoetsen</h3><button class="st-modal__close" type="button" data-i18n-al="studio.close" aria-label="Sluiten" data-close="st-keys-modal"></button></div>
+          <div class="st-modal__body">
+            <table class="st-keys">
+              <tr><td><kbd>Ctrl</kbd><kbd>Z</kbd> / <kbd>Ctrl</kbd><kbd>Y</kbd></td><td data-i18n="studio.kbdUndoRedo">Ongedaan maken / opnieuw</td></tr>
+              <tr><td><kbd>Ctrl</kbd><kbd>C</kbd> <kbd>X</kbd> <kbd>V</kbd></td><td data-i18n="studio.kbdCopyCutPaste">Kopieer · knip · plak</td></tr>
+              <tr><td><kbd>Ctrl</kbd><kbd>D</kbd></td><td data-i18n="studio.kbdDuplicate">Dupliceer selectie</td></tr>
+              <tr><td><kbd>Ctrl</kbd><kbd>A</kbd></td><td data-i18n="studio.kbdSelectAll">Selecteer alles</td></tr>
+              <tr><td><kbd>Delete</kbd></td><td data-i18n="studio.kbdDelete">Verwijder selectie</td></tr>
+              <tr><td><kbd>Arrow keys</kbd> (+<kbd>Shift</kbd>)</td><td data-i18n="studio.kbdMove">Verplaats 1 px (10 px)</td></tr>
+              <tr><td data-i18n="studio.kbdMultiKey">Shift + klik</td><td data-i18n="studio.kbdMulti">Meerdere elementen selecteren</td></tr>
+              <tr><td data-i18n="studio.kbdMarqueeKey">Slepen op leeg canvas</td><td data-i18n="studio.kbdMarquee">Selectiekader (marquee)</td></tr>
+              <tr><td data-i18n="studio.kbdEditTextKey">Dubbelklik op tekst</td><td data-i18n="studio.kbdEditText">Tekst bewerken</td></tr>
+              <tr><td data-i18n="studio.kbdZoomKey">Ctrl + scroll</td><td data-i18n="studio.kbdZoom">In-/uitzoomen</td></tr>
+              <tr><td><kbd>Ctrl</kbd><kbd>]</kbd> / <kbd>Ctrl</kbd><kbd>[</kbd></td><td data-i18n="studio.kbdLayer">Laag naar voren / achteren</td></tr>
+              <tr><td><kbd>Ctrl</kbd><kbd>G</kbd> / <kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>G</kbd></td><td data-i18n="studio.kbdGroup">Groeperen / groep opheffen</td></tr>
+              <tr><td data-i18n="studio.kbdRotateKey">Shift bij draaien</td><td data-i18n="studio.kbdRotate">Stappen van 15 graden</td></tr>
+              <tr><td data-i18n="studio.kbdGuidesKey">Alt bij slepen</td><td data-i18n="studio.kbdGuides">Hulplijnen tijdelijk uit</td></tr>
+              <tr><td><kbd>Esc</kbd></td><td data-i18n="studio.kbdDeselect">Deselecteer / stop bewerken</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/studio.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

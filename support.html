@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact &amp; support - PlasmaMade Partner Center</title>
+<meta name="description" content="Contact en support voor PlasmaMade-partners, dealers en installateurs.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="support">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.support">Contact &amp; support</h2>
+        <p data-i18n="support.intro">Vragen over producten, marketingmateriaal of de ontwerpomgeving? We helpen je graag snel verder.</p>
+      </div>
+
+      <div class="grid grid--3" id="contact-cards" style="margin-bottom:8px"></div>
+
+      <div class="grid" style="grid-template-columns:1.2fr 1fr;gap:28px;align-items:start;margin-top:18px">
+        <!-- Formulier -->
+        <div class="card"><div class="card__body" style="padding:26px 28px">
+          <h3 style="margin-bottom:4px" data-i18n="support.formTitle">Stel je vraag</h3>
+          <p class="muted" style="font-size:14px;margin-bottom:14px" data-i18n="support.formSub">Vul het formulier in.</p>
+          <div class="callout" style="font-size:12.5px;margin-bottom:18px" data-i18n="support.portalNotice">Je supportverzoek wordt opgeslagen in het Partner Center en klaargezet als e-mail aan PlasmaMade Sales.</div>
+          <form id="support-form" novalidate>
+            <div class="grid grid--2" style="gap:14px">
+              <div class="field"><label for="sf-name" data-i18n="support.name">Naam</label><input id="sf-name" required data-i18n-ph="support.namePh" placeholder="Je naam" autocomplete="name" aria-describedby="sf-name-err"><p class="field-err" id="sf-name-err" hidden></p></div>
+              <div class="field"><label for="sf-company" data-i18n="support.company">Bedrijf</label><input id="sf-company" data-i18n-ph="support.companyPh" placeholder="Je bedrijf" autocomplete="organization"></div>
+            </div>
+            <div class="grid grid--2" style="gap:14px">
+              <div class="field"><label for="sf-email" data-i18n="support.email">E-mail</label><input id="sf-email" type="email" required data-i18n-ph="support.emailPh" placeholder="jij@bedrijf.nl" autocomplete="email" aria-describedby="sf-email-err"><p class="field-err" id="sf-email-err" hidden></p></div>
+              <div class="field"><label for="sf-phone" data-i18n="support.phone">Telefoon (optioneel)</label><input id="sf-phone" type="tel" data-i18n-ph="support.phonePh" placeholder="+31 ..." autocomplete="tel"></div>
+            </div>
+            <div class="grid grid--2" style="gap:14px">
+              <div class="field"><label for="sf-cat" data-i18n="support.category">Categorie</label>
+                <select id="sf-cat">
+                  <option value="1" data-i18n="support.cat1">Productvraag</option>
+                  <option value="2" data-i18n="support.cat2">Marketingmateriaal</option>
+                  <option value="3" data-i18n="support.cat3">Ontwerpomgeving</option>
+                  <option value="4" data-i18n="support.cat4">Bestelling / order</option>
+                  <option value="5" data-i18n="support.cat5">Techniek &amp; installatie</option>
+                  <option value="6" data-i18n="support.cat6">Anders</option>
+                </select></div>
+              <div class="field"><label for="sf-product" data-i18n="support.product">Product (optioneel)</label>
+                <select id="sf-product"></select></div>
+            </div>
+            <div class="field"><label for="sf-subject" data-i18n="support.subject">Onderwerp</label><input id="sf-subject" required data-i18n-ph="support.subjectPh" placeholder="Korte samenvatting" aria-describedby="sf-subject-err"><p class="field-err" id="sf-subject-err" hidden></p></div>
+            <div class="field"><label for="sf-msg" data-i18n="support.message">Bericht</label><textarea id="sf-msg" required data-i18n-ph="support.messagePh" placeholder="Waarmee kunnen we je helpen?" aria-describedby="sf-msg-err"></textarea><p class="field-err" id="sf-msg-err" hidden></p></div>
+            <div class="field">
+              <label for="sf-file" data-i18n="support.attachment">Bijlage (optioneel)</label>
+              <input type="file" id="sf-file" multiple accept=".pdf,.jpg,.jpeg,.png">
+              <p class="muted" style="font-size:12px;margin-top:4px" data-i18n="support.attachmentHint">Voeg een foto of document toe.</p>
+              <p class="muted" id="sf-file-info" style="font-size:12px;margin-top:2px"></p>
+            </div>
+            <div class="field">
+              <label class="check-label" for="sf-privacy" style="display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:13.5px;cursor:pointer">
+                <input type="checkbox" id="sf-privacy" required style="margin-top:3px" aria-describedby="sf-privacy-err">
+                <span data-i18n="support.privacy">Ik ga ermee akkoord dat PlasmaMade mijn gegevens gebruikt om deze vraag te beantwoorden.</span>
+              </label>
+              <p class="field-err" id="sf-privacy-err" hidden></p>
+            </div>
+            <button type="submit" class="btn btn--primary btn--lg" id="sf-submit">
+              <span data-i18n="support.submit">Verstuur bericht</span>
+            </button>
+          </form>
+          <div id="sf-success" class="callout" style="margin-top:16px;display:none">
+            <strong data-i18n="support.successTitle">Je e-mail staat klaar</strong><br>
+            <span data-i18n="support.successText">Je supportverzoek is geregistreerd en je mailprogramma is geopend met het ingevulde bericht.</span>
+            <div class="muted" style="font-size:12px;margin-top:8px">Ticket: <b id="sf-ticket-id" class="green"></b></div>
+          </div>
+        </div></div>
+
+        <!-- Zijbalk -->
+        <aside>
+          <div class="card" style="margin-bottom:18px"><div class="card__body">
+            <h4 style="margin-bottom:14px" data-i18n="support.companyTitle">PlasmaMade B.V.</h4>
+            <ul class="icon-list" id="company-info"></ul>
+          </div></div>
+          <div class="card"><div class="card__body">
+            <h4 style="margin-bottom:12px" data-i18n="support.quickHelp">Snelle hulp</h4>
+            <a href="products.html" class="btn btn--ghost btn--sm btn--block" id="ql-1" style="margin-bottom:8px"></a>
+            <a href="downloads.html" class="btn btn--ghost btn--sm btn--block" id="ql-2" style="margin-bottom:8px"></a>
+            <a href="studio.html" class="btn btn--ghost btn--sm btn--block" id="ql-3"></a>
+          </div></div>
+          <div class="card" style="margin-top:18px"><div class="card__body">
+            <div class="flex items-center between" style="gap:12px;margin-bottom:12px">
+              <h4 data-i18n="support.myTickets">Mijn supportverzoeken</h4>
+              <span class="badge badge--green-soft" id="ticket-count">0</span>
+            </div>
+            <div id="ticket-list"></div>
+          </div></div>
+        </aside>
+      </div>
+
+      <div class="section-title"><h3 data-i18n="support.faqTitle">Veelgestelde vragen</h3><div class="line"></div></div>
+      <div class="accordion" id="support-faq"></div>
+
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.support") + " - PlasmaMade Partner Center";
+
+  // Contactkaarten
+  var cards = [
+    { ic: "mail", tt: t("support.mailT"), v: "sales@plasmamade.com", href: "mailto:sales@plasmamade.com", s: t("support.mailS") },
+    { ic: "phone", tt: t("support.phoneT"), v: "+31 522 468 071", href: "tel:+31522468071", s: t("support.phoneS") },
+    { ic: "globe", tt: t("support.webT"), v: "plasmamade.com", href: "https://plasmamade.com", s: t("support.webS") }
+  ];
+  document.getElementById("contact-cards").innerHTML = cards.map(function (c) {
+    return '<a class="tile" href="' + esc(c.href) + '"' + (c.href.indexOf("http") === 0 ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
+      '<div class="tile__icon">' + PM_ICON(c.ic) + '</div><h3 style="font-size:16px">' + esc(c.tt) + '</h3>' +
+      '<p style="flex:0">' + esc(c.s) + '</p><span class="green" style="font-weight:700;font-size:14px">' + esc(c.v) + '</span></a>';
+  }).join("");
+
+  // Bedrijfsinfo
+  var info = [
+    { ic: "pin", h: t("support.visitAddress"), p: "Achthoevenweg 30, 7951 SK Staphorst" },
+    { ic: "mail", h: t("support.postAddress"), p: "Postbus 162, 7950 AD Staphorst" },
+    { ic: "phone", h: t("support.general"), p: "+31 (0) 522 468077" },
+    { ic: "fileText", h: t("support.kvkBtw"), p: "60745304 · NL854041515B01" }
+  ];
+  document.getElementById("company-info").innerHTML = info.map(function (i) {
+    return '<li><span class="li-ico">' + PM_ICON(i.ic) + '</span><div><h5>' + esc(i.h) + '</h5><p>' + esc(i.p) + '</p></div></li>';
+  }).join("");
+
+  // Snelle links
+  document.getElementById("ql-1").innerHTML = PM_ICON("box") + esc(t("nav.products"));
+  document.getElementById("ql-2").innerHTML = PM_ICON("download") + esc(t("nav.downloads"));
+  document.getElementById("ql-3").innerHTML = PM_ICON("palette") + esc(t("common.openStudio"));
+
+  // Productselectie
+  var prodSel = document.getElementById("sf-product");
+  prodSel.innerHTML = '<option value="">' + esc(t("support.productNone")) + '</option>' +
+    D.products.map(function (p) { return '<option value="' + p.id + '">' + esc(p.name) + '</option>'; }).join("");
+  var preselect = PM_param("product");
+  if (preselect && D.products.some(function (p) { return p.id === preselect; })) prodSel.value = preselect;
+
+  // FAQ (vertaald via content-overlay)
+  document.getElementById("support-faq").innerHTML = D.faq.map(function (f) {
+    return '<div class="acc-item"><button class="acc-head" type="button" aria-expanded="false">' + esc(lc("faq", f.id, "q", f.q)) + '<span class="ico">' + PM_ICON("plus") + '</span></button>' +
+      '<div class="acc-body"><div class="acc-body__inner">' + esc(lc("faq", f.id, "a", f.a)) + '</div></div></div>';
+  }).join("");
+
+  function renderTickets() {
+    var u = PM_AUTH.getUser() || {};
+    var tickets = (window.PM_TICKETS ? PM_TICKETS.list() : []).filter(function (tk) {
+      return !u.email || String(tk.email || "").toLowerCase() === String(u.email || "").toLowerCase();
+    }).slice(0, 5);
+    document.getElementById("ticket-count").textContent = PM_fmtNum(tickets.length);
+    document.getElementById("ticket-list").innerHTML = tickets.length ? tickets.map(function (tk, i) {
+      return '<div class="acct-row" style="' + (i ? "" : "padding-top:0;") + '">' +
+        '<div class="acct-row__txt"><h5>' + esc(tk.subject || tk.id) + '</h5><p>' + esc(tk.id) + ' · ' + esc(PM_fmtDate(tk.createdAt)) + '</p></div>' +
+        '<span class="badge ' + (tk.status === "closed" ? "badge--grey" : "badge--green-soft") + '">' + esc(tk.status === "closed" ? t("support.ticketClosed") : t("support.ticketOpen")) + '</span></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">' + esc(t("support.noTickets")) + '</p>';
+  }
+  renderTickets();
+
+  if (window.__supBound) return;
+  window.__supBound = true;
+
+  document.addEventListener("click", function (e) {
+    var h = e.target.closest(".acc-head"); if (!h) return;
+    var open = h.parentElement.classList.toggle("open");
+    h.setAttribute("aria-expanded", String(open));
+  });
+
+  document.getElementById("sf-file").addEventListener("change", function () {
+    var n = this.files ? this.files.length : 0;
+    document.getElementById("sf-file-info").textContent = n ? PM_t("support.attachmentChosen", { n: n }) : "";
+  });
+
+  function setErr(id, msg) {
+    var p = document.getElementById(id + "-err"), input = document.getElementById(id);
+    if (msg) { p.textContent = msg; p.hidden = false; if (input) input.setAttribute("aria-invalid", "true"); }
+    else { p.hidden = true; if (input) input.removeAttribute("aria-invalid"); }
+  }
+
+  // Verzenden = nette mailto met alle velden (eerlijk: geen backend)
+  document.getElementById("support-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("sf-name").value.trim();
+    var email = document.getElementById("sf-email").value.trim();
+    var subject = document.getElementById("sf-subject").value.trim();
+    var msg = document.getElementById("sf-msg").value.trim();
+    var privacy = document.getElementById("sf-privacy").checked;
+    var ok = true;
+    if (!name) { setErr("sf-name", PM_t("support.errName")); ok = false; } else setErr("sf-name", null);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setErr("sf-email", PM_t("support.errEmail")); ok = false; } else setErr("sf-email", null);
+    if (!subject) { setErr("sf-subject", PM_t("support.errSubject")); ok = false; } else setErr("sf-subject", null);
+    if (!msg) { setErr("sf-msg", PM_t("support.errMessage")); ok = false; } else setErr("sf-msg", null);
+    if (!privacy) { setErr("sf-privacy", PM_t("support.errPrivacy")); ok = false; } else setErr("sf-privacy", null);
+    if (!ok) {
+      var firstErr = document.querySelector('#support-form [aria-invalid="true"]');
+      if (firstErr) firstErr.focus(); else if (!privacy) document.getElementById("sf-privacy").focus();
+      return;
+    }
+    var catSel = document.getElementById("sf-cat");
+    var cat = catSel.options[catSel.selectedIndex].textContent;
+    var prodName = prodSel.value ? prodSel.options[prodSel.selectedIndex].textContent : "-";
+    var company = document.getElementById("sf-company").value.trim() || "-";
+    var phone = document.getElementById("sf-phone").value.trim() || "-";
+    var files = Array.prototype.slice.call((document.getElementById("sf-file").files || [])).map(function (f) {
+      return { name: f.name, size: f.size, type: f.type || "" };
+    });
+    var ticket = PM_TICKETS.create({
+      name: name,
+      company: company,
+      email: email,
+      phone: phone,
+      category: cat,
+      product: prodName,
+      productId: prodSel.value || "",
+      subject: subject,
+      message: msg,
+      files: files
+    });
+    var body =
+      "Ticket: " + ticket.id + "\n" +
+      PM_t("support.name") + ": " + name + "\n" +
+      PM_t("support.company") + ": " + company + "\n" +
+      PM_t("support.email") + ": " + email + "\n" +
+      PM_t("support.phone") + ": " + phone + "\n" +
+      PM_t("support.category") + ": " + cat + "\n" +
+      PM_t("support.product") + ": " + prodName + "\n" +
+      PM_t("support.attachment") + ": " + (files.length ? files.map(function (f) { return f.name; }).join(", ") : "-") + "\n\n" + msg;
+    location.href = "mailto:sales@plasmamade.com?subject=" + encodeURIComponent("[Partner Center] " + subject) + "&body=" + encodeURIComponent(body);
+    document.getElementById("sf-ticket-id").textContent = ticket.id;
+    document.getElementById("sf-success").style.display = "block";
+    document.getElementById("sf-success").scrollIntoView({ behavior: "smooth", block: "center" });
+    renderTickets();
+    PM_toast(PM_t("support.ticketSaved", { id: ticket.id }));
+  });
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

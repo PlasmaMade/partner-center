@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video-uitleg - PlasmaMade Partner Center</title>
+<meta name="description" content="Video-uitleg en montagevideo's van PlasmaMade voor partners.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.video-thumb{position:relative;aspect-ratio:16/9;background:#0d1117;border:none;padding:0;width:100%;cursor:pointer;overflow:hidden;display:block}
+.video-thumb img{width:100%;height:100%;object-fit:cover;opacity:.94;transition:opacity .2s}
+.video-thumb:hover img{opacity:1}
+.video-thumb .play{position:absolute;inset:0;display:grid;place-items:center}
+.video-thumb .play span{width:56px;height:56px;border-radius:50%;background:rgba(19,165,56,.95);display:grid;place-items:center;box-shadow:0 6px 20px rgba(0,0,0,.28)}
+.video-thumb .play svg{width:24px;height:24px;color:#fff;margin-left:3px}
+.video-embed{aspect-ratio:16/9;width:100%;background:#000}
+.video-embed iframe,.video-embed video{width:100%;height:100%;border:0;display:block}
+.video-fallback{height:100%;min-height:220px;display:grid;place-items:center;text-align:center;padding:28px;background:#0d1117;color:#fff}
+.video-fallback p{color:rgba(255,255,255,.76);margin:8px auto 16px;max-width:520px}
+.video-fallback .btn{background:#fff;color:#0d1117;border-color:#fff}
+.share-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--green-700);background:var(--green-50);border:1px solid var(--green-100);padding:3px 9px;border-radius:20px}
+.share-tag svg{width:12px;height:12px}
+.vid-subs{display:block;font-size:11.5px;color:var(--muted);margin-top:6px}
+@media (prefers-reduced-motion: reduce){.video-thumb img,.video-thumb .play span{transition:none}}
+</style>
+</head>
+<body data-page="videos">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.videos">Video-uitleg</h2>
+        <p data-i18n="videos.intro">Officiele PlasmaMade-video's, gekoppeld aan het juiste product en onderwerp.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box" id="sb"></div>
+        <select class="select" id="f-prod"></select>
+        <select class="select" id="f-topic"></select>
+        <span class="result-count" id="rc" aria-live="polite"></span>
+      </div>
+
+      <section class="grid grid--3" id="video-grid"></section>
+
+      <div class="callout" style="margin-top:26px">
+        <strong data-i18n="common.tip">Tip:</strong> <span data-i18n-html="videos.tip"></span>
+      </div>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, V = D.videos, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.videos") + " - PlasmaMade Partner Center";
+  document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("videos.searchPh")) + '" aria-label="' + esc(t("videos.searchPh")) + '">';
+  function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
+  document.getElementById("f-prod").innerHTML = '<option value="">' + esc(t("videos.allProducts")) + '</option>' + uniq(V.map(function (v) { return v.product; })).map(function (p) { return '<option value="' + esc(p) + '">' + esc(p) + '</option>'; }).join("");
+  document.getElementById("f-topic").innerHTML = '<option value="">' + esc(t("videos.allTopics")) + '</option>' + uniq(V.map(function (v) { return v.topic; })).map(function (tp) { return '<option value="' + esc(tp) + '">' + esc(PM_dict("topics", tp)) + '</option>'; }).join("");
+  document.getElementById("f-prod").setAttribute("aria-label", t("videos.allProducts"));
+  document.getElementById("f-topic").setAttribute("aria-label", t("videos.allTopics"));
+
+  function poster(v) {
+    if (v.poster) return v.poster;
+    var prod = D.products.find(function (p) { return p.name === v.product; });
+    return prod && prod.image ? prod.image : "assets/img/ultrafine/ultrafine-space.jpg";
+  }
+  function isLocalVideo(v) { return !!(v && v.source === "local" && v.file); }
+  function sourceUrl(v) { return (v && v.url) || (v && v.yt ? "https://www.youtube.com/watch?v=" + v.yt : ""); }
+  function typeLabel(v) { return isLocalVideo(v) ? esc(t("common.video")) : "Bronlink"; }
+  function relDownloads(v) {
+    var prod = D.products.find(function (p) { return p.name === v.product; });
+    if (!prod || !prod.downloads || !prod.downloads.length) return "";
+    var dls = prod.downloads.map(function (did) { return D.downloads.find(function (d) { return d.id === did; }); }).filter(Boolean).slice(0, 2);
+    if (!dls.length) return "";
+    return '<div style="margin-top:8px"><span class="muted" style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">' + esc(t("videos.relDownloads")) + '</span>' +
+      dls.map(function (d) {
+        return '<a href="assets/downloads/' + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") + '" download class="flex items-center gap green" style="font-size:12.5px;font-weight:600;margin-top:5px">' + PM_ICON("download") + esc(lc("downloads", d.id, "title", d.title)) + '</a>';
+      }).join("") + '</div>';
+  }
+
+  function render() {
+    var q = (document.getElementById("q").value || "").toLowerCase();
+    var fp = document.getElementById("f-prod").value, ft = document.getElementById("f-topic").value;
+    var list = V.filter(function (v) {
+      var title = lc("videos", v.id, "title", v.title), desc = lc("videos", v.id, "desc", v.desc);
+      return (!q || (v.title + " " + title + " " + v.product + " " + v.topic + " " + desc + " " + v.desc).toLowerCase().indexOf(q) > -1) &&
+             (!fp || v.product === fp) && (!ft || v.topic === ft);
+    });
+    document.getElementById("rc").textContent = list.length === 1 ? t("videos.countOne") : t("videos.count", { n: PM_fmtNum(list.length) });
+    document.getElementById("video-grid").innerHTML = list.map(function (v) {
+      var title = lc("videos", v.id, "title", v.title);
+      return '<div class="asset" id="v-' + v.id + '">' +
+        '<button class="video-thumb" type="button" data-id="' + v.id + '" aria-label="' + esc(t("videos.playAria", { title: title })) + '"><img src="' + esc(poster(v)) + '" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'assets/img/ultrafine/ultrafine-space.jpg\'"><span class="type-tag">' + typeLabel(v) + '</span><span class="play">' + PM_ICON("play") + '</span></button>' +
+        '<div class="asset__body"><span class="asset__cat">' + esc(PM_dict("topics", v.topic)) + '</span><h4>' + esc(title) + '</h4>' +
+        '<p>' + esc(lc("videos", v.id, "desc", v.desc)) + '</p>' +
+        '<div class="asset__meta"><span>' + PM_ICON("box") + esc(v.product) + '</span><span>' + PM_ICON("user") + esc(PM_dict("audiences", v.audience)) + '</span></div>' +
+        '<span class="vid-subs">' + esc(isLocalVideo(v) ? t("videos.subsNone") : "Bronlink beschikbaar") + '</span>' +
+        '<div class="flex items-center gap wrap" style="margin-top:8px;gap:8px">' +
+          (v.shareable ? '<span class="share-tag">' + PM_ICON("check") + esc(t("videos.shareable")) + '</span>' : '') +
+          (sourceUrl(v) ? '<button type="button" class="btn btn--ghost btn--sm vid-copy" data-url="' + esc(sourceUrl(v)) + '">' + PM_ICON("link") + esc(t("videos.copyLink")) + '</button>' : '') +
+        '</div>' +
+        relDownloads(v) +
+        '</div></div>';
+    }).join("") || '<div class="empty" style="grid-column:1/-1">' + PM_ICON("play") + '<h4>' + esc(t("videos.emptyTitle")) + '</h4><p>' + esc(t("videos.emptyText")) + '</p></div>';
+
+    document.querySelectorAll(".video-thumb").forEach(function (b) {
+      b.addEventListener("click", function () { play(V.find(function (x) { return x.id === b.getAttribute("data-id"); }), b); });
+    });
+    document.querySelectorAll(".vid-copy").forEach(function (b) {
+      b.addEventListener("click", function () {
+        PM_copy(b.getAttribute("data-url"), function () { PM_toast(t("common.linkCopied")); });
+      });
+    });
+    var focus = PM_param("focus");
+    if (focus) { var el = document.getElementById("v-" + focus); if (el) { el.style.outline = "2px solid var(--green)"; el.scrollIntoView({ behavior: "smooth", block: "center" }); var btn = el.querySelector(".video-thumb"); if (btn) play(V.find(function (x) { return x.id === focus; }), btn); } }
+  }
+  function play(v, btn) {
+    if (!v) return;
+    var title = lc("videos", v.id, "title", v.title);
+    var wrap = document.createElement("div"); wrap.className = "video-embed";
+    if (isLocalVideo(v)) {
+      var vd = document.createElement("video");
+      vd.src = v.file; vd.poster = v.poster || ""; vd.controls = true; vd.autoplay = true; vd.playsInline = true; vd.preload = "metadata";
+      vd.addEventListener("error", function () {
+        var url = sourceUrl(v);
+        wrap.innerHTML = '<div class="video-fallback"><div><h3>' + esc(title) + '</h3><p>' + esc(t("videos.unavailable")) + '</p>' + (url ? '<a class="btn btn--sm" target="_blank" rel="noopener" href="' + esc(url) + '">' + PM_ICON("external") + 'Open bronvideo</a>' : '') + '</div></div>';
+      });
+      wrap.appendChild(vd);
+    } else {
+      var url = sourceUrl(v);
+      wrap.innerHTML = '<div class="video-fallback"><div><h3>' + esc(title) + '</h3><p>Het originele lokale bronbestand staat nog niet in de portal. De bronlink blijft beschikbaar zonder embed-foutmelding.</p>' + (url ? '<a class="btn btn--sm" target="_blank" rel="noopener" href="' + esc(url) + '">' + PM_ICON("external") + 'Open bronvideo</a>' : '') + '</div></div>';
+    }
+    btn.replaceWith(wrap);
+  }
+  if (!window.__vidBound) {
+    window.__vidBound = true;
+    document.addEventListener("input", function (e) { if (e.target && e.target.id === "q") render(); });
+  }
+  ["f-prod", "f-topic"].forEach(function (id) { document.getElementById(id).addEventListener("change", render); });
+  render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

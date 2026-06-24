@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Productinformatie - PlasmaMade Partner Center</title>
+<meta name="description" content="Alle PlasmaMade E-Filters en luchtreinigers overzichtelijk op een rij.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="products">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.products">Productinformatie</h2>
+        <p data-i18n="products.intro">Alles over de PlasmaMade-productlijn: specificaties, voordelen, toepassingen, doelgroepen, installatie en verkoopargumenten.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box"></div>
+        <div class="chips" id="fam-filter"></div>
+        <span class="result-count" id="rc" aria-live="polite"></span>
+      </div>
+
+      <section class="grid grid--3" id="product-grid"></section>
+
+      <!-- Keuzehulp: welk product voor welke situatie -->
+      <div class="section-title"><h3 data-i18n="products.guideTitle">Welk product kies je?</h3><div class="line"></div></div>
+      <div class="card"><div class="card__body" style="padding:0;overflow-x:auto">
+        <table class="spec-table" id="guide" style="font-size:14px"></table>
+      </div></div>
+
+      <!-- Vergelijkingsteaser -->
+      <div class="section-title"><h3 data-i18n="products.cmpTitle">Snel vergelijken</h3><div class="line"></div><a class="more" href="sales-tools.html" data-i18n="products.cmpFull">Volledige vergelijking</a></div>
+      <div style="overflow-x:auto">
+        <table class="compare-table" id="cmp"></table>
+      </div>
+
+      <div class="card card--hover" style="margin-top:26px;background:var(--green-grad);border:none;color:#fff">
+        <div class="card__body" style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:26px 30px">
+          <div><h3 style="color:#fff;margin-bottom:4px" data-i18n="products.ctaTitle">Welk filter past op welke kap?</h3><p style="opacity:.92;margin:0" data-i18n="products.ctaText">Gebruik de Filter Finder of neem contact op met sales voor advies op maat.</p></div>
+          <div class="flex gap wrap" style="gap:10px">
+            <a href="filter-finder.html" class="btn btn--white" data-i18n="products.ctaBtn">Open de Filter Finder</a>
+            <a href="support.html" class="btn" style="background:rgba(255,255,255,.16);color:#fff" data-i18n="products.ctaBtn2">Vraag advies</a>
+          </div>
+        </div>
+      </div>
+
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.products") + " - PlasmaMade Partner Center";
+  var families = ["E-Filter", "Air Cleaner"]; // productfamilies = merknamen, niet vertaald
+  var current = window.__prodFam || "*";
+
+  document.querySelector(".search-box").innerHTML = PM_ICON("search") +
+    '<input type="text" id="psearch" placeholder="' + esc(t("products.searchPh")) + '" aria-label="' + esc(t("products.searchPh")) + '">';
+
+  function chips() {
+    var all = [["*", t("common.all")]].concat(families.map(function (f) { return [f, f]; }));
+    document.getElementById("fam-filter").innerHTML = all.map(function (f) {
+      return '<button class="chip' + (f[0] === current ? " active" : "") + '" data-f="' + esc(f[0]) + '" aria-pressed="' + (f[0] === current) + '">' + esc(f[1]) + '</button>';
+    }).join("");
+    document.querySelectorAll("#fam-filter .chip").forEach(function (b) {
+      b.addEventListener("click", function () { current = window.__prodFam = b.getAttribute("data-f"); chips(); render(); });
+    });
+  }
+  function render() {
+    var q = (document.getElementById("psearch").value || "").toLowerCase();
+    var list = D.products.filter(function (p) {
+      var type = lc("products", p.id, "type", p.type), tag = lc("products", p.id, "tagline", p.tagline);
+      var okFam = current === "*" || p.family === current;
+      var okQ = !q || (p.name + " " + p.type + " " + type + " " + tag).toLowerCase().indexOf(q) > -1;
+      return okFam && okQ;
+    });
+    document.getElementById("rc").textContent = list.length === 1 ? t("products.countOne") : t("products.count", { n: PM_fmtNum(list.length) });
+    document.getElementById("product-grid").innerHTML = list.map(function (p) {
+      return '<a class="product-card" href="product.html?id=' + p.id + '">' +
+        '<div class="product-card__img">' + (p.flagship ? '<span class="product-card__flag"><span class="badge badge--green">' + esc(t("products.flagship")) + '</span></span>' : '') +
+        '<img src="' + p.image + '" alt="' + esc(p.name) + '" loading="lazy" width="280" height="210"></div>' +
+        '<div class="product-card__body"><div class="product-card__type">' + esc(lc("products", p.id, "type", p.type)) + '</div>' +
+        '<h3>' + esc(p.name) + '</h3><p>' + esc(lc("products", p.id, "tagline", p.tagline)) + '</p>' +
+        '<div class="pill-row">' + p.certifications.map(function (c) { return '<span class="tag-static">' + esc(c) + '</span>'; }).join("") + '</div>' +
+        '<span class="tile__link" style="margin-top:6px">' + esc(t("products.view")) + ' ' + PM_ICON("arrowRight") + '</span></div></a>';
+    }).join("") || '<div class="empty" style="grid-column:1/-1">' + PM_ICON("box") + '<h4>' + esc(t("products.emptyTitle")) + '</h4><p>' + esc(t("products.emptyText")) + '</p></div>';
+  }
+  if (!window.__prodBound) {
+    window.__prodBound = true;
+    document.addEventListener("input", function (e) { if (e.target && e.target.id === "psearch") render(); });
+  }
+
+  // Vergelijkingstabel (E-Filters) - speclabels en -waarden gelokaliseerd
+  var cmpProducts = ["guc1212", "guc1223", "guc1323"].map(function (id) { return D.products.find(function (p) { return p.id === id; }); });
+  var rows = ["Max. luchtdoorvoer", "Aansluiting", "Afmetingen filter", "Certificering", "Levensduur"];
+  var head = '<thead><tr><th>' + esc(t("products.cmpFeature")) + '</th>' + cmpProducts.map(function (p) { return '<th' + (p.flagship ? ' class="hl"' : '') + '>' + esc(p.name) + '</th>'; }).join("") + '</tr></thead>';
+  var body = '<tbody>' + rows.map(function (r) {
+    return '<tr><td class="feature">' + esc(PM_dict("specLabels", r)) + '</td>' + cmpProducts.map(function (p) { return '<td>' + esc(PM_dict("specValues", p.specs[r]) || "-") + '</td>'; }).join("") + '</tr>';
+  }).join("") + '</tbody>';
+  document.getElementById("cmp").innerHTML = head + body;
+
+  // Keuzehulp
+  var guide = [
+    ["products.guide1", "guc1223", "GUC1223"],
+    ["products.guide2", "guc1212", "GUC1212"],
+    ["products.guide3", "guc1323", "GUC1323"],
+    ["products.guide4", "airclean-ultrafine", "AirClean UltraFine"],
+    ["products.guide5", "table-air-cleaner", "Table Air Cleaner"]
+  ];
+  document.getElementById("guide").innerHTML =
+    '<tr style="background:var(--black)"><td style="color:#fff;font-weight:700;width:62%">' + esc(t("products.guideSituation")) + '</td><td style="color:#fff;font-weight:700">' + esc(t("products.guideProduct")) + '</td></tr>' +
+    guide.map(function (g) {
+      return '<tr><td style="color:var(--ink);font-weight:500">' + esc(t(g[0])) + '</td><td><a href="product.html?id=' + g[1] + '" class="flex items-center gap green" style="font-weight:700">' + esc(g[2]) + ' ' + PM_ICON("arrowRight") + '</a></td></tr>';
+    }).join("");
+
+  chips(); render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

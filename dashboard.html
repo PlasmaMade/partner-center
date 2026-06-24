@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard - PlasmaMade Partner Center</title>
+<meta name="description" content="Jouw startpunt in het PlasmaMade Partner Center: producten, marketing, kennis en tools.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="dashboard">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+
+      <section class="portal-hero">
+        <div class="portal-hero__copy">
+          <div class="portal-eyebrow">PlasmaMade Partner Center</div>
+          <h2 id="hero-greet">Welkom terug</h2>
+          <p data-i18n="dash.heroIntro">Alles voor productadvies, verkoop, marketing en support. Rustig, actueel en volledig in PlasmaMade-stijl.</p>
+          <div class="hero__actions">
+            <a href="filter-finder.html" class="btn btn--primary" data-i18n="dash.heroCtaFinder">Vind het juiste filter</a>
+            <a href="marketing.html" class="btn btn--ghost" data-i18n="dash.heroCtaMarketing">Marketingmateriaal</a>
+          </div>
+        </div>
+        <div class="portal-hero__media" aria-hidden="true">
+          <img class="portal-hero__butterflies" src="assets/img/lifestyle/butterflies.png" alt="">
+          <img class="portal-hero__product" src="assets/img/lifestyle/hero-filters.png" alt="">
+        </div>
+      </section>
+
+      <div class="section-title"><h3 data-i18n="dash.forYou">Aanbevolen voor jou</h3><div class="line"></div></div>
+      <p class="muted" id="role-intro" style="margin:-8px 0 14px;font-size:13.5px"></p>
+      <section class="portal-actions" id="role-actions"></section>
+
+      <div class="grid dash-main-grid">
+        <div>
+          <div class="section-title"><h3 data-i18n="dash.featProducts">Productfocus</h3><div class="line"></div><a class="more" href="products.html" data-i18n="dash.allProducts">Alle producten</a></div>
+          <div class="grid grid--3" id="feat-products"></div>
+        </div>
+        <aside class="portal-side">
+          <div class="section-title"><h3 data-i18n="dash.quickDownloads">Meest gebruikt</h3><div class="line"></div></div>
+          <div class="portal-list" id="quick-dl"></div>
+
+          <div class="section-title"><h3>Mijn ontwerpen</h3><div class="line"></div><a class="more" href="studio.html">Studio</a></div>
+          <div class="portal-list" id="design-status-list"></div>
+
+          <div class="section-title"><h3 data-i18n="dash.latestNews">Partnerupdates</h3><div class="line"></div><a class="more" href="news.html" data-i18n="dash.allNews">Alles</a></div>
+          <div class="portal-list" id="feat-news"></div>
+        </aside>
+      </div>
+
+      <div class="grid dash-bottom-grid">
+        <div>
+          <div class="section-title"><h3 data-i18n="dash.featCampaign">Actuele campagne</h3><div class="line"></div></div>
+          <a class="campaign-card" id="feat-campaign"></a>
+        </div>
+        <div>
+          <div class="section-title"><h3 data-i18n="dash.recentViewed">Verder waar je was</h3><div class="line"></div></div>
+          <div class="portal-list" id="recent-list"></div>
+        </div>
+      </div>
+
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  var user = PM_AUTH.getUser() || {};
+  document.title = t("nav.dashboard") + " - PlasmaMade Partner Center";
+
+  // Begroeting
+  var hour = new Date().getHours();
+  var part = hour < 12 ? t("dash.greetMorning") : (hour < 18 ? t("dash.greetAfternoon") : t("dash.greetEvening"));
+  document.getElementById("hero-greet").textContent = part + (user.name ? ", " + user.name.split(" ")[0] : "") + "!";
+
+  var actionDefs = [
+    ["box", "products", "products.html"], ["filter", "finder", "filter-finder.html"],
+    ["book", "knowledge", "knowledge.html"], ["image", "marketing", "marketing.html"],
+    ["megaphone", "campaigns", "campaigns.html"], ["target", "sales", "sales-tools.html"],
+    ["palette", "studio", "studio.html"], ["download", "downloads", "downloads.html"],
+    ["shieldCheck", "testdocs", "testdocuments.html"], ["lifebuoy", "support", "support.html"]
+  ];
+  function actionHtml(d) {
+    return '<a class="portal-action" href="' + d[2] + '"><span class="portal-action__icon">' + PM_ICON(d[0]) + '</span>' +
+      '<span class="portal-action__body"><b>' + esc(t("dash.tile." + d[1] + ".t")) + '</b><span>' + esc(t("dash.tile." + d[1] + ".d")) + '</span></span>' +
+      '<span class="portal-action__arrow">' + PM_ICON("arrowRight") + '</span></a>';
+  }
+
+  // Rolgerichte aanbevelingen
+  var role = user.role && t("role." + user.role) !== "role." + user.role ? user.role : "dealer";
+  var roleTiles = {
+    dealer: ["finder", "sales", "marketing", "products"],
+    distributor: ["products", "finder", "downloads", "testdocs"],
+    installer: ["finder", "products", "testdocs", "support"],
+    studio: ["finder", "marketing", "studio", "sales"],
+    internal: ["admin", "campaigns", "marketing", "products"]
+  };
+  var rt = (roleTiles[role] || roleTiles.dealer).filter(function (id) { return id !== "admin" || role === "internal"; });
+  document.getElementById("role-intro").textContent = t("dash.roleIntro." + role);
+  document.getElementById("role-actions").innerHTML = rt.map(function (id) {
+    if (id === "admin") return '<a class="portal-action" href="admin.html"><span class="portal-action__icon">' + PM_ICON("chart") + '</span>' +
+      '<span class="portal-action__body"><b>' + esc(t("nav.admin")) + '</b><span>' + esc(t("admin.intro")) + '</span></span><span class="portal-action__arrow">' + PM_ICON("arrowRight") + '</span></a>';
+    return actionHtml(actionDefs.find(function (d) { return d[1] === id; }));
+  }).join("");
+
+  // Uitgelichte producten
+  var feat = D.products.filter(function (p) { return ["guc1223", "guc1323", "airclean-ultrafine"].indexOf(p.id) > -1; });
+  document.getElementById("feat-products").innerHTML = feat.map(function (p) {
+    return '<a class="product-card" href="product.html?id=' + p.id + '">' +
+      '<div class="product-card__img">' + (p.flagship ? '<span class="product-card__flag"><span class="badge badge--green">' + esc(t("products.flagship")) + '</span></span>' : '') +
+      '<img src="' + p.image + '" alt="' + esc(p.name) + '" loading="lazy" width="280" height="210"></div>' +
+      '<div class="product-card__body"><div class="product-card__type">' + esc(lc("products", p.id, "type", p.type)) + '</div>' +
+      '<h3>' + esc(p.name) + '</h3><p>' + esc(lc("products", p.id, "tagline", p.tagline)) + '</p></div></a>';
+  }).join("");
+
+  // Nieuws compact
+  document.getElementById("feat-news").innerHTML = D.news.slice(0, 3).map(function (n, i) {
+    var dt = PM_date(n.date);
+    return '<a class="portal-list__row" href="news.html?id=' + n.id + '">' +
+      '<span class="portal-list__date">' + dt.d + ' ' + esc(dt.m) + '</span>' +
+      '<span class="portal-list__txt"><b>' + esc(lc("news", n.id, "title", n.title)) + '</b><span>' + esc(PM_dict("categories", n.category)) + '</span></span>' +
+      '<span class="portal-list__go">' + PM_ICON("arrowRight") + '</span></a>';
+  }).join("");
+
+  // Recent bekeken
+  function itemMeta(r) {
+    if (r.type === "product") { var p = D.products.find(function (x) { return x.id === r.id; }); return p && { t: p.name, s: lc("products", p.id, "type", p.type), href: "product.html?id=" + p.id, ic: "box" }; }
+    if (r.type === "article") { var a = D.articles.find(function (x) { return x.id === r.id; }); return a && { t: lc("articles", a.id, "title", a.title), s: PM_dict("categories", a.category), href: "article.html?id=" + a.id, ic: "book" }; }
+    if (r.type === "campaign") { var c = D.campaigns.find(function (x) { return x.id === r.id; }); return c && { t: lc("campaigns", c.id, "title", c.title), s: PM_dict("audiences", c.audience), href: "campaign.html?id=" + c.id, ic: "megaphone" }; }
+    if (r.type === "news") { var n = D.news.find(function (x) { return x.id === r.id; }); return n && { t: lc("news", n.id, "title", n.title), s: PM_dict("categories", n.category), href: "news.html?id=" + n.id, ic: "newspaper" }; }
+    return null;
+  }
+  function rowList(items, emptyKey) {
+    if (!items.length) return '<div class="portal-list__empty">' + esc(t(emptyKey)) + '</div>';
+    return items.map(function (m, i) {
+      return '<a href="' + m.href + '" class="portal-list__row">' +
+        '<span class="portal-list__icon">' + PM_ICON(m.ic) + '</span>' +
+        '<span class="portal-list__txt"><b>' + esc(m.t) + '</b><span>' + esc(m.s) + '</span></span>' +
+        '<span class="portal-list__go">' + PM_ICON("arrowRight") + '</span></a>';
+    }).join("");
+  }
+  var recent = PM_RECENT.list().map(itemMeta).filter(Boolean).slice(0, 5);
+  document.getElementById("recent-list").innerHTML = rowList(recent, "dash.recentEmpty");
+
+  // Uitgelichte campagne
+  var c = D.campaigns[0];
+  var cc = document.getElementById("feat-campaign");
+  cc.href = "campaign.html?id=" + c.id;
+  cc.innerHTML = '<img src="' + c.image + '" alt="" loading="lazy">' +
+    '<div class="campaign-card__body"><span class="badge badge--green">' + esc(PM_dict("statuses", c.status)) + '</span>' +
+    '<h3>' + esc(lc("campaigns", c.id, "title", c.title)) + '</h3><p>' + esc(lc("campaigns", c.id, "core", c.core)) + '</p></div>';
+
+  // Meest gebruikte partnerdocumenten: lokaal gemeten + vaste basisset
+  var qd = ["totaalbrochure-eu-nl-2026", "productsheet-guc1223", "productsheet-guc1323", "logo-pakket"];
+  var analytics = {};
+  try { analytics = JSON.parse(localStorage.getItem("pm_analytics") || "{}"); } catch (e) {}
+  var dlCounts = (analytics.byLabel || {}).download || {};
+  var recentDl = Object.keys(dlCounts)
+    .map(function (f) { return f.replace(/\.(pdf|zip)$/i, ""); })
+    .map(function (f) { return D.downloads.find(function (d) { return d.file === f; }); })
+    .filter(Boolean).map(function (d) { return d.id; });
+  var ids = recentDl.concat(qd).filter(function (v, i, s) { return s.indexOf(v) === i; }).slice(0, 5);
+  var items = ids.map(function (id) { return D.downloads.find(function (d) { return d.id === id; }); }).filter(Boolean);
+  document.getElementById("quick-dl").innerHTML = items.map(function (d, i) {
+    return '<a href="assets/downloads/' + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") + '" download class="portal-list__row">' +
+      '<span class="portal-list__icon">' + PM_ICON(d.type === "ZIP" ? "layers" : "fileText") + '</span>' +
+      '<span class="portal-list__txt"><b>' + esc(lc("downloads", d.id, "title", d.title)) + '</b><span>' + esc(d.type) + ' · ' + esc(PM_fmtSize(d.size)) + '</span></span>' +
+      '<span class="portal-list__go">' + PM_ICON("download") + '</span></a>';
+  }).join("");
+
+  var myDesigns = window.PM_DESIGNS ? PM_DESIGNS.list().filter(function (d) {
+    return !d.ownerEmail || !user.email || d.ownerEmail === user.email;
+  }).sort(function (a, b) { return (a.updated || "") < (b.updated || "") ? 1 : -1; }).slice(0, 4) : [];
+  var designLabels = window.PM_DESIGNS ? PM_DESIGNS.labels : {};
+  document.getElementById("design-status-list").innerHTML = myDesigns.length ? myDesigns.map(function (d) {
+    var status = d.status || "draft";
+    var reason = d.feedback ? " - " + d.feedback : "";
+    var meta = (designLabels[status] || status) + reason;
+    return '<a href="studio.html?design=' + encodeURIComponent(d.id) + '" class="portal-list__row">' +
+      '<span class="portal-list__icon">' + PM_ICON(status === "approved" || status === "downloaded" ? "shieldCheck" : "palette") + '</span>' +
+      '<span class="portal-list__txt"><b>' + esc(d.name || "Ontwerp") + '</b><span>' + esc(meta) + '</span></span>' +
+      '<span class="portal-list__go">' + PM_ICON("arrowRight") + '</span></a>';
+  }).join("") : '<div class="portal-list__empty">Nog geen ontwerpen. Open de Design Studio om materiaal te maken en ter goedkeuring in te dienen.</div>';
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

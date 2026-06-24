@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inloggen - PlasmaMade Partner Center</title>
+<meta name="description" content="PlasmaMade Partner Center - alles wat partners, dealers en installateurs nodig hebben om PlasmaMade te begrijpen, presenteren, verkopen en promoten.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="login">
+<div class="login-wrap">
+  <!-- Brand side -->
+  <div class="login-side">
+    <div class="login-side__top">
+      <img src="assets/img/logo/logo-white.png" alt="PlasmaMade" width="190" height="40">
+    </div>
+    <div class="login-side__mid">
+      <div class="eyebrow" data-i18n="login.eyebrow">Partner Center</div>
+      <h1 data-i18n="login.headline">PlasmaMade Partner Center</h1>
+      <p data-i18n="login.intro">Een centrale plek voor productinformatie, marketingmateriaal, verkooptools, support en ontwerp in PlasmaMade-stijl.</p>
+      <div class="payoff">breathe better, live better.</div>
+    </div>
+    <div class="login-side__feats">
+      <div id="f1"></div><div id="f2"></div><div id="f3"></div><div id="f4"></div>
+    </div>
+  </div>
+
+  <!-- Form side -->
+  <div class="login-form">
+    <div class="login-lang">
+      <label for="login-lang-sel" class="sr-only" data-i18n="ui.lang">Taal</label>
+      <select id="login-lang-sel" class="select select--sm"></select>
+    </div>
+    <div class="login-card">
+      <div class="mobile-logo"><img src="assets/img/logo/logo-green.png" alt="PlasmaMade" width="150" height="32"></div>
+      <h2 data-i18n="login.welcome">Welkom terug</h2>
+      <p class="sub" data-i18n="login.sub">Log in op het PlasmaMade Partner Center.</p>
+      <div class="auth-tabs" role="tablist" aria-label="Partner Center toegang">
+        <button type="button" class="auth-tab active" id="auth-login-tab" data-auth-tab="login">Inloggen</button>
+        <button type="button" class="auth-tab" id="auth-request-tab" data-auth-tab="request">Account aanvragen</button>
+      </div>
+      <div class="auth-alert" id="auth-alert" hidden></div>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="email" data-i18n="login.email">E-mailadres</label>
+          <input type="email" id="email" data-i18n-ph="login.emailPh" placeholder="jij@bedrijf.nl" autocomplete="username" required aria-describedby="email-err">
+          <p class="field-err" id="email-err" hidden></p>
+        </div>
+        <div class="field">
+          <label for="pw" data-i18n="login.password">Wachtwoord</label>
+          <div class="pw-wrap">
+            <input type="password" id="pw" placeholder="********" autocomplete="current-password" minlength="6" required aria-describedby="pw-err">
+            <button type="button" class="pw-toggle" id="pw-toggle" aria-pressed="false"></button>
+          </div>
+          <p class="field-err" id="pw-err" hidden></p>
+        </div>
+        <input type="hidden" id="role" value="dealer">
+        <div class="auth-role-note">
+          Je rol wordt bepaald door de goedgekeurde partneraanvraag. Beheerrechten worden apart door PlasmaMade toegekend.
+        </div>
+        <button type="submit" class="btn btn--primary btn--block btn--lg" id="login-submit" data-i18n="login.submit">Inloggen</button>
+        <p style="text-align:center;margin-top:14px;font-size:13px">
+          <a href="mailto:sales@plasmamade.com" id="forgot-link" class="green" style="font-weight:600" data-i18n="login.forgot">Wachtwoord vergeten?</a>
+        </p>
+      </form>
+      <form id="request-form" class="auth-request" novalidate hidden>
+        <div class="auth-grid">
+          <div class="field">
+            <label for="req-first">Voornaam</label>
+            <input type="text" id="req-first" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="req-last">Achternaam</label>
+            <input type="text" id="req-last" autocomplete="family-name" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="req-email">E-mailadres</label>
+          <input type="email" id="req-email" autocomplete="email" placeholder="jij@bedrijf.nl" required>
+        </div>
+        <div class="auth-grid">
+          <div class="field">
+            <label for="req-pw">Wachtwoord aanmaken</label>
+            <input type="password" id="req-pw" autocomplete="new-password" minlength="8" required aria-describedby="req-pw-err">
+            <p class="field-err" id="req-pw-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="req-pw2">Wachtwoord herhalen</label>
+            <input type="password" id="req-pw2" autocomplete="new-password" minlength="8" required aria-describedby="req-pw2-err">
+            <p class="field-err" id="req-pw2-err" hidden></p>
+          </div>
+        </div>
+        <div class="auth-grid">
+          <div class="field">
+            <label for="req-company">Bedrijfsnaam</label>
+            <input type="text" id="req-company" autocomplete="organization" required>
+          </div>
+          <div class="field">
+            <label for="req-function">Functie</label>
+            <input type="text" id="req-function" autocomplete="organization-title" required>
+          </div>
+        </div>
+        <div class="auth-grid">
+          <div class="field">
+            <label for="req-country">Land</label>
+            <input type="text" id="req-country" autocomplete="country-name" required>
+          </div>
+          <div class="field">
+            <label for="req-phone">Telefoonnummer</label>
+            <input type="tel" id="req-phone" autocomplete="tel" required>
+          </div>
+        </div>
+        <div class="auth-grid">
+          <div class="field">
+            <label for="req-type">Type partner</label>
+            <select id="req-type" required>
+              <option value="dealer">Dealer</option>
+              <option value="distributor">Distributeur</option>
+              <option value="installer">Installateur</option>
+              <option value="studio">Keukenstudio / retailer</option>
+              <option value="retailpartner">Retailpartner</option>
+              <option value="international">Internationale partner</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="req-website">Website</label>
+            <input type="url" id="req-website" autocomplete="url" placeholder="https://">
+          </div>
+        </div>
+        <div class="field">
+          <label for="req-reason">Reden van aanvraag</label>
+          <textarea id="req-reason" rows="3" required placeholder="Vertel kort waarvoor je het Partner Center wilt gebruiken."></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block btn--lg" id="request-submit">Aanvraag indienen</button>
+      </form>
+      <div class="login-note" role="note">
+        <span data-i18n="login.accessNote">Beveiligde toegang voor PlasmaMade-partners. Accountaanvragen en beheerwijzigingen worden centraal verwerkt.</span>
+      </div>
+      <div class="login-hint">
+        <span data-i18n="login.hint">Exclusieve toegang voor PlasmaMade-partners, dealers en installateurs. Nog geen account?</span>
+        <button type="button" class="text-link" id="request-link">Vraag toegang aan</button>.
+        <p class="muted" style="margin-top:10px;font-size:12px" data-i18n="login.privacy">Je aanvraag wordt veilig naar PlasmaMade gestuurd en is daarna zichtbaar voor beheerders.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var t = window.PM_t;
+  document.title = t("login.docTitle");
+
+  // Brand-side feature ticks
+  var feats = ["login.feat1", "login.feat2", "login.feat3", "login.feat4"];
+  var featIcons = ["box", "image", "lifebuoy", "shieldCheck"];
+  feats.forEach(function (key, i) {
+    var el = document.getElementById("f" + (i + 1));
+    if (el) el.innerHTML = PM_ICON(featIcons[i]) + "<span>" + PM_escape(t(key)) + "</span>";
+  });
+
+  // Taalmenu (native select: toetsenbord-, screenreader- en mobielvriendelijk)
+  var sel = document.getElementById("login-lang-sel");
+  sel.innerHTML = PM_I18N.langs.map(function (l) {
+    return '<option value="' + l.code + '" lang="' + l.code + '"' + (l.code === PM_lang() ? " selected" : "") + '>' + PM_escape(l.name) + '</option>';
+  }).join("");
+
+  // Toon/verberg wachtwoord
+  var pw = document.getElementById("pw"), tog = document.getElementById("pw-toggle");
+  function renderToggle() {
+    var hidden = pw.type === "password";
+    tog.innerHTML = PM_ICON(hidden ? "eye" : "eyeOff");
+    tog.setAttribute("aria-label", t(hidden ? "login.showPw" : "login.hidePw"));
+    tog.setAttribute("aria-pressed", String(!hidden));
+  }
+  renderToggle();
+
+  // Wachtwoord vergeten -> mail naar accountmanager
+  document.getElementById("forgot-link").href =
+    "mailto:sales@plasmamade.com?subject=" + encodeURIComponent(t("login.forgotSubject"));
+
+  if (window.__loginBound) return;
+  window.__loginBound = true;
+
+  var loginForm = document.getElementById("login-form");
+  var requestForm = document.getElementById("request-form");
+  var alertBox = document.getElementById("auth-alert");
+  function showAlert(msg, type) {
+    alertBox.textContent = msg;
+    alertBox.className = "auth-alert " + (type || "");
+    alertBox.hidden = !msg;
+  }
+  function switchAuth(tab) {
+    document.querySelectorAll("[data-auth-tab]").forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-auth-tab") === tab); });
+    loginForm.hidden = tab !== "login";
+    requestForm.hidden = tab !== "request";
+    showAlert("");
+  }
+  document.querySelectorAll("[data-auth-tab]").forEach(function (b) {
+    b.addEventListener("click", function () { switchAuth(b.getAttribute("data-auth-tab")); });
+  });
+  document.getElementById("request-link").addEventListener("click", function () { switchAuth("request"); });
+
+  sel.addEventListener("change", function () { PM_setLang(this.value); });
+  tog.addEventListener("click", function () {
+    pw.type = pw.type === "password" ? "text" : "password";
+    renderToggle();
+    pw.focus();
+  });
+
+  // Sessieherstel: al ingelogd -> naar de gekozen startpagina (of dashboard)
+  if (PM_AUTH.getUser()) {
+    var su = PM_AUTH.getUser();
+    var st = PM_AUTH.approvalStatus ? PM_AUTH.approvalStatus(su) : "approved";
+    if (st && st !== "approved") location.replace("account-status.html?status=" + encodeURIComponent(st));
+    else location.replace((su.prefs && su.prefs.startPage) || "dashboard.html");
+    return;
+  }
+
+  function setErr(id, msg) {
+    var p = document.getElementById(id + "-err"), input = document.getElementById(id);
+    if (msg) { p.textContent = msg; p.hidden = false; input.setAttribute("aria-invalid", "true"); }
+    else { p.hidden = true; input.removeAttribute("aria-invalid"); }
+  }
+
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    showAlert("");
+    var email = document.getElementById("email").value.trim();
+    var pwVal = pw.value;
+    var ok = true;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setErr("email", PM_t("login.errEmail")); ok = false; } else setErr("email", null);
+    if (!pwVal || pwVal.length < 6) { setErr("pw", PM_t("login.errPassword")); ok = false; } else setErr("pw", null);
+    if (!ok) {
+      var firstErr = document.querySelector('[aria-invalid="true"]');
+      if (firstErr) firstErr.focus();
+      return;
+    }
+    var btn = document.getElementById("login-submit");
+    btn.disabled = true;
+    btn.textContent = PM_t("login.submitting");
+    var role = document.getElementById("role").value;
+    var access = PM_AUTH.verifyLogin ? await PM_AUTH.verifyLogin(email, pwVal) : (PM_AUTH.canLogin ? PM_AUTH.canLogin(email) : { ok: true, status: "approved" });
+    if (!access.ok) {
+      btn.disabled = false;
+      btn.textContent = PM_t("login.submit");
+      if (access.reason === "bad_password") {
+        setErr("pw", "Dit wachtwoord klopt niet voor dit account.");
+        pw.focus();
+        return;
+      }
+      if (access.reason === "missing_password") {
+        showAlert("Voor dit account is nog geen wachtwoord ingesteld. Vraag opnieuw toegang aan of neem contact op met PlasmaMade.", "warn");
+        return;
+      }
+      if (access.reason === "sync_unavailable") {
+        showAlert("De centrale accountcontrole is tijdelijk niet bereikbaar. Probeer opnieuw of controleer de Netlify Functions-instelling.", "warn");
+        return;
+      }
+      if (access.request) {
+        var status = access.status || "pending";
+        PM_AUTH.setUser({
+          name: ((access.request.firstName || "") + " " + (access.request.lastName || "")).trim(),
+          role: access.request.partnerType || access.request.role || "dealer",
+          email: email,
+          company: access.request.company || PM_companyFromEmail(email),
+          approvalStatus: status
+        });
+        location.href = "account-status.html?status=" + encodeURIComponent(status);
+      } else {
+        showAlert("Dit e-mailadres heeft nog geen goedgekeurde partneraanvraag. Vraag eerst toegang aan; PlasmaMade controleert de gegevens voordat je kunt inloggen.", "warn");
+        document.getElementById("req-email").value = email;
+      }
+      return;
+    }
+    var local = email.split("@")[0].replace(/[._-]+/g, " ");
+    var name = local.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    var req = access.request || null;
+    if (req) name = ((req.firstName || "") + " " + (req.lastName || "")).trim() || name;
+    var company = (req && req.company) || PM_companyFromEmail(email);
+    role = (access.internal || access.admin) ? "internal" : ((req && (req.partnerType || req.role)) || "dealer");
+    var now = new Date().toISOString();
+    PM_AUTH.setUser({ name: name, role: role, email: email, company: company, joinedAt: now, lastLoginAt: now, approvalStatus: "approved", admin: !!(access.internal || access.admin) });
+    if ((access.internal || access.admin) && window.PM_ADMINS) PM_ADMINS.grant(email, { source: "netlify_admin", name: name });
+    if (window.PM_PARTNERS) {
+      PM_PARTNERS.upsert({ name: name, role: role, email: email, company: company, status: "active", source: "login", lastActiveAt: now });
+    }
+    setTimeout(function () { location.href = "dashboard.html"; }, 350);
+  });
+
+  requestForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    showAlert("");
+    setErr("req-pw", null);
+    setErr("req-pw2", null);
+    if (!requestForm.checkValidity()) {
+      showAlert("Vul alle verplichte velden in. Dan kan PlasmaMade de aanvraag goed beoordelen.", "warn");
+      var first = requestForm.querySelector(":invalid");
+      if (first) first.focus();
+      return;
+    }
+    var reqPassword = document.getElementById("req-pw").value;
+    var reqPassword2 = document.getElementById("req-pw2").value;
+    if (!reqPassword || reqPassword.length < 8) {
+      setErr("req-pw", "Gebruik minimaal 8 tekens.");
+      document.getElementById("req-pw").focus();
+      return;
+    }
+    if (reqPassword !== reqPassword2) {
+      setErr("req-pw2", "De wachtwoorden zijn niet gelijk.");
+      document.getElementById("req-pw2").focus();
+      return;
+    }
+    var requestBtn = document.getElementById("request-submit");
+    requestBtn.disabled = true;
+    requestBtn.textContent = "Aanvraag opslaan...";
+    var credentials = await PM_SECURITY.createPassword(reqPassword);
+    var payload = {
+      firstName: document.getElementById("req-first").value.trim(),
+      lastName: document.getElementById("req-last").value.trim(),
+      email: document.getElementById("req-email").value.trim(),
+      company: document.getElementById("req-company").value.trim(),
+      functionTitle: document.getElementById("req-function").value.trim(),
+      country: document.getElementById("req-country").value.trim(),
+      phone: document.getElementById("req-phone").value.trim(),
+      partnerType: document.getElementById("req-type").value,
+      website: document.getElementById("req-website").value.trim(),
+      reason: document.getElementById("req-reason").value.trim(),
+      passwordSalt: credentials.passwordSalt,
+      passwordHash: credentials.passwordHash,
+      passwordSetAt: new Date().toISOString()
+    };
+    var remoteRequired = !!(window.PM_SYNC && PM_SYNC.online && PM_SYNC.online() && !(PM_SYNC.isLocalDev && PM_SYNC.isLocalDev()));
+    var req = (window.PM_SYNC && PM_SYNC.submitRequest) ? await PM_SYNC.submitRequest(payload) : null;
+    if (!req && remoteRequired) {
+      requestBtn.disabled = false;
+      requestBtn.textContent = "Aanvraag indienen";
+      showAlert("De aanvraag kon niet naar PlasmaMade worden verzonden. Controleer de Netlify Function en probeer opnieuw.", "warn");
+      return;
+    }
+    if (!req) req = PM_REQUESTS.create(payload);
+    PM_AUTH.setUser({
+      name: (payload.firstName + " " + payload.lastName).trim(),
+      role: payload.partnerType,
+      email: payload.email,
+      company: payload.company,
+      approvalStatus: req.status || "pending"
+    });
+    location.href = "account-status.html?status=pending";
+  });
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

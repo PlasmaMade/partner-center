@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mijn account - PlasmaMade Partner Center</title>
+<meta name="description" content="Beheer je PlasmaMade Partner Center-account, gegevens en voorkeuren.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="account">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.account">Mijn account</h2>
+        <p data-i18n="account.intro">Beheer je profiel, voorkeuren en beveiliging. Je gegevens worden veilig in deze browser bewaard.</p>
+      </div>
+
+      <!-- PROFIELKAART -->
+      <div class="card" style="margin-bottom:18px"><div class="card__body" style="padding:26px 28px">
+        <div class="acct-head">
+          <div class="acct-avatar" id="acct-avatar">
+            <button type="button" class="acct-avatar-edit" id="acct-avatar-edit" aria-label="Foto wijzigen"></button>
+            <input type="file" id="acct-avatar-file" accept="image/*" hidden>
+          </div>
+          <div class="acct-head__info">
+            <h2 id="acct-name">-</h2>
+            <div class="flex items-center gap" style="gap:9px;margin-top:5px;flex-wrap:wrap">
+              <span class="badge badge--green-soft" id="acct-role">-</span>
+              <span class="muted" id="acct-company" style="font-size:14px"></span>
+            </div>
+            <div class="acct-meta-row" id="acct-meta"></div>
+          </div>
+        </div>
+      </div></div>
+
+      <div class="grid" style="grid-template-columns:1.45fr 1fr;gap:22px;align-items:start" id="acct-cols">
+        <div>
+          <!-- PROFIELGEGEVENS -->
+          <div class="card" style="margin-bottom:18px"><div class="card__body" style="padding:24px 26px">
+            <h3 style="margin-bottom:3px" data-i18n="account.editProfile">Profielgegevens</h3>
+            <p class="muted" style="font-size:13.5px;margin-bottom:18px" data-i18n="account.profileSub">Pas je naam, bedrijf en contactgegevens aan.</p>
+            <form id="acct-form" novalidate>
+              <div class="grid grid--2" style="gap:14px">
+                <div class="field"><label for="f-name" data-i18n="account.fldName">Naam</label><input id="f-name" autocomplete="name" required aria-describedby="f-name-err"><p class="field-err" id="f-name-err" hidden></p></div>
+                <div class="field"><label for="f-company" data-i18n="account.fldCompany">Bedrijf</label><input id="f-company" autocomplete="organization"></div>
+              </div>
+              <div class="grid grid--2" style="gap:14px">
+                <div class="field"><label for="f-email" data-i18n="account.fldEmail">E-mailadres</label><input id="f-email" type="email" autocomplete="email" required aria-describedby="f-email-err"><p class="field-err" id="f-email-err" hidden></p></div>
+                <div class="field"><label for="f-phone" data-i18n="account.fldPhone">Telefoon</label><input id="f-phone" type="tel" autocomplete="tel" data-i18n-ph="account.phonePh" placeholder="+31 ..."></div>
+              </div>
+              <div class="field"><label for="f-role" data-i18n="account.fldRole">Functie / rol</label>
+                <select id="f-role">
+                  <option value="dealer" data-i18n="role.dealer">Dealer</option>
+                  <option value="distributor" data-i18n="role.distributor">Distributeur</option>
+                  <option value="installer" data-i18n="role.installer">Installateur</option>
+                  <option value="studio" data-i18n="role.studio">Keukenstudio / retailer</option>
+                </select>
+                <p class="muted" style="font-size:12px;margin-top:6px">Interne rechten kunnen alleen door een beheerder worden toegewezen.</p>
+              </div>
+              <button type="submit" class="btn btn--primary" id="f-save"></button>
+            </form>
+          </div></div>
+
+          <!-- VOORKEUREN -->
+          <div class="card" id="prefs" style="margin-bottom:18px"><div class="card__body" style="padding:24px 26px">
+            <h3 style="margin-bottom:3px" data-i18n="account.prefsTitle">Voorkeuren</h3>
+            <p class="muted" style="font-size:13.5px;margin-bottom:14px" data-i18n="account.prefsSub">Stel je werkomgeving in.</p>
+            <div class="grid grid--2" style="gap:14px;margin-bottom:6px">
+              <div class="field" style="margin-bottom:0"><label for="f-lang" data-i18n="account.prefLang">Interfacetaal</label><select id="f-lang"></select></div>
+              <div class="field" style="margin-bottom:0"><label for="f-start" data-i18n="account.prefStart">Startpagina na inloggen</label><select id="f-start"></select></div>
+            </div>
+            <div class="divider" style="margin:18px 0 6px"></div>
+            <div class="st-grouplbl-x" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9aa6b2;margin-bottom:4px" data-i18n="account.notifTitle">Meldingen</div>
+            <div id="acct-notifs"></div>
+          </div></div>
+
+          <!-- BEVEILIGING -->
+          <div class="card" style="margin-bottom:18px"><div class="card__body" style="padding:24px 26px">
+            <h3 style="margin-bottom:3px" data-i18n="account.securityTitle">Beveiliging</h3>
+            <p class="muted" style="font-size:13.5px;margin-bottom:16px" data-i18n="account.securitySub">Wijzig je wachtwoord en beheer je sessie.</p>
+            <form id="acct-pw" novalidate>
+              <div class="grid grid--2" style="gap:14px">
+                <div class="field"><label for="f-pw1" data-i18n="account.newPw">Nieuw wachtwoord</label>
+                  <div class="pw-wrap"><input id="f-pw1" type="password" minlength="8" autocomplete="new-password" aria-describedby="f-pw1-err"><button type="button" class="pw-toggle" id="f-pw1-tog" aria-label="Toon wachtwoord"></button></div>
+                  <p class="field-err" id="f-pw1-err" hidden></p></div>
+                <div class="field"><label for="f-pw2" data-i18n="account.confirmPw">Herhaal wachtwoord</label><input id="f-pw2" type="password" minlength="8" autocomplete="new-password" aria-describedby="f-pw2-err"><p class="field-err" id="f-pw2-err" hidden></p></div>
+              </div>
+              <p class="muted" style="font-size:12px;margin:-4px 0 14px" data-i18n="account.pwHint">Minimaal 8 tekens.</p>
+              <button type="submit" class="btn btn--ghost" id="f-pwsave"></button>
+            </form>
+            <div class="acct-row" style="margin-top:6px">
+              <div class="acct-row__txt"><h5 data-i18n="account.sessionTitle">Actieve sessie</h5><p id="acct-session"></p></div>
+              <button type="button" class="btn btn--ghost btn--sm" id="acct-signout"></button>
+            </div>
+          </div></div>
+
+          <!-- ACCOUNTGEGEVENS -->
+          <div class="card"><div class="card__body" style="padding:24px 26px">
+            <h3 style="margin-bottom:3px" data-i18n="account.dataTitle">Accountgegevens</h3>
+            <p class="muted" style="font-size:13.5px;margin-bottom:14px" data-i18n="account.dataSub">Exporteer of wis de gegevens die lokaal in deze browser zijn opgeslagen.</p>
+            <div class="acct-row">
+              <div class="acct-row__txt"><h5 data-i18n="account.exportTitle">Mijn gegevens exporteren</h5><p data-i18n="account.exportSub">Download al je lokale gegevens als JSON-bestand.</p></div>
+              <button type="button" class="btn btn--ghost btn--sm" id="acct-export"></button>
+            </div>
+            <div class="acct-row">
+              <div class="acct-row__txt"><h5 data-i18n="account.clearTitle">Lokale gegevens wissen</h5><p data-i18n="account.clearSub">Verwijdert ontwerpen, favorieten, uploads en statistieken uit deze browser.</p></div>
+              <button type="button" class="btn btn--ghost btn--sm" id="acct-clear" style="color:var(--danger);border-color:#f1c9c6"></button>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- RECHTERKOLOM -->
+        <div>
+          <div class="card" style="margin-bottom:18px"><div class="card__body" style="padding:22px 24px">
+            <h3 style="margin-bottom:14px" data-i18n="account.activityTitle">Jouw activiteit</h3>
+            <div id="acct-activity"></div>
+          </div></div>
+          <div class="card" style="background:var(--green-grad);border:none;color:#fff"><div class="card__body" style="padding:24px 26px">
+            <h3 style="color:#fff;margin-bottom:6px" data-i18n="account.tipTitle">Haal meer uit het Partner Center</h3>
+            <p style="opacity:.92;font-size:13.5px;margin-bottom:16px;line-height:1.5" data-i18n="account.tipText">Maak in een paar klikken on-brand materiaal in de Design Studio of vind het juiste filter met de Filter Finder.</p>
+            <div class="flex gap wrap" style="gap:10px">
+              <a href="studio.html" class="btn btn--white btn--sm" id="acct-tip-studio"></a>
+              <a href="filter-finder.html" class="btn btn--sm" style="background:rgba(255,255,255,.18);color:#fff" id="acct-tip-finder"></a>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var t = window.PM_t, esc = window.PM_escape, icon = window.PM_ICON;
+  document.title = t("nav.account") + " - PlasmaMade Partner Center";
+
+  var user = PM_AUTH.getUser() || {};
+  if (!user.joinedAt) { user = PM_AUTH.update({ joinedAt: new Date().toISOString() }); }
+  user.prefs = user.prefs || {};
+
+  function read(key, fb) { try { var v = JSON.parse(localStorage.getItem(key)); return v == null ? fb : v; } catch (e) { return fb; } }
+
+  // ---- Profielkaart ----
+  function renderHead() {
+    var u = PM_AUTH.getUser() || {};
+    var av = document.getElementById("acct-avatar");
+    av.querySelector(".ini") && av.querySelector(".ini").remove();
+    var prevImg = av.querySelector("img"); if (prevImg) prevImg.remove();
+    if (u.avatar) { var im = document.createElement("img"); im.src = u.avatar; im.alt = ""; av.insertBefore(im, av.firstChild); }
+    else { var sp = document.createElement("span"); sp.className = "ini"; sp.textContent = PM_AUTH.initials(u); av.insertBefore(sp, av.firstChild); }
+
+    document.getElementById("acct-name").textContent = u.name || "Partner";
+    var roleK = PM_roleKey(u.role);
+    document.getElementById("acct-role").textContent = roleK ? t(roleK) : (u.role || "Partner");
+    document.getElementById("acct-company").textContent = u.company ? "· " + u.company : "";
+    var meta = [];
+    if (u.email) meta.push(["mail", u.email]);
+    if (u.phone) meta.push(["phone", u.phone]);
+    meta.push(["calendar", t("account.memberSince", { date: PM_fmtDate(u.joinedAt) })]);
+    document.getElementById("acct-meta").innerHTML = meta.map(function (m) {
+      return '<span class="acct-meta">' + icon(m[0]) + esc(m[1]) + '</span>';
+    }).join("");
+  }
+  renderHead();
+  document.getElementById("acct-avatar-edit").innerHTML = icon("camera");
+
+  // Avatar upload
+  var avFile = document.getElementById("acct-avatar-file");
+  document.getElementById("acct-avatar-edit").addEventListener("click", function () { avFile.click(); });
+  avFile.addEventListener("change", function () {
+    var f = avFile.files && avFile.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var sz = 256, cv = document.createElement("canvas"); cv.width = cv.height = sz;
+        var ctx = cv.getContext("2d");
+        var s = Math.min(im.width, im.height);
+        ctx.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, sz, sz);
+        var data = cv.toDataURL("image/jpeg", 0.85);
+        if (data.length > 900000) { PM_toast(t("account.photoTooBig")); return; }
+        PM_AUTH.update({ avatar: data });
+        renderHead(); if (window.PM_rebuildShell) PM_rebuildShell();
+        PM_toast(t("account.photoSaved"));
+      };
+      im.src = r.result;
+    };
+    r.readAsDataURL(f);
+    avFile.value = "";
+  });
+
+  // ---- Profielformulier ----
+  function renderRoleOptions() {
+    var u = PM_AUTH.getUser() || {};
+    var isAdmin = PM_AUTH.isAdmin && PM_AUTH.isAdmin(u);
+    var roles = [
+      ["dealer", t("role.dealer")],
+      ["distributor", t("role.distributor")],
+      ["installer", t("role.installer")],
+      ["studio", t("role.studio")]
+    ];
+    if (isAdmin) roles.push(["internal", t("role.internal")]);
+    var roleSel = document.getElementById("f-role");
+    roleSel.innerHTML = roles.map(function (r) {
+      return '<option value="' + r[0] + '">' + esc(r[1]) + '</option>';
+    }).join("");
+    roleSel.disabled = !!isAdmin;
+    roleSel.title = isAdmin ? "Adminrollen worden beheerd via Partnerbeheer." : "";
+  }
+  function fillForm() {
+    var u = PM_AUTH.getUser() || {};
+    renderRoleOptions();
+    document.getElementById("f-name").value = u.name || "";
+    document.getElementById("f-company").value = u.company || "";
+    document.getElementById("f-email").value = u.email || "";
+    document.getElementById("f-email").readOnly = true;
+    document.getElementById("f-email").title = "Dit e-mailadres is gekoppeld aan de login en kan alleen door een beheerder worden gewijzigd.";
+    document.getElementById("f-phone").value = u.phone || "";
+    document.getElementById("f-role").value = PM_roleKey(u.role) ? u.role : "dealer";
+  }
+  fillForm();
+  document.getElementById("f-save").innerHTML = icon("save") + esc(t("account.save"));
+  function setErr(id, msg) {
+    var p = document.getElementById(id + "-err"), input = document.getElementById(id);
+    if (msg) { p.textContent = msg; p.hidden = false; input.setAttribute("aria-invalid", "true"); }
+    else { p.hidden = true; input.removeAttribute("aria-invalid"); }
+  }
+  document.getElementById("acct-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("f-name").value.trim();
+    var email = document.getElementById("f-email").value.trim();
+    var ok = true;
+    if (!name) { setErr("f-name", t("account.errName")); ok = false; } else setErr("f-name", null);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setErr("f-email", t("account.errEmail")); ok = false; } else setErr("f-email", null);
+    if (!ok) { var fe = document.querySelector('#acct-form [aria-invalid="true"]'); if (fe) fe.focus(); return; }
+    PM_AUTH.update({
+      name: name, email: (PM_AUTH.getUser() || {}).email || email,
+      company: document.getElementById("f-company").value.trim(),
+      phone: document.getElementById("f-phone").value.trim(),
+      role: document.getElementById("f-role").disabled ? ((PM_AUTH.getUser() || {}).role || "internal") : document.getElementById("f-role").value
+    });
+    renderHead(); if (window.PM_rebuildShell) PM_rebuildShell();
+    PM_toast(t("account.saved"));
+  });
+
+  // ---- Voorkeuren ----
+  var langSel = document.getElementById("f-lang");
+  langSel.innerHTML = PM_I18N.langs.map(function (l) {
+    return '<option value="' + l.code + '"' + (l.code === PM_lang() ? " selected" : "") + ' lang="' + l.code + '">' + esc(l.name) + '</option>';
+  }).join("");
+  langSel.addEventListener("change", function () { PM_setLang(this.value); });
+
+  var startSel = document.getElementById("f-start");
+  var startOpts = [["dashboard.html", t("nav.dashboard")], ["studio.html", t("nav.studio")], ["marketing.html", t("nav.marketing")], ["products.html", t("nav.products")], ["filter-finder.html", t("nav.finder")]];
+  startSel.innerHTML = startOpts.map(function (o) { return '<option value="' + o[0] + '"' + ((PM_AUTH.getUser().prefs || {}).startPage === o[0] ? " selected" : "") + '>' + esc(o[1]) + '</option>'; }).join("");
+  startSel.addEventListener("change", function () { PM_AUTH.update({ prefs: { startPage: this.value } }); PM_toast(t("account.prefsSaved")); });
+
+  var notifs = [
+    ["email", "account.notifEmail", "account.notifEmailSub", true],
+    ["product", "account.notifProduct", "account.notifProductSub", true],
+    ["campaign", "account.notifCampaign", "account.notifCampaignSub", false]
+  ];
+  var prefs = PM_AUTH.getUser().prefs || {};
+  var nt = prefs.notifs || {};
+  document.getElementById("acct-notifs").innerHTML = notifs.map(function (n) {
+    var on = nt[n[0]] != null ? nt[n[0]] : n[3];
+    return '<div class="acct-row"><div class="acct-row__txt"><h5>' + esc(t(n[1])) + '</h5><p>' + esc(t(n[2])) + '</p></div>' +
+      '<label class="switch"><input type="checkbox" data-notif="' + n[0] + '"' + (on ? " checked" : "") + ' aria-label="' + esc(t(n[1])) + '"><span class="track"></span></label></div>';
+  }).join("");
+  document.querySelectorAll("[data-notif]").forEach(function (c) {
+    c.addEventListener("change", function () {
+      var cur = (PM_AUTH.getUser().prefs || {}).notifs || {};
+      cur[c.getAttribute("data-notif")] = c.checked;
+      PM_AUTH.update({ prefs: { notifs: cur } });
+      PM_toast(t("account.prefsSaved"));
+    });
+  });
+
+  // ---- Beveiliging ----
+  var pw1 = document.getElementById("f-pw1"), pw2 = document.getElementById("f-pw2"), tog = document.getElementById("f-pw1-tog");
+  tog.innerHTML = icon("eye");
+  tog.addEventListener("click", function () {
+    var hidden = pw1.type === "password";
+    pw1.type = hidden ? "text" : "password";
+    tog.innerHTML = icon(hidden ? "eyeOff" : "eye");
+    pw1.focus();
+  });
+  document.getElementById("f-pwsave").innerHTML = icon("key") + esc(t("account.updatePw"));
+  document.getElementById("acct-pw").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var a = pw1.value, b = pw2.value, ok = true;
+    if (!a || a.length < 8) { setErr("f-pw1", t("account.pwTooShort")); ok = false; } else setErr("f-pw1", null);
+    if (a !== b) { setErr("f-pw2", t("account.pwMismatch")); ok = false; } else setErr("f-pw2", null);
+    if (!ok) return;
+    PM_AUTH.update({ pwUpdatedAt: new Date().toISOString() });
+    pw1.value = ""; pw2.value = "";
+    PM_toast(t("account.pwUpdated"));
+  });
+
+  var u0 = PM_AUTH.getUser();
+  document.getElementById("acct-session").textContent =
+    t("account.sessionText", { device: navigator.platform || "dit apparaat" });
+  document.getElementById("acct-signout").innerHTML = icon("logout") + esc(t("ui.logoutBtn"));
+  document.getElementById("acct-signout").addEventListener("click", function () {
+    PM_confirm(t("ui.logoutConfirm"), PM_AUTH.logout, { ok: t("ui.logoutBtn"), cancel: t("common.cancel") });
+  });
+
+  // ---- Accountgegevens ----
+  document.getElementById("acct-export").innerHTML = icon("download") + esc(t("account.exportBtn"));
+  document.getElementById("acct-export").addEventListener("click", function () {
+    var dump = {};
+    ["pm_partner_auth", "pm_partners", "pm_support_tickets", "pm_designs", "pm_favs", "pm_recent", "pm_analytics", "pm_uploads", "pm_lang"].forEach(function (k) {
+      try { var v = localStorage.getItem(k); if (v != null) dump[k] = JSON.parse(v); } catch (e) {}
+    });
+    var blob = new Blob([JSON.stringify(dump, null, 2)], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "plasmamade-account-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    PM_toast(t("account.exportDone"));
+  });
+  document.getElementById("acct-clear").innerHTML = icon("trash") + esc(t("account.clearBtn"));
+  document.getElementById("acct-clear").addEventListener("click", function () {
+    PM_confirm(t("account.clearConfirm"), function () {
+      ["pm_partners", "pm_support_tickets", "pm_designs", "pm_favs", "pm_recent", "pm_analytics", "pm_uploads", "pm_studio_autosave"].forEach(function (k) { try { localStorage.removeItem(k); } catch (e) {} });
+      PM_toast(t("account.cleared"));
+      renderActivity();
+    }, { ok: t("account.clearBtn"), cancel: t("common.cancel") });
+  });
+
+  // ---- Activiteit ----
+  function renderActivity() {
+    var designs = read("pm_designs", []), favs = read("pm_favs", []), recent = read("pm_recent", []), tickets = read("pm_support_tickets", []);
+    var analytics = read("pm_analytics", {}); var dl = (analytics.byLabel || {}).download || {};
+    var dlTotal = Object.keys(dl).reduce(function (s, k) { return s + dl[k]; }, 0);
+    var rows = [
+      ["palette", "account.actDesigns", "account.actDesignsSub", designs.length, "studio.html"],
+      ["star", "account.actFavorites", "account.actFavoritesSub", favs.length, "dashboard.html"],
+      ["download", "account.actDownloads", "account.actDownloadsSub", dlTotal, "downloads.html"],
+      ["lifebuoy", "account.actTickets", "account.actTicketsSub", tickets.length, "support.html"],
+      ["clock", "account.actRecent", "account.actRecentSub", recent.length, "dashboard.html"]
+    ];
+    document.getElementById("acct-activity").innerHTML = rows.map(function (r) {
+      return '<a class="acct-link" href="' + r[4] + '"><span class="acct-link__ic">' + icon(r[0]) + '</span>' +
+        '<span class="acct-link__txt"><b>' + esc(t(r[1])) + '</b><span>' + esc(t(r[2])) + '</span></span>' +
+        '<span class="acct-link__n">' + PM_fmtNum(r[3]) + '</span></a>';
+    }).join("");
+  }
+  renderActivity();
+
+  document.getElementById("acct-tip-studio").innerHTML = icon("palette") + esc(t("common.openStudio"));
+  document.getElementById("acct-tip-finder").innerHTML = icon("filter") + esc(t("nav.finder"));
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

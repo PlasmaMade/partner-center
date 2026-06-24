@@ -1,0 +1,38 @@
+[
+  {
+    "sheet": 1,
+    "components": [
+      "Accordion",
+      "AssetCard",
+      "Avatar",
+      "Badge",
+      "Button",
+      "Callout",
+      "CampaignCard",
+      "Card",
+      "Chip",
+      "CompareTable",
+      "EmptyState",
+      "Field",
+      "Hero",
+      "IconButton",
+      "KbCard",
+      "NewsItem"
+    ]
+  },
+  {
+    "sheet": 2,
+    "components": [
+      "ProductCard",
+      "SearchBox",
+      "SectionTitle",
+      "Select",
+      "SpecTable",
+      "StatCard",
+      "Switch",
+      "Tabs",
+      "Tile",
+      "Toast"
+    ]
+  }
+]

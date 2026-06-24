@@ -1,0 +1,9 @@
+{
+  "namespace": "PlasmaMade",
+  "source": "@plasmamade/ds@1.0.0",
+  "shape": "package",
+  "provider": null,
+  "componentCount": 26,
+  "skippedStoryIds": [],
+  "runtimeFontPrefixes": []
+}

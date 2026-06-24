@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accountstatus - PlasmaMade Partner Center</title>
+<meta name="description" content="Status van je aanvraag voor het PlasmaMade Partner Center.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.status-page{min-height:100vh;display:grid;place-items:center;background:#f6f7f6;padding:28px}
+.status-card{width:min(100%,620px);background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:34px}
+.status-card__logo{height:34px;width:auto;margin-bottom:28px}
+.status-card__badge{margin-bottom:16px}
+.status-card h1{font-size:28px;margin-bottom:12px}
+.status-card p{color:var(--muted);font-size:15px;line-height:1.65;margin-bottom:18px}
+.status-meta{display:grid;gap:8px;margin:22px 0;padding:16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--line);font-size:13px}
+.status-meta div{display:flex;justify-content:space-between;gap:16px}
+.status-meta b{color:var(--ink)}
+.status-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+@media(max-width:640px){.status-card{padding:26px}.status-meta div{display:block}.status-actions .btn{width:100%;justify-content:center}}
+</style>
+</head>
+<body data-page="login">
+<main class="status-page">
+  <section class="status-card">
+    <img class="status-card__logo" src="assets/img/logo/logo-green.png" alt="PlasmaMade" width="160" height="34">
+    <span class="badge status-card__badge" id="status-badge">Accountstatus</span>
+    <h1 id="status-title">Aanvraag ontvangen</h1>
+    <p id="status-text">Je aanvraag is ontvangen. PlasmaMade controleert je gegevens. Zodra je account is goedgekeurd, krijg je toegang tot het Partner Center.</p>
+    <div class="status-meta" id="status-meta"></div>
+    <div class="status-actions">
+      <a href="mailto:sales@plasmamade.com?subject=Vraag%20over%20Partner%20Center%20account" class="btn btn--primary">Contact met PlasmaMade</a>
+      <button type="button" class="btn btn--ghost" id="status-logout">Terug naar inloggen</button>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var user = PM_AUTH.getUser() || {};
+  var status = (PM_param("status") || (PM_AUTH.approvalStatus && PM_AUTH.approvalStatus(user)) || "pending").toLowerCase();
+  if (status === "approved") { location.replace("dashboard.html"); return; }
+  var copy = {
+    pending: {
+      badge: "Wacht op goedkeuring",
+      cls: "badge--warn",
+      title: "Je aanvraag is ontvangen",
+      text: "PlasmaMade controleert je gegevens. Zodra je account is goedgekeurd, krijg je toegang tot het Partner Center."
+    },
+    rejected: {
+      badge: "Aanvraag afgewezen",
+      cls: "badge--grey",
+      title: "Je account is niet goedgekeurd",
+      text: "De aanvraag is afgewezen. Neem contact op met PlasmaMade als je denkt dat dit niet klopt of als je aanvullende gegevens wilt doorgeven."
+    },
+    suspended: {
+      badge: "Account geblokkeerd",
+      cls: "badge--warn",
+      title: "Je account is tijdelijk geblokkeerd",
+      text: "Dit account heeft op dit moment geen toegang tot het Partner Center. Neem contact op met PlasmaMade voor meer informatie."
+    },
+    none: {
+      badge: "Geen aanvraag gevonden",
+      cls: "badge--grey",
+      title: "Vraag eerst toegang aan",
+      text: "Voor externe partners is een goedgekeurde aanvraag nodig. Ga terug naar inloggen en kies Account aanvragen."
+    }
+  };
+  var c = copy[status] || copy.pending;
+  var badge = document.getElementById("status-badge");
+  badge.textContent = c.badge;
+  badge.className = "badge status-card__badge " + c.cls;
+  document.getElementById("status-title").textContent = c.title;
+  document.getElementById("status-text").textContent = c.text;
+  document.getElementById("status-meta").innerHTML =
+    '<div><span>Naam</span><b>' + PM_escape(user.name || "-") + '</b></div>' +
+    '<div><span>Bedrijf</span><b>' + PM_escape(user.company || "-") + '</b></div>' +
+    '<div><span>E-mail</span><b>' + PM_escape(user.email || "-") + '</b></div>';
+  document.getElementById("status-logout").addEventListener("click", function () { PM_AUTH.logout(); });
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

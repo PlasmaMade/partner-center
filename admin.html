@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beheer &amp; analytics - PlasmaMade Partner Center</title>
+<meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
+.adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
+.adm-bar .b{width:100%;max-width:34px;background:var(--green-grad);border-radius:7px 7px 0 0;min-height:4px}
+.adm-bar .lbl{font-size:11px;color:var(--muted);font-weight:600}
+.adm-bar .num{font-size:11px;color:var(--ink);font-weight:700}
+.adm-hbar{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.adm-hbar .n{font-size:13px;font-weight:600;width:200px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adm-hbar .track{flex:1;height:9px;background:var(--grey);border-radius:6px;overflow:hidden}
+.adm-hbar .fill{height:100%;background:var(--green);border-radius:6px}
+.adm-hbar .v{font-size:12px;font-weight:700;color:var(--green-700);width:46px;text-align:right}
+.adm-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.adm-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#717d89;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.adm-table td{padding:12px 16px;border-bottom:1px solid var(--line)}
+.adm-table tr:last-child td{border-bottom:none}
+.adm-table tbody tr:hover{background:var(--surface-2)}
+.status-dot{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:12.5px}
+.status-dot i{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block}
+.status-dot.off i{background:#c2c8cf}
+.status-dot.warn i{background:var(--warn)}
+.inv-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+.inv-row:last-child{border-bottom:none}
+.inv-row .l{display:flex;align-items:center;gap:11px;font-weight:600;font-size:14px}
+.inv-row .l span.i{width:34px;height:34px;border-radius:9px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center}
+.inv-row .l span.i svg{width:17px;height:17px}
+.inv-row .c{font-weight:800;font-size:17px;color:var(--black)}
+.act-row{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;align-items:center}
+.act-row:last-child{border-bottom:none}
+.act-row .ai{width:30px;height:30px;border-radius:8px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0}
+.act-row .ai svg{width:15px;height:15px}
+.act-row .at{color:var(--muted);font-size:11.5px;margin-left:auto;white-space:nowrap}
+.gov-row{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.gov-row:last-child{border-bottom:none}
+.gov-row .k{width:190px;flex-shrink:0;font-weight:700;color:var(--muted);font-size:12.5px}
+.admin-ops-grid{grid-template-columns:1.15fr 1.15fr;gap:20px;align-items:start;margin:18px 0 12px}
+.admin-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.admin-panel-head h3{margin-bottom:4px}
+.admin-panel-head p{font-size:12.5px;color:var(--muted)}
+.admin-list{display:grid;gap:10px}
+.admin-item{border:1px solid var(--line);border-radius:var(--radius);padding:13px;background:var(--surface)}
+.admin-item__top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.admin-item__top b{display:block;font-size:14px}
+.admin-item__meta{font-size:12px;color:var(--muted);line-height:1.5}
+.admin-item__actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.admin-item__actions .btn{padding:7px 10px;font-size:12px;border-radius:8px}
+.admin-thumb{width:74px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface-2);flex-shrink:0}
+.admin-thumb img{width:100%;height:56px;object-fit:cover}
+.admin-phrase-form{display:grid;grid-template-columns:1fr 128px auto;gap:8px;margin-bottom:12px}
+.admin-phrase-form input,.admin-phrase-form select{border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.admin-grant-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:12px}
+.admin-grant-form input{border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.admin-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.admin-toolbar .select{min-width:220px}
+.cms-manager{margin:18px 0 22px}
+.cms-grid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:18px;align-items:start}
+.cms-list{display:grid;gap:8px;max-height:560px;overflow:auto;padding-right:4px}
+.cms-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:var(--radius);padding:12px;background:var(--surface)}
+.cms-row:hover{background:var(--surface-2)}
+.cms-row b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cms-row small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.cms-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cms-actions .btn,.partner-actions .btn{padding:7px 9px;font-size:12px;border-radius:8px}
+.cms-editor{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface-2);padding:14px;position:sticky;top:86px}
+.cms-editor[hidden]{display:none}
+.cms-editor h4{font-size:15px;margin-bottom:8px}
+.cms-editor textarea{width:100%;min-height:360px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12.5px;line-height:1.45;background:#fff;color:var(--ink)}
+.cms-editor__foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
+.partner-actions{display:flex;gap:6px;flex-wrap:wrap}
+.audit-row{display:flex;gap:10px;border-bottom:1px solid var(--line);padding:9px 0;font-size:12.5px}
+.audit-row:last-child{border-bottom:0}
+.audit-row b{font-size:13px}
+.audit-row span{color:var(--muted)}
+.admin-suite-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0 22px}
+.admin-suite-grid .card__body{min-height:100%}
+.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-form-grid label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--ink)}
+.admin-form-grid input,.admin-form-grid select{border:1px solid var(--line);border-radius:8px;padding:9px 10px;background:#fff;color:var(--ink)}
+.admin-mini-list{display:grid;gap:9px;margin-top:12px;max-height:310px;overflow:auto;padding-right:4px}
+.admin-mini-row{border:1px solid var(--line);border-radius:var(--radius);padding:11px;background:var(--surface)}
+.admin-mini-row b{display:block;font-size:13.5px}
+.admin-mini-row small{display:block;color:var(--muted);font-size:12px;line-height:1.45;margin-top:2px}
+.admin-mini-row .admin-item__actions{margin-top:8px}
+.media-row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center}
+.media-row img{width:52px;height:42px;object-fit:cover;border-radius:7px;background:var(--surface-2);border:1px solid var(--line)}
+.perm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+.perm-grid label{display:flex;gap:7px;align-items:center;font-size:12px;font-weight:700;color:var(--ink)}
+.perm-grid input{accent-color:var(--green)}
+.version-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.settings-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:1100px){.admin-ops-grid,.cms-grid{grid-template-columns:1fr}.admin-phrase-form,.admin-grant-form{grid-template-columns:1fr}.cms-editor{position:static}}
+@media(max-width:600px){
+  .admin-panel-head{flex-direction:column;align-items:stretch}
+  .admin-toolbar{width:100%}
+  .admin-toolbar .select{min-width:0;width:100%}
+  .cms-row{grid-template-columns:1fr}
+  .cms-actions{justify-content:flex-start}
+  .admin-item__top{flex-direction:column}
+  .adm-hbar .n{width:130px}
+  .gov-row{flex-direction:column;gap:4px}
+  .gov-row .k{width:auto}
+  .admin-suite-grid,.admin-form-grid,.perm-grid{grid-template-columns:1fr}
+  .media-row,.version-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-page="admin">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div><h2 data-i18n="nav.admin">Beheer &amp; analytics</h2><p data-i18n="admin.intro">Inzicht in het gebruik van het Partner Center plus content-, vertaal-, bestands- en templatebeheer.</p></div>
+        <span class="badge badge--dark" style="margin-top:6px" data-i18n="admin.badge">Beheerdersweergave</span>
+      </div>
+
+      <section class="grid grid--4" id="kpis" style="margin-bottom:6px"></section>
+
+      <section class="grid admin-ops-grid">
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Accountaanvragen</h3><p>Nieuwe partneraanvragen verschijnen hier automatisch.</p></div>
+            <span class="badge badge--green-soft" id="request-count">0</span>
+          </div>
+          <div id="account-requests" class="admin-list"></div>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Designgoedkeuring</h3><p>Ingediende ontwerpen moeten eerst door PlasmaMade worden gecontroleerd.</p></div>
+            <span class="badge badge--warn" id="approval-count">0</span>
+          </div>
+          <div id="design-approvals" class="admin-list"></div>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Standaardzinnenbeheer</h3><p>Tekstblokken die partners in de Design Studio kunnen plaatsen.</p></div>
+            <span class="badge badge--green-soft" id="phrase-admin-count">0</span>
+          </div>
+          <form id="phrase-form" class="admin-phrase-form">
+            <input id="phrase-text" type="text" placeholder="Nieuwe standaardzin" required>
+            <select id="phrase-category">
+              <option value="algemeen">Algemeen</option>
+              <option value="E-Filters">E-Filters</option>
+              <option value="AirClean UltraFine">AirClean UltraFine</option>
+              <option value="duurzaamheid">Duurzaamheid</option>
+              <option value="social media">Social media</option>
+            </select>
+            <button class="btn btn--primary btn--sm" type="submit">Toevoegen</button>
+          </form>
+          <div id="phrase-admin-list" class="admin-list"></div>
+        </div></div>
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Auditlog</h3><p>Belangrijke acties rond accounts, designs en content.</p></div>
+          </div>
+          <div id="audit-log"></div>
+        </div></div>
+      </section>
+
+      <section class="card cms-manager">
+        <div class="card__body">
+          <div class="admin-panel-head">
+            <div>
+              <h3>Contentbeheer</h3>
+              <p>Beheer alle portaldata: producten, kennis, campagnes, nieuws, downloads, video&apos;s en testdocumenten.</p>
+            </div>
+            <div class="admin-toolbar">
+              <select id="cms-collection" class="select" aria-label="Collectie kiezen"></select>
+              <button type="button" class="btn btn--primary btn--sm" id="cms-add">Toevoegen</button>
+              <button type="button" class="btn btn--ghost btn--sm" id="cms-reset">Origineel herstellen</button>
+            </div>
+          </div>
+          <div class="cms-grid">
+            <div id="cms-list" class="cms-list"></div>
+            <div class="cms-editor" id="cms-editor" hidden>
+              <h4 id="cms-editor-title">Item bewerken</h4>
+              <p class="muted" style="font-size:12.5px;margin-bottom:10px">Pas de velden zorgvuldig aan. Het item wordt direct zichtbaar in de portal na opslaan.</p>
+              <textarea id="cms-json" spellcheck="false" aria-label="Content JSON"></textarea>
+              <div class="cms-editor__foot">
+                <button type="button" class="btn btn--ghost btn--sm" id="cms-cancel">Annuleren</button>
+                <button type="button" class="btn btn--primary btn--sm" id="cms-save">Opslaan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-suite-grid" id="admin-suite">
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>AI-bewerker</h3><p>Chat met de portal, laat de AI meedenken en zet pagina's, beelden, copy en CMS-wijzigingen klaar als toepasbare acties.</p></div>
+            <span class="badge badge--green-soft">Builder</span>
+          </div>
+          <p class="muted" style="font-size:13px">Werkt met gesprekshistorie, portalcontext, server-bridge, bevestiging bij structurele wijzigingen en versiegeschiedenis.</p>
+          <div class="settings-row">
+            <button type="button" class="btn btn--primary btn--sm" id="admin-ai-open">Bouw met AI</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="admin-edit-mode">Portal in bewerkmodus</button>
+          </div>
+        </div></div>
+
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Design & huisstijl</h3><p>Kleuren, hoeken, spacing en algemene look & feel van de portal.</p></div>
+            <span class="badge badge--green-soft" id="settings-status">Actief</span>
+          </div>
+          <div class="admin-form-grid">
+            <label>Groen<input id="set-green" type="color" value="#13A538"></label>
+            <label>Hoekradius<input id="set-radius" type="number" min="4" max="24" value="8"></label>
+            <label>Achtergrond<input id="set-bg" type="color" value="#f6f7f6"></label>
+            <label>Spacing<select id="set-spacing"><option value="compact">Compact</option><option value="comfortable">Comfortabel</option><option value="wide">Ruim</option></select></label>
+          </div>
+          <div class="settings-row">
+            <button type="button" class="btn btn--primary btn--sm" id="settings-save">Opslaan</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="settings-reset">Herstellen</button>
+          </div>
+        </div></div>
+
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Mediabibliotheek</h3><p>Bestanden met metadata, categorie, taal, versie en zichtbaarheid.</p></div>
+            <span class="badge badge--green-soft" id="media-count">0</span>
+          </div>
+          <div class="admin-form-grid">
+            <label>Categorie<select id="media-cat"></select></label>
+            <label>Upload<input id="media-upload" type="file"></label>
+          </div>
+          <div id="media-list" class="admin-mini-list"></div>
+        </div></div>
+
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Partnergroepen & zichtbaarheid</h3><p>Bepaal per groep welke pagina's zichtbaar zijn.</p></div>
+            <span class="badge badge--green-soft" id="group-count">0 groepen</span>
+          </div>
+          <div id="group-permissions" class="admin-mini-list"></div>
+        </div></div>
+
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Landingspagina's</h3><p>Maak publiceerbare pagina's voor distributeurs, campagnes of partnergroepen.</p></div>
+            <button type="button" class="btn btn--primary btn--sm" id="page-add">Nieuwe pagina</button>
+          </div>
+          <div id="custom-pages" class="admin-mini-list"></div>
+        </div></div>
+
+        <div class="card"><div class="card__body">
+          <div class="admin-panel-head">
+            <div><h3>Versiegeschiedenis</h3><p>Herstel eerdere versies van content, pagina's, groepen, media en styling.</p></div>
+            <span class="badge badge--green-soft" id="version-count">0</span>
+          </div>
+          <div id="version-list" class="admin-mini-list"></div>
+        </div></div>
+      </section>
+
+      <div class="grid" style="grid-template-columns:1.5fr 1fr;gap:22px;align-items:start;margin-top:14px" id="adm-cols">
+        <div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <div class="flex items-center between" style="margin-bottom:16px"><h3 data-i18n="admin.activity7">Activiteit - laatste 7 dagen</h3><span class="badge badge--green-soft" id="act-total"></span></div>
+            <div class="adm-bars" id="bars"></div>
+          </div></div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:16px" data-i18n="admin.mostVisited">Meest bezochte onderdelen</h3>
+            <div id="topviews"></div>
+          </div></div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:16px" data-i18n="admin.topDownloads">Populairste downloads</h3>
+            <div id="topdl"></div>
+          </div></div>
+          <div class="card"><div class="card__body">
+            <div class="flex items-center between wrap" style="margin-bottom:6px;gap:10px">
+              <h3 data-i18n="admin.translations">Vertaalstatus per taal</h3>
+            </div>
+            <p class="muted" style="font-size:12.5px;margin-bottom:10px" data-i18n="admin.translationsSub">Live berekend per taal versus de bron (Nederlands).</p>
+            <div style="overflow-x:auto"><table class="adm-table" id="tr-table"></table></div>
+          </div></div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:6px" data-i18n="admin.inventory">Contentvoorraad</h3>
+            <p class="muted" style="font-size:12.5px;margin-bottom:10px" data-i18n="admin.inventorySub">Beheerd via het lichtgewicht CMS (data.js)</p>
+            <div id="inventory"></div>
+          </div></div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:6px" data-i18n="admin.templates">Templatebeheer</h3>
+            <p class="muted" style="font-size:12.5px;margin-bottom:12px" id="tpl-text"></p>
+            <div id="tpl-cats" class="pill-row" style="margin-bottom:14px"></div>
+            <a href="studio.html" class="btn btn--ghost btn--sm btn--block" data-i18n="admin.openStudio">Open Design Studio</a>
+          </div></div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:6px" data-i18n="admin.fileCheck">Bestandscontrole</h3>
+            <p class="muted" style="font-size:12.5px;margin-bottom:12px" data-i18n="admin.fileCheckSub">Controleert live of alle geregistreerde bestanden bestaan.</p>
+            <button type="button" class="btn btn--primary btn--sm btn--block" id="fc-run" data-i18n="admin.fileCheckRun">Start controle</button>
+            <div id="fc-result" style="margin-top:12px;font-size:13px"></div>
+          </div></div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:14px" data-i18n="admin.recent">Recente activiteit</h3>
+            <div id="recent"></div>
+            <button type="button" class="btn btn--ghost btn--sm btn--block" id="exp-btn" style="margin-top:12px" data-i18n="admin.export">Exporteer analytics (JSON)</button>
+          </div></div>
+          <div class="card" style="margin-bottom:20px"><div class="card__body">
+            <h3 style="margin-bottom:6px" data-i18n="admin.supportInbox">Support inbox</h3>
+            <p class="muted" style="font-size:12.5px;margin-bottom:12px" data-i18n="admin.supportInboxSub">Verzoeken die via het supportformulier zijn geregistreerd.</p>
+            <div id="support-inbox"></div>
+          </div></div>
+          <div class="card"><div class="card__body">
+            <h3 style="margin-bottom:10px" data-i18n="admin.governance">Governance &amp; roadmap</h3>
+            <div id="gov"></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="section-title"><h3 data-i18n="admin.partnerMgmt">Partnerbeheer</h3><div class="line"></div><button type="button" class="btn btn--primary btn--sm" id="partner-add">Partner toevoegen</button></div>
+      <p class="muted" style="font-size:12.5px;margin:-6px 0 12px" data-i18n="admin.partnerData">Partnerbeheer toont accounts en supportcontacten die in deze portalomgeving zijn geregistreerd.</p>
+      <div class="card" style="margin-bottom:18px"><div class="card__body">
+        <div class="admin-panel-head">
+          <div><h3>Adminrechten</h3><p>Wijs beheerrechten toe aan bestaande gebruikers. De gebruiker moet met een goedgekeurd account en eigen wachtwoord inloggen.</p></div>
+          <span class="badge badge--green-soft" id="admin-grant-count">0 admins</span>
+        </div>
+        <form id="admin-grant-form" class="admin-grant-form">
+          <input id="admin-grant-email" type="email" placeholder="partner@bedrijf.nl" autocomplete="off" required>
+          <button type="submit" class="btn btn--primary btn--sm">Admin maken</button>
+        </form>
+        <div id="admin-grants-list" class="admin-list" style="margin-top:12px"></div>
+      </div></div>
+      <div class="card"><div class="card__body" style="padding:0;overflow-x:auto"><table class="adm-table" id="partners"></table></div></div>
+
+      <p class="muted" style="font-size:12px;margin-top:18px;max-width:760px" data-i18n="admin.note">Analytics tonen uitsluitend gebeurtenissen die lokaal in deze browser zijn geregistreerd.</p>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
+<script src="assets/js/studio.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
+  document.title = t("nav.admin") + " - PlasmaMade Partner Center";
+  var A = {}; try { A = JSON.parse(localStorage.getItem("pm_analytics") || "{}"); } catch (e) { A = {}; }
+  var ev = A.events || {}, byLabel = A.byLabel || {}, recent = A.recent || [];
+  var designs = []; try { designs = JSON.parse(localStorage.getItem("pm_designs") || "[]"); } catch (e) {}
+  var tickets = window.PM_TICKETS ? PM_TICKETS.list() : [];
+  var authUser = PM_AUTH.getUser() || {};
+  if (authUser.email && window.PM_PARTNERS) {
+    PM_PARTNERS.upsert({
+      name: authUser.name || "Partner",
+      email: authUser.email,
+      company: authUser.company || PM_companyFromEmail(authUser.email),
+      phone: authUser.phone || "",
+      role: authUser.role || "dealer",
+      status: "active",
+      source: "account",
+      lastActiveAt: new Date().toISOString()
+    });
+  }
+  var partnersData = window.PM_PARTNERS ? PM_PARTNERS.list() : [];
+  var requestsData = window.PM_REQUESTS ? PM_REQUESTS.list() : [];
+  var designCounts = window.PM_DESIGNS ? PM_DESIGNS.counts() : { submitted: 0, in_review: 0, changes_requested: 0, approved: 0, rejected: 0 };
+  var pendingDesigns = (designCounts.submitted || 0) + (designCounts.in_review || 0) + (designCounts.changes_requested || 0);
+
+  // ---- KPI's: uitsluitend lokaal gemeten waarden ----
+  var kpis = [
+    { ic: "idCard", v: requestsData.filter(function (r) { return r.status === "pending"; }).length, l: "Nieuwe aanvragen" },
+    { ic: "shieldCheck", v: pendingDesigns, l: "Designs te beoordelen" },
+    { ic: "download", v: ev.download || 0, l: t("admin.kpiDownloads") },
+    { ic: "lifebuoy", v: tickets.length, l: t("admin.kpiTickets") }
+  ];
+  document.getElementById("kpis").innerHTML = kpis.map(function (k) {
+    return '<div class="stat"><div class="s-top"><span>' + esc(k.l) + '</span>' + PM_ICON(k.ic) + '</div><div class="s-val">' + PM_fmtNum(k.v) + '</div><div class="s-sub">' + esc(t("admin.kpiSub")) + '</div></div>';
+  }).join("");
+
+  function statusBadge(status) {
+    var map = { pending: "Wacht op goedkeuring", approved: "Goedgekeurd", rejected: "Afgewezen", suspended: "Geblokkeerd", draft: "Concept", submitted: "Ingediend", in_review: "In beoordeling", changes_requested: "Aanpassing nodig", downloaded: "Gedownload" };
+    var cls = status === "approved" ? "badge--green-soft" : (status === "rejected" || status === "suspended" ? "badge--grey" : "badge--warn");
+    return '<span class="badge ' + cls + '">' + esc(map[status] || status || "-") + '</span>';
+  }
+
+  function renderSettingsPanel() {
+    var s = PM_PORTAL_SETTINGS.get();
+    document.getElementById("set-green").value = s.green || "#13A538";
+    document.getElementById("set-radius").value = Number(s.radius) || 8;
+    document.getElementById("set-bg").value = s.background || "#f6f7f6";
+    document.getElementById("set-spacing").value = s.spacing || "comfortable";
+    document.getElementById("settings-status").textContent = s.updatedAt ? "Bijgewerkt" : "Standaard";
+  }
+  function saveSettingsPanel() {
+    PM_PORTAL_SETTINGS.update({
+      green: document.getElementById("set-green").value,
+      radius: Number(document.getElementById("set-radius").value) || 8,
+      background: document.getElementById("set-bg").value,
+      spacing: document.getElementById("set-spacing").value
+    });
+    PM_toast("Portalstijl opgeslagen");
+    renderVersionsPanel();
+    renderSettingsPanel();
+  }
+  document.getElementById("settings-save").addEventListener("click", saveSettingsPanel);
+  document.getElementById("settings-reset").addEventListener("click", function () {
+    PM_PORTAL_SETTINGS.reset();
+    PM_toast("Portalstijl hersteld");
+    renderVersionsPanel();
+    renderSettingsPanel();
+  });
+
+  function adminPageLabel(id) {
+    var map = {
+      dashboard: "Dashboard", products: "Producten", finder: "Filter Finder", knowledge: "Kennisbank",
+      videos: "Video's", marketing: "Marketing", campaigns: "Campagnes", sales: "Verkooptools",
+      studio: "Design Studio", brand: "Brand", downloads: "Downloads", testdocs: "Testdocumenten",
+      news: "Nieuws", support: "Support", account: "Account", "custom-page": "Landingspagina's"
+    };
+    return map[id] || id;
+  }
+  function renderGroupsPanel() {
+    var rows = PM_GROUPS.list();
+    document.getElementById("group-count").textContent = rows.length + " groepen";
+    document.getElementById("group-permissions").innerHTML = rows.map(function (g) {
+      var boxes = PM_GROUPS.pages.map(function (p) {
+        var checked = !g.pages || g.pages.indexOf(p) > -1 || g.pages.indexOf("*") > -1;
+        return '<label><input type="checkbox" data-group-page="' + esc(g.id) + '" data-page-id="' + esc(p) + '"' + (checked ? " checked" : "") + '> ' + esc(adminPageLabel(p)) + '</label>';
+      }).join("");
+      return '<div class="admin-mini-row"><b>' + esc(g.label || g.id) + '</b><small>' + esc(g.note || "") + '</small><div class="perm-grid">' + boxes + '</div></div>';
+    }).join("");
+    document.querySelectorAll("[data-group-page]").forEach(function (box) {
+      box.addEventListener("change", function () {
+        var id = box.getAttribute("data-group-page");
+        var rows = PM_GROUPS.list();
+        var group = rows.find(function (g) { return g.id === id; });
+        if (!group) return;
+        group.pages = PM_GROUPS.pages.filter(function (p) {
+          var input = document.querySelector('[data-group-page="' + CSS.escape(id) + '"][data-page-id="' + CSS.escape(p) + '"]');
+          return input && input.checked;
+        });
+        PM_GROUPS.save(rows);
+        PM_toast("Zichtbaarheid opgeslagen");
+        renderVersionsPanel();
+      });
+    });
+  }
+
+  function renderMediaPanel() {
+    var catSel = document.getElementById("media-cat");
+    if (!catSel.dataset.ready) {
+      catSel.innerHTML = PM_MEDIA_LIBRARY.categories.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join("");
+      catSel.dataset.ready = "1";
+    }
+    var rows = PM_MEDIA_LIBRARY.list();
+    document.getElementById("media-count").textContent = rows.length + " items";
+    document.getElementById("media-list").innerHTML = rows.slice(0, 14).map(function (m) {
+      var isImg = /^data:image\//.test(m.url || "") || /\.(png|jpe?g|webp|gif)$/i.test(m.url || "");
+      return '<div class="admin-mini-row media-row">' +
+        (isImg ? '<img src="' + esc(m.url) + '" alt="">' : '<span class="admin-thumb" style="width:52px;height:42px;display:grid;place-items:center">' + PM_ICON("fileText") + '</span>') +
+        '<div><b>' + esc(m.title || m.fileName || "Mediabestand") + '</b><small>' + esc((m.category || "-") + " - " + (m.productCategory || "Merk algemeen") + " - " + (m.lang || "NL") + " - v" + (m.version || "1.0")) + '</small></div>' +
+        '<div class="admin-item__actions"><button type="button" class="btn btn--ghost" data-media-edit="' + esc(m.id) + '">Metadata</button><button type="button" class="btn btn--ghost" data-media-delete="' + esc(m.id) + '">Verwijderen</button></div></div>';
+    }).join("");
+    document.querySelectorAll("[data-media-edit]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-media-edit");
+        var row = PM_MEDIA_LIBRARY.list().find(function (m) { return m.id === id; });
+        if (!row) return;
+        var title = prompt("Titel:", row.title || "");
+        if (title === null) return;
+        var desc = prompt("Beschrijving:", row.description || "");
+        if (desc === null) return;
+        PM_MEDIA_LIBRARY.upsert(Object.assign({}, row, { title: title.trim(), description: desc.trim() }));
+        renderMediaPanel(); renderVersionsPanel();
+      });
+    });
+    document.querySelectorAll("[data-media-delete]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (!confirm("Dit mediabestand verwijderen uit de bibliotheek?")) return;
+        PM_MEDIA_LIBRARY.remove(b.getAttribute("data-media-delete"));
+        renderMediaPanel(); renderVersionsPanel();
+      });
+    });
+  }
+  document.getElementById("media-upload").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var title = prompt("Titel voor dit mediabestand:", f.name);
+    if (title === null) return;
+    PM_MEDIA_LIBRARY.createFromFile(f, { title: title.trim(), category: document.getElementById("media-cat").value }, function () {
+      PM_toast("Mediabestand toegevoegd");
+      renderMediaPanel(); renderVersionsPanel();
+    });
+    this.value = "";
+  });
+
+  function renderPagesPanel() {
+    var rows = PM_CUSTOM_PAGES.list();
+    document.getElementById("custom-pages").innerHTML = rows.length ? rows.map(function (p) {
+      return '<div class="admin-mini-row"><div class="version-row"><div><b>' + esc(p.title || p.id) + '</b><small>' + esc((p.audience || "Partners") + " - " + (p.status || "draft") + " - " + (p.updatedAt ? PM_fmtDate(p.updatedAt) : "-")) + '</small></div><div class="admin-item__actions"><a class="btn btn--ghost" href="page.html?id=' + encodeURIComponent(p.id) + '">Open</a><button class="btn btn--ghost" data-page-publish="' + esc(p.id) + '">' + ((p.status || "draft") === "published" ? "Concept" : "Publiceren") + '</button><button class="btn btn--ghost" data-page-delete="' + esc(p.id) + '">Verwijderen</button></div></div></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">Nog geen custom pagina&apos;s.</p>';
+    document.querySelectorAll("[data-page-publish]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-page-publish");
+        var row = PM_CUSTOM_PAGES.get(id);
+        if (!row) return;
+        row.status = (row.status || "draft") === "published" ? "draft" : "published";
+        PM_CUSTOM_PAGES.upsert(row);
+        renderPagesPanel(); renderVersionsPanel();
+      });
+    });
+    document.querySelectorAll("[data-page-delete]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (!confirm("Deze landingspagina verwijderen?")) return;
+        PM_CUSTOM_PAGES.remove(b.getAttribute("data-page-delete"));
+        renderPagesPanel(); renderVersionsPanel();
+      });
+    });
+  }
+  document.getElementById("page-add").addEventListener("click", function () {
+    var title = prompt("Titel van de nieuwe landingspagina:", "Nieuwe partnerpagina");
+    if (!title) return;
+    var id = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || ("pagina-" + Date.now());
+    PM_CUSTOM_PAGES.upsert({
+      id: id,
+      title: title.trim(),
+      audience: "Partners",
+      status: "draft",
+      intro: "Een nieuwe PlasmaMade-landingspagina. Pas tekst, beeld en blokken aan via de AI-bewerker of het contentbeheer.",
+      blocks: [
+        { title: "Heldere informatie", text: "Bundel documenten, campagnes en productinformatie voor een specifieke partnergroep." },
+        { title: "Bewaakte huisstijl", text: "Gebruik PlasmaMade-kleuren, Libre Franklin en echte merkassets." },
+        { title: "Publiceer wanneer klaar", text: "Laat de pagina als concept staan tot de inhoud gecontroleerd is." }
+      ]
+    });
+    renderPagesPanel(); renderVersionsPanel();
+  });
+
+  function renderVersionsPanel() {
+    var rows = PM_VERSIONS.list();
+    document.getElementById("version-count").textContent = rows.length + " versies";
+    document.getElementById("version-list").innerHTML = rows.slice(0, 12).map(function (v) {
+      return '<div class="admin-mini-row version-row"><div><b>' + esc((v.meta && v.meta.label) || v.subject || v.type) + '</b><small>' + esc(v.type + " - " + (v.actor || "system") + " - " + PM_fmtDate(v.createdAt)) + '</small></div><div class="admin-item__actions"><button type="button" class="btn btn--ghost" data-version-restore="' + esc(v.id) + '">Herstellen</button><button type="button" class="btn btn--ghost" data-version-remove="' + esc(v.id) + '">Wissen</button></div></div>';
+    }).join("") || '<p class="muted" style="font-size:13px">Nog geen versies opgeslagen.</p>';
+    document.querySelectorAll("[data-version-restore]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var row = PM_VERSIONS.list().find(function (v) { return v.id === b.getAttribute("data-version-restore"); });
+        if (!row || !confirm("Deze versie herstellen?")) return;
+        PM_VERSIONS.restore(row.id);
+        PM_toast("Versie hersteld");
+        if (["cms", "page", "pages"].indexOf(row.type) > -1) location.reload();
+        renderSettingsPanel(); renderGroupsPanel(); renderMediaPanel(); renderPagesPanel(); renderVersionsPanel(); renderAudit();
+      });
+    });
+    document.querySelectorAll("[data-version-remove]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        PM_VERSIONS.remove(b.getAttribute("data-version-remove"));
+        renderVersionsPanel();
+      });
+    });
+  }
+  document.getElementById("admin-ai-open").addEventListener("click", function () { PM_AI_CODER.open(); });
+  document.getElementById("admin-edit-mode").addEventListener("click", function () { PM_PAGE_EDITS.setMode(true); PM_toast("Bewerkmodus staat aan"); });
+
+  function renderRequests() {
+    var rows = window.PM_REQUESTS ? PM_REQUESTS.list() : [];
+    var open = rows.filter(function (r) { return r.status === "pending"; }).length;
+    document.getElementById("request-count").textContent = open + " open";
+    document.getElementById("account-requests").innerHTML = rows.length ? rows.slice(0, 8).map(function (r) {
+      var name = ((r.firstName || "") + " " + (r.lastName || "")).trim() || r.email || "Partner";
+      var mailInfo = r.approvalMailAt ? '<div class="admin-item__meta">Bevestigingsmail voorbereid: ' + esc(PM_fmtDate(r.approvalMailAt)) + '</div>' : '';
+      var actions = r.status === "approved"
+        ? '<button class="btn btn--ghost" data-req-mail="' + esc(r.id) + '">Mail opnieuw openen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>'
+        : '<button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren + mail</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
+      return '<div class="admin-item">' +
+        '<div class="admin-item__top"><div><b>' + esc(name) + '</b><div class="admin-item__meta">' + esc(r.company || "-") + ' - ' + esc(r.email || "-") + '<br>' + esc(r.country || "-") + ' - ' + esc(r.functionTitle || "-") + '</div></div>' + statusBadge(r.status) + '</div>' +
+        '<div class="admin-item__meta">' + esc(r.reason || "Geen toelichting opgegeven.") + '</div>' +
+        mailInfo +
+        '<div class="admin-item__actions">' + actions + '</div></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">Nog geen accountaanvragen.</p>';
+    document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.approve(b.getAttribute("data-req-approve")); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); } PM_toast("Account goedgekeurd en bevestigingsmail geopend"); renderRequests(); renderAudit(); }); });
+    document.querySelectorAll("[data-req-mail]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-mail"); }); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); PM_toast("Bevestigingsmail geopend"); renderRequests(); renderAudit(); } }); });
+    document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { var reason = prompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid."); PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }); });
+    document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { var reason = prompt("Reden voor blokkade:", "Tijdelijk geblokkeerd."); PM_REQUESTS.suspend(b.getAttribute("data-req-suspend"), reason || ""); PM_toast("Account geblokkeerd"); renderRequests(); renderAudit(); }); });
+    document.querySelectorAll("[data-req-delete]").forEach(function (b) { b.addEventListener("click", function () { if (confirm("Deze accountaanvraag verwijderen?")) { PM_REQUESTS.remove(b.getAttribute("data-req-delete")); PM_toast("Aanvraag verwijderd"); renderRequests(); renderAudit(); } }); });
+  }
+  function renderDesignApprovals() {
+    var rows = window.PM_DESIGNS ? PM_DESIGNS.list().sort(function (a, b) { return (a.updated || "") < (b.updated || "") ? 1 : -1; }) : [];
+    var review = rows.filter(function (d) { return ["submitted", "in_review", "changes_requested"].indexOf(d.status || "draft") > -1; });
+    document.getElementById("approval-count").textContent = review.length + " open";
+    document.getElementById("design-approvals").innerHTML = rows.length ? rows.slice(0, 8).map(function (d) {
+      return '<div class="admin-item"><div class="admin-item__top"><div style="display:flex;gap:12px;min-width:0">' +
+        '<span class="admin-thumb">' + (d.thumb ? '<img src="' + d.thumb + '" alt="">' : '') + '</span><div style="min-width:0"><b>' + esc(d.name || d.id) + '</b>' +
+        '<div class="admin-item__meta">' + esc(d.ownerEmail || "Onbekende partner") + '<br>' + esc(PM_fmtDate(d.updated || new Date().toISOString())) + '</div></div></div>' + statusBadge(d.status || "draft") + '</div>' +
+        '<div class="admin-item__meta">' + esc(d.feedback ? "Feedback: " + d.feedback : "Geen feedback.") + '</div>' +
+        '<div class="admin-item__actions">' +
+          '<a class="btn btn--ghost" href="studio.html?design=' + encodeURIComponent(d.id) + '">Bekijken</a>' +
+          '<button class="btn btn--primary" data-des-approve="' + esc(d.id) + '">Goedkeuren</button>' +
+          '<button class="btn btn--ghost" data-des-changes="' + esc(d.id) + '">Aanpassing nodig</button>' +
+          '<button class="btn btn--ghost" data-des-reject="' + esc(d.id) + '">Afwijzen</button>' +
+          '<button class="btn btn--ghost" data-des-delete="' + esc(d.id) + '">Verwijderen</button>' +
+        '</div></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">Nog geen ontwerpen opgeslagen of ingediend.</p>';
+    document.querySelectorAll("[data-des-approve]").forEach(function (b) { b.addEventListener("click", function () { PM_DESIGNS.setStatus(b.getAttribute("data-des-approve"), "approved", "Goedgekeurd voor gebruik."); PM_toast("Design goedgekeurd"); renderDesignApprovals(); renderAudit(); }); });
+    document.querySelectorAll("[data-des-changes]").forEach(function (b) { b.addEventListener("click", function () { var fb = prompt("Feedback voor partner:", "Pas tekst, logo of beeldgebruik aan volgens de PlasmaMade-richtlijnen."); PM_DESIGNS.setStatus(b.getAttribute("data-des-changes"), "changes_requested", fb || "Aanpassing nodig."); PM_toast("Feedback opgeslagen"); renderDesignApprovals(); renderAudit(); }); });
+    document.querySelectorAll("[data-des-reject]").forEach(function (b) { b.addEventListener("click", function () { var fb = prompt("Reden voor afwijzing:", "Niet geschikt voor externe communicatie."); PM_DESIGNS.setStatus(b.getAttribute("data-des-reject"), "rejected", fb || "Afgewezen."); PM_toast("Design afgewezen"); renderDesignApprovals(); renderAudit(); }); });
+    document.querySelectorAll("[data-des-delete]").forEach(function (b) { b.addEventListener("click", function () { if (confirm("Dit ontwerp verwijderen?")) { PM_DESIGNS.remove(b.getAttribute("data-des-delete")); PM_toast("Design verwijderd"); renderDesignApprovals(); renderAudit(); } }); });
+  }
+  function renderPhrases() {
+    var rows = window.PM_PHRASES ? PM_PHRASES.list() : [];
+    document.getElementById("phrase-admin-count").textContent = rows.length + " zinnen";
+    document.getElementById("phrase-admin-list").innerHTML = rows.slice(0, 10).map(function (p) {
+      return '<div class="admin-item"><div class="admin-item__top"><div><b>' + esc(p.text) + '</b><div class="admin-item__meta">' + esc(p.lang || "NL") + ' - ' + esc(p.category || "algemeen") + ' - ' + esc(p.product || "Merk algemeen") + '</div></div>' + statusBadge(p.active === false ? "suspended" : "approved") + '</div>' +
+        '<div class="admin-item__actions"><button class="btn btn--ghost" data-ph-edit="' + esc(p.id) + '">Bewerken</button><button class="btn btn--ghost" data-ph-toggle="' + esc(p.id) + '">' + (p.active === false ? "Activeren" : "Deactiveren") + '</button><button class="btn btn--ghost" data-ph-remove="' + esc(p.id) + '">Verwijderen</button></div></div>';
+    }).join("");
+    document.querySelectorAll("[data-ph-edit]").forEach(function (b) { b.addEventListener("click", function () { var row = PM_PHRASES.list().find(function (p) { return p.id === b.getAttribute("data-ph-edit"); }); if (!row) return; var text = prompt("Standaardzin:", row.text); if (text) PM_PHRASES.update(row.id, { text: text.trim() }); renderPhrases(); renderAudit(); }); });
+    document.querySelectorAll("[data-ph-toggle]").forEach(function (b) { b.addEventListener("click", function () { var row = PM_PHRASES.list().find(function (p) { return p.id === b.getAttribute("data-ph-toggle"); }); if (!row) return; PM_PHRASES.update(row.id, { active: row.active === false }); renderPhrases(); renderAudit(); }); });
+    document.querySelectorAll("[data-ph-remove]").forEach(function (b) { b.addEventListener("click", function () { if (confirm("Deze standaardzin verwijderen?")) { PM_PHRASES.remove(b.getAttribute("data-ph-remove")); renderPhrases(); renderAudit(); } }); });
+  }
+  function renderAudit() {
+    var rows = window.PM_AUDIT ? PM_AUDIT.list() : [];
+    document.getElementById("audit-log").innerHTML = rows.length ? rows.slice(0, 10).map(function (r) {
+      return '<div class="audit-row"><span>' + PM_ICON("clock") + '</span><div><b>' + esc(r.action) + '</b><br><span>' + esc(r.subject || "-") + ' - ' + esc(r.actor || "system") + ' - ' + esc(PM_fmtDate(r.createdAt)) + '</span></div></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">Nog geen auditregels.</p>';
+  }
+  var cmsCollection = "products";
+  var cmsEditorCollection = "products";
+  function cmsItemTitle(row) {
+    return row.name || row.title || row.question || row.id || "Item";
+  }
+  function cmsItemMeta(row) {
+    return [row.id, row.category || row.type || row.product || row.tag || "", row.status || ""].filter(Boolean).join(" - ");
+  }
+  function openCmsEditor(collection, row) {
+    cmsEditorCollection = collection;
+    document.getElementById("cms-editor").hidden = false;
+    document.getElementById("cms-editor-title").textContent = (row && row.id) ? "Item bewerken" : "Nieuw item";
+    document.getElementById("cms-json").value = JSON.stringify(row || PM_CMS.blank(collection), null, 2);
+    document.getElementById("cms-json").focus();
+  }
+  function renderCms() {
+    if (!window.PM_CMS) return;
+    var sel = document.getElementById("cms-collection");
+    if (!sel.options.length) {
+      sel.innerHTML = PM_CMS.collections.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.label) + '</option>'; }).join("");
+    }
+    sel.value = cmsCollection;
+    var rows = PM_CMS.list(cmsCollection);
+    document.getElementById("cms-list").innerHTML = rows.length ? rows.map(function (row) {
+      return '<div class="cms-row">' +
+        '<div><b>' + esc(cmsItemTitle(row)) + '</b><small>' + esc(cmsItemMeta(row)) + '</small></div>' +
+        '<div class="cms-actions">' +
+          '<button type="button" class="btn btn--ghost" data-cms-edit="' + esc(row.id) + '">Bewerken</button>' +
+          '<button type="button" class="btn btn--ghost" data-cms-copy="' + esc(row.id) + '">Dupliceren</button>' +
+          '<button type="button" class="btn btn--ghost" data-cms-delete="' + esc(row.id) + '">Verwijderen</button>' +
+        '</div></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">Deze collectie is leeg. Voeg een eerste item toe.</p>';
+    document.querySelectorAll("[data-cms-edit]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var row = PM_CMS.list(cmsCollection).find(function (r) { return String(r.id) === String(b.getAttribute("data-cms-edit")); });
+        if (row) openCmsEditor(cmsCollection, row);
+      });
+    });
+    document.querySelectorAll("[data-cms-copy]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        PM_CMS.duplicate(cmsCollection, b.getAttribute("data-cms-copy"));
+        PM_toast("Item gedupliceerd");
+        renderCms(); renderAudit();
+      });
+    });
+    document.querySelectorAll("[data-cms-delete]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (confirm("Dit contentitem verwijderen?")) {
+          PM_CMS.remove(cmsCollection, b.getAttribute("data-cms-delete"));
+          document.getElementById("cms-editor").hidden = true;
+          PM_toast("Item verwijderd");
+          renderCms(); renderAudit();
+        }
+      });
+    });
+  }
+  document.getElementById("cms-collection").addEventListener("change", function () {
+    cmsCollection = this.value;
+    document.getElementById("cms-editor").hidden = true;
+    renderCms();
+  });
+  document.getElementById("cms-add").addEventListener("click", function () { openCmsEditor(cmsCollection, PM_CMS.blank(cmsCollection)); });
+  document.getElementById("cms-cancel").addEventListener("click", function () { document.getElementById("cms-editor").hidden = true; });
+  document.getElementById("cms-save").addEventListener("click", function () {
+    var row;
+    try { row = JSON.parse(document.getElementById("cms-json").value); }
+    catch (e) { alert("De JSON is niet geldig. Controleer komma's, aanhalingstekens en accolades."); return; }
+    if (!row.id) { alert("Elk item heeft een uniek id nodig."); return; }
+    PM_CMS.upsert(cmsEditorCollection, row);
+    PM_toast("Content opgeslagen");
+    document.getElementById("cms-editor").hidden = true;
+    renderCms(); renderAudit();
+  });
+  document.getElementById("cms-reset").addEventListener("click", function () {
+    if (confirm("Deze collectie terugzetten naar de originele design/data-bundel? Lokale wijzigingen in deze collectie verdwijnen.")) {
+      PM_CMS.reset(cmsCollection);
+      document.getElementById("cms-editor").hidden = true;
+      PM_toast("Collectie hersteld");
+      renderCms(); renderAudit();
+    }
+  });
+  document.getElementById("phrase-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = document.getElementById("phrase-text").value.trim();
+    if (!text) return;
+    PM_PHRASES.create({ text: text, category: document.getElementById("phrase-category").value, product: "Merk algemeen", lang: "NL", active: true });
+    document.getElementById("phrase-text").value = "";
+    renderPhrases(); renderAudit(); PM_toast("Standaardzin toegevoegd");
+  });
+  renderRequests();
+  renderDesignApprovals();
+  renderPhrases();
+  renderAudit();
+  renderCms();
+
+  // ---- 7-daagse staafgrafiek: lokaal gemeten per dag ----
+  var days = [];
+  var today = new Date();
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(today.getTime() - i * 86400000);
+    days.push({ key: d.toISOString().slice(0, 10), name: PM_fmtDate(d, { weekday: "short" }).replace(".", "") });
+  }
+  var vals = days.map(function (d) { return (A.daily && A.daily[d.key]) || 0; });
+  var max = Math.max.apply(null, vals.concat([1]));
+  document.getElementById("bars").innerHTML = days.map(function (d, idx) {
+    return '<div class="adm-bar"><span class="num">' + vals[idx] + '</span><div class="b" style="height:' + Math.round(vals[idx] / max * 100) + '%"></div><span class="lbl">' + esc(d.name) + '</span></div>';
+  }).join("");
+  document.getElementById("act-total").textContent = t("admin.actions", { n: PM_fmtNum(vals.reduce(function (a, b) { return a + b; }, 0)) });
+
+  // ---- Meest bezocht (lokaal gemeten) ----
+  function hbar(rows, target) {
+    var el = document.getElementById(target);
+    if (!rows.length) { el.innerHTML = '<p class="muted" style="font-size:13px">' + esc(t("admin.noData")) + '</p>'; return; }
+    var mx = rows[0].v;
+    el.innerHTML = rows.map(function (r) {
+      return '<div class="adm-hbar"><span class="n">' + esc(r.n) + '</span><span class="track"><span class="fill" style="width:' + Math.round(r.v / mx * 100) + '%"></span></span><span class="v">' + PM_fmtNum(r.v) + '</span></div>';
+    }).join("");
+  }
+  var pageNames = { dashboard: t("nav.dashboard"), products: t("nav.products"), product: t("nav.products"), finder: t("nav.finder"), knowledge: t("nav.knowledge"), article: t("nav.knowledge"), marketing: t("nav.marketing"), videos: t("nav.videos"), downloads: t("nav.downloads"), campaigns: t("nav.campaigns"), campaign: t("nav.campaigns"), sales: t("nav.sales"), studio: t("nav.studio"), testdocs: t("nav.testdocs"), news: t("nav.news"), support: t("nav.support"), admin: t("nav.admin") };
+  var views = byLabel.view || {};
+  hbar(Object.keys(views).map(function (k) { return { n: pageNames[k] || k, v: views[k] }; }).sort(function (a, b) { return b.v - a.v; }).slice(0, 7), "topviews");
+
+  var dlNames = {};
+  D.downloads.forEach(function (d) { dlNames[d.file] = PM_lc("downloads", d.id, "title", d.title); });
+  D.testdocs.forEach(function (td) { dlNames[td.file] = PM_lc("testdocs", td.id, "title", td.title); });
+  var dlsBy = byLabel.download || {};
+  hbar(Object.keys(dlsBy).map(function (k) { var key = k.replace(/\.(pdf|zip)$/i, ""); return { n: dlNames[key] || k, v: dlsBy[k] }; }).sort(function (a, b) { return b.v - a.v; }).slice(0, 7), "topdl");
+
+  // ---- Contentvoorraad (echte aantallen) ----
+  var inv = [
+    ["box", "admin.invProducts", D.products.length], ["book", "admin.invArticles", D.articles.length],
+    ["play", "admin.invVideos", D.videos.length], ["image", "admin.invMarketing", D.marketing.length],
+    ["megaphone", "admin.invCampaigns", D.campaigns.length], ["shieldCheck", "admin.invTestdocs", D.testdocs.length],
+    ["download", "admin.invDownloads", D.downloads.length], ["newspaper", "admin.invNews", D.news.length]
+  ];
+  document.getElementById("inventory").innerHTML = inv.map(function (r) {
+    return '<div class="inv-row"><span class="l"><span class="i">' + PM_ICON(r[0]) + '</span>' + esc(t(r[1])) + '</span><span class="c">' + r[2] + '</span></div>';
+  }).join("");
+
+  // ---- Templatebeheer (telling live uit studio.js; fallback alleen als studio.js niet laadt) ----
+  var tplCount = (window.PMStudio && PMStudio.templateCount) || 21;
+  document.getElementById("tpl-text").textContent = t("admin.templatesText", { n: tplCount });
+  document.getElementById("tpl-cats").innerHTML = ["Basis", "Social media", "Print", "Sales", "Campagne", "Digitaal", "Presentatie"].map(function (c) { return '<span class="tag-static">' + esc(PM_dict("studioTplCats", c)) + '</span>'; }).join("");
+
+  // ---- Vertaalstatus per taal (live berekend) ----
+  var trTable = document.getElementById("tr-table");
+  function renderTrStatus() {
+    var base = PM_I18N.locale("nl");
+    var baseKeys = base ? Object.keys(base.ui) : [];
+    var rows = PM_I18N.langs.map(function (l) {
+      var loc = PM_I18N.locale(l.code);
+      var st;
+      if (!loc) st = '<span class="status-dot off"><i></i>' + esc(t("admin.trNotLoaded")) + '</span>';
+      else {
+        var missing = baseKeys.filter(function (k) { return loc.ui[k] == null; }).length;
+        st = missing === 0
+          ? '<span class="status-dot"><i></i>' + esc(t("admin.trComplete")) + '</span>'
+          : '<span class="status-dot warn"><i></i>' + esc(t("admin.trIncomplete", { n: missing })) + '</span>';
+      }
+      var keyCount = loc ? Object.keys(loc.ui).length : "-";
+      return '<tr><td style="font-weight:600"><span lang="' + l.code + '">' + esc(l.name) + '</span> <span class="muted">(' + l.code + ')</span></td><td>' + keyCount + '</td><td>' + st + '</td></tr>';
+    }).join("");
+    trTable.innerHTML = '<thead><tr><th>' + esc(t("admin.trLang")) + '</th><th>' + esc(t("admin.trKeys")) + '</th><th>' + esc(t("admin.trStatus")) + '</th></tr></thead><tbody>' + rows + '</tbody>';
+  }
+  // Laad alle taalbestanden zodat de status compleet is
+  PM_I18N.langs.filter(function (l) { return ["nl", "en"].indexOf(l.code) > -1; }).forEach(function (l) {
+    if (PM_I18N.locale(l.code)) return;
+    var s = document.createElement("script");
+    s.src = "assets/i18n/" + l.code + ".js";
+    s.onload = renderTrStatus; s.onerror = renderTrStatus;
+    document.head.appendChild(s);
+  });
+  renderTrStatus();
+  setTimeout(renderTrStatus, 1200);
+
+  // ---- Bestandscontrole: HEAD-fetch op elk geregistreerd bestand ----
+  document.getElementById("fc-run").addEventListener("click", function () {
+    var btn = this, out = document.getElementById("fc-result");
+    var files = [];
+    D.downloads.forEach(function (d) { files.push("assets/downloads/" + d.file + (d.type === "ZIP" ? ".zip" : ".pdf")); });
+    D.testdocs.forEach(function (td) { files.push("assets/testdocs/" + td.file + ".pdf"); });
+    D.products.forEach(function (p) { files.push(p.image); });
+    D.marketing.forEach(function (m) { files.push(m.img); });
+    files = files.filter(function (v, i, s) { return s.indexOf(v) === i; });
+    var missing = [], done = 0;
+    btn.disabled = true;
+    function tick() {
+      done++;
+      out.textContent = t("admin.fileCheckBusy", { done: done, total: files.length });
+      if (done === files.length) {
+        btn.disabled = false;
+        if (!missing.length) out.innerHTML = '<span class="status-dot"><i></i>' + esc(t("admin.fileCheckOk", { n: files.length })) + '</span>';
+        else out.innerHTML = '<span class="status-dot warn"><i></i>' + esc(t("admin.fileCheckMissing", { n: missing.length })) + '</span><ul style="margin-top:8px;font-size:12px;color:var(--muted)">' + missing.map(function (f) { return '<li>' + esc(f) + '</li>'; }).join("") + '</ul>';
+      }
+    }
+    files.forEach(function (f) {
+      fetch(f, { method: "HEAD" }).then(function (r) { if (!r.ok) missing.push(f); tick(); }).catch(function () { missing.push(f); tick(); });
+    });
+  });
+
+  // ---- Recente activiteit (lokaal) ----
+  var evIco = { view: "eye", download: "download", design_save: "save", export: "palette", lang: "globe", page_add: "plus", support_ticket: "lifebuoy" };
+  var evKey = { view: "admin.evView", download: "admin.evDownload", design_save: "admin.evSave", export: "admin.evExport", lang: "admin.evLang", support_ticket: "admin.evSupport" };
+  var recList = recent.slice(0, 8);
+  document.getElementById("recent").innerHTML = recList.length ? recList.map(function (r) {
+    var mins = Math.max(0, Math.round((Date.now() - r.t) / 60000));
+    var when = mins < 1 ? t("admin.justNow") : (mins < 60 ? t("admin.minAgo", { n: mins }) : t("admin.hourAgo", { n: Math.round(mins / 60) }));
+    return '<div class="act-row"><span class="ai">' + PM_ICON(evIco[r.event] || "grid") + '</span><div><div style="font-weight:600">' + esc(t(evKey[r.event]) !== evKey[r.event] ? t(evKey[r.event]) : r.event) + '</div><div class="muted" style="font-size:12px">' + esc(pageNames[r.label] || r.label || "-") + '</div></div><span class="at">' + esc(when) + '</span></div>';
+  }).join("") : '<p class="muted" style="font-size:13px">' + esc(t("admin.noData")) + '</p>';
+
+  // ---- Support inbox ----
+  document.getElementById("support-inbox").innerHTML = tickets.length ? tickets.slice(0, 8).map(function (tk) {
+    return '<div class="act-row"><span class="ai">' + PM_ICON("lifebuoy") + '</span><div style="min-width:0">' +
+      '<div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(tk.subject || tk.id) + '</div>' +
+      '<div class="muted" style="font-size:12px">' + esc(tk.id) + ' · ' + esc(t("admin.ticketMeta", { category: tk.category || "Support", date: PM_fmtDate(tk.createdAt) })) + '</div>' +
+      '<div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc((tk.company || "—") + " · " + (tk.email || "—")) + '</div>' +
+    '</div><span class="badge ' + (tk.status === "closed" ? "badge--grey" : "badge--green-soft") + '">' + esc(tk.status === "closed" ? t("support.ticketClosed") : t("support.ticketOpen")) + '</span></div>';
+  }).join("") : '<p class="muted" style="font-size:13px">' + esc(t("admin.noTickets")) + '</p>';
+
+  // ---- Export analytics ----
+  document.getElementById("exp-btn").addEventListener("click", function () {
+    var blob = new Blob([JSON.stringify(A, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pm-analytics-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    PM_toast(t("admin.exported"));
+  });
+
+  // ---- Governance ----
+  var gov = [
+    ["admin.govContent", "admin.govContentV"],
+    ["admin.govOwner", "admin.govOwnerV"],
+    ["admin.govUpdate", null],
+    ["admin.govI18n", "admin.govI18nV"],
+    ["admin.govRoadmap", "admin.govRoadmapV"]
+  ];
+  document.getElementById("gov").innerHTML = gov.map(function (g) {
+    var val = g[1] ? t(g[1]) : PM_fmtDate("2026-05-20");
+    return '<div class="gov-row"><span class="k">' + esc(t(g[0])) + '</span><span>' + esc(val) + '</span></div>';
+  }).join("");
+
+  // ---- Partnerbeheer: live uit partneraccounts en supportcontacten ----
+  var partners = partnersData.map(function (p) {
+    var last = p.lastActiveAt || p.updatedAt || p.createdAt || new Date().toISOString();
+    var days = Math.max(0, Math.floor((Date.now() - new Date(last).getTime()) / 86400000));
+    var roleKey = PM_roleKey(p.role || "");
+    return {
+      naam: p.company || p.name || p.email || "Partner",
+      type: roleKey ? t(roleKey) : (p.role === "support" ? t("nav.support") : (p.role || "Partner")),
+      regio: p.email ? String(p.email).split("@")[1] || "—" : "—",
+      days: days,
+      on: (p.status || "active") === "active"
+    };
+  });
+  if (!partners.length && authUser.email) {
+    partners.push({
+      naam: authUser.company || authUser.name || "Partner",
+      type: t(PM_roleKey(authUser.role) || "role.dealer"),
+      regio: String(authUser.email).split("@")[1] || "—",
+      days: 0,
+      on: true
+    });
+  }
+  document.getElementById("partners").innerHTML =
+    '<thead><tr><th>' + esc(t("admin.thPartner")) + '</th><th>' + esc(t("admin.thType")) + '</th><th>' + esc(t("admin.thRegion")) + '</th><th>' + esc(t("admin.thLastActive")) + '</th><th>' + esc(t("admin.thStatus")) + '</th></tr></thead><tbody>' +
+    (partners.length ? partners : [{ naam: t("admin.noData"), type: "—", regio: "—", days: 0, on: false }]).map(function (p) {
+      var when = p.days === 0 ? t("admin.agoToday") : t("admin.agoDays", { n: p.days });
+      return '<tr><td style="font-weight:600">' + esc(p.naam) + '</td><td>' + esc(p.type) + '</td><td>' + esc(p.regio) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (p.on ? '' : ' off') + '"><i></i>' + esc(t(p.on ? "admin.active" : "admin.inactive")) + '</span></td></tr>';
+    }).join("") + '</tbody>';
+  function adminRoleLabel(role) {
+    var roleKey = PM_roleKey(role || "");
+    return roleKey ? t(roleKey) : (role === "support" ? t("nav.support") : (role || "Partner"));
+  }
+  function adminPartnerStatus(status) {
+    return (status || "active") === "active" ? t("admin.active") : ((status || "") === "suspended" ? "Geblokkeerd" : t("admin.inactive"));
+  }
+  function adminSafePartnerRole(role, email) {
+    var r = String(role || "dealer").trim().toLowerCase();
+    if (r === "internal") {
+      if (window.PM_ADMINS) PM_ADMINS.grant(email, { source: "partnerbeheer" });
+      return "internal";
+    }
+    return r;
+  }
+  function grantAdmin(email) {
+    email = String(email || "").trim().toLowerCase();
+    if (!email) return;
+    if (window.PM_ADMINS) PM_ADMINS.grant(email, { source: "admin_panel" });
+    if (window.PM_PARTNERS) {
+      PM_PARTNERS.upsert({
+        email: email,
+        company: PM_companyFromEmail(email),
+        name: PM_companyFromEmail(email),
+        role: "internal",
+        status: "active",
+        source: "admin_grant",
+        lastActiveAt: new Date().toISOString()
+      });
+    }
+    PM_toast("Adminrechten toegewezen");
+    renderAdminGrants(); adminRenderPartners(); renderAudit();
+  }
+  function revokeAdmin(email) {
+    email = String(email || "").trim().toLowerCase();
+    if (!email) return;
+    if (window.PM_ADMINS) PM_ADMINS.revoke(email);
+    if (window.PM_PARTNERS) PM_PARTNERS.update(email, { role: "dealer" });
+    PM_toast("Adminrechten ingetrokken");
+    renderAdminGrants(); adminRenderPartners(); renderAudit();
+  }
+  function renderAdminGrants() {
+    var grants = window.PM_ADMINS ? PM_ADMINS.list() : [];
+    document.getElementById("admin-grant-count").textContent = grants.length + " admins";
+    document.getElementById("admin-grants-list").innerHTML = grants.length ? grants.map(function (g) {
+      return '<div class="admin-item"><div class="admin-item__top"><div><b>' + esc(g.email) + '</b><div class="admin-item__meta">Toegevoegd door ' + esc(g.grantedBy || "beheerder") + ' - ' + esc(PM_fmtDate(g.grantedAt || g.updatedAt || new Date().toISOString())) + '</div></div><span class="badge badge--green-soft">Admin</span></div><div class="admin-item__actions"><button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(g.email) + '">Admin intrekken</button></div></div>';
+    }).join("") : '<p class="muted" style="font-size:13px">Nog geen extra adminrechten toegewezen.</p>';
+    document.querySelectorAll("#admin-grants-list [data-admin-revoke]").forEach(function (b) { b.addEventListener("click", function () { revokeAdmin(b.getAttribute("data-admin-revoke")); }); });
+  }
+  function adminEditPartner(email) {
+    var row = PM_PARTNERS.list().find(function (p) { return String(p.email || "").toLowerCase() === String(email || "").toLowerCase(); });
+    if (!row) return;
+    var company = prompt("Bedrijfsnaam / weergavenaam:", row.company || row.name || "");
+    if (company === null) return;
+    var role = prompt("Rol (dealer, distributor, installer, studio, support):", row.role || "dealer");
+    if (role === null) return;
+    var status = prompt("Status (active, inactive, suspended):", row.status || "active");
+    if (status === null) return;
+    PM_PARTNERS.update(row.email, {
+      name: row.name || company.trim(),
+      company: company.trim(),
+      role: adminSafePartnerRole(role, row.email),
+      status: status.trim() || "active"
+    });
+    PM_toast("Partner bijgewerkt");
+    adminRenderPartners(); renderAudit();
+  }
+  function adminRenderPartners() {
+    var rows = window.PM_PARTNERS ? PM_PARTNERS.list() : [];
+    if (!rows.length && authUser.email) {
+      rows.push({
+        name: authUser.name || "Partner",
+        email: authUser.email,
+        company: authUser.company || PM_companyFromEmail(authUser.email),
+        role: authUser.role || "dealer",
+        status: "active",
+        lastActiveAt: new Date().toISOString()
+      });
+    }
+    document.getElementById("partners").innerHTML =
+      '<thead><tr><th>' + esc(t("admin.thPartner")) + '</th><th>Email</th><th>' + esc(t("admin.thType")) + '</th><th>' + esc(t("admin.thRegion")) + '</th><th>' + esc(t("admin.thLastActive")) + '</th><th>' + esc(t("admin.thStatus")) + '</th><th>Acties</th></tr></thead><tbody>' +
+      (rows.length ? rows : [{ company: t("admin.noData"), email: "", role: "", status: "inactive", lastActiveAt: new Date().toISOString() }]).map(function (p) {
+        var last = p.lastActiveAt || p.updatedAt || p.createdAt || new Date().toISOString();
+        var days = Math.max(0, Math.floor((Date.now() - new Date(last).getTime()) / 86400000));
+        var when = days === 0 ? t("admin.agoToday") : t("admin.agoDays", { n: days });
+        var on = (p.status || "active") === "active";
+        var region = p.email ? String(p.email).split("@")[1] || "-" : "-";
+        var isAdm = window.PM_ADMINS && PM_ADMINS.has(p.email);
+        var adminBtn = isAdm
+          ? '<button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(p.email || "") + '">Admin intrekken</button>'
+          : '<button type="button" class="btn btn--ghost" data-admin-grant="' + esc(p.email || "") + '">Admin maken</button>';
+        return '<tr><td style="font-weight:600">' + esc(p.company || p.name || p.email || "Partner") + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + '<button type="button" class="btn btn--ghost" data-partner-delete="' + esc(p.email || "") + '">Verwijderen</button></div></td></tr>';
+      }).join("") + '</tbody>';
+    document.querySelectorAll("[data-partner-edit]").forEach(function (b) { b.addEventListener("click", function () { adminEditPartner(b.getAttribute("data-partner-edit")); }); });
+    document.querySelectorAll("[data-partner-delete]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-partner-delete"); if (email && confirm("Deze partner verwijderen?")) { PM_PARTNERS.remove(email); PM_toast("Partner verwijderd"); adminRenderPartners(); renderAudit(); } }); });
+    document.querySelectorAll("#partners [data-admin-grant]").forEach(function (b) { b.addEventListener("click", function () { grantAdmin(b.getAttribute("data-admin-grant")); }); });
+    document.querySelectorAll("#partners [data-admin-revoke]").forEach(function (b) { b.addEventListener("click", function () { revokeAdmin(b.getAttribute("data-admin-revoke")); }); });
+  }
+  document.getElementById("admin-grant-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var input = document.getElementById("admin-grant-email");
+    grantAdmin(input.value);
+    input.value = "";
+  });
+  document.getElementById("partner-add").addEventListener("click", function () {
+    var email = prompt("E-mailadres van partner:");
+    if (!email) return;
+    var company = prompt("Bedrijfsnaam:", PM_companyFromEmail(email));
+    if (company === null) return;
+    var role = prompt("Rol (dealer, distributor, installer, studio, support):", "dealer");
+    if (role === null) return;
+    PM_PARTNERS.upsert({
+      email: email.trim(),
+      company: company.trim(),
+      name: company.trim(),
+      role: adminSafePartnerRole(role, email),
+      status: "active",
+      source: "admin",
+      lastActiveAt: new Date().toISOString()
+    });
+    PM_toast("Partner toegevoegd");
+    adminRenderPartners(); renderAudit();
+  });
+  renderSettingsPanel();
+  renderGroupsPanel();
+  renderMediaPanel();
+  renderPagesPanel();
+  renderVersionsPanel();
+  renderAdminGrants();
+  adminRenderPartners();
+  if (!window.__adminStateSyncBound) {
+    window.__adminStateSyncBound = true;
+    document.addEventListener("pm:state-sync", function (ev) {
+      var src = ev && ev.detail && ev.detail.source;
+      if (src === "push") return;
+      renderRequests();
+      renderDesignApprovals();
+      renderPhrases();
+      renderCms();
+      renderAudit();
+      renderSettingsPanel();
+      renderGroupsPanel();
+      renderMediaPanel();
+      renderPagesPanel();
+      renderVersionsPanel();
+      renderAdminGrants();
+      adminRenderPartners();
+    });
+  }
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

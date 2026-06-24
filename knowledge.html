@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kennisbank - PlasmaMade Partner Center</title>
+<meta name="description" content="PlasmaMade kennisbank: techniek, gezondheid en achtergrond van plasmatechnologie.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="knowledge">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.knowledge">Kennisbank</h2>
+        <p data-i18n="kb.intro">Begrijp PlasmaMade en vertel het verhaal door aan je klanten.</p>
+      </div>
+
+      <!-- Wat wordt gefilterd -->
+      <div class="card" style="background:var(--surface);margin-bottom:26px">
+        <div class="card__body">
+          <h3 style="margin-bottom:4px" data-i18n="kb.pollTitle">Wat haalt PlasmaMade uit de lucht?</h3>
+          <p class="muted" style="font-size:13.5px;margin-bottom:18px" data-i18n="kb.pollSub">Tot 98% van ziekteverwekkers · tot 85% fijnstof (UltraFine)</p>
+          <div class="pollutants" id="pollutants"></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box" id="sb"></div>
+        <div class="chips" id="cat-filter"></div>
+        <span class="result-count" id="rc" aria-live="polite"></span>
+      </div>
+
+      <section class="grid grid--3" id="kb-grid"></section>
+
+      <p class="muted" style="font-size:12px;margin-top:22px" data-i18n="article.source">Bron: Totaalbrochure EU-NL 2026 en officiele PlasmaMade-productdocumentatie · bijgewerkt mei 2026</p>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, A = D.articles, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.knowledge") + " - PlasmaMade Partner Center";
+
+  // Vervuilers
+  var poll = [
+    ["nose", "kb.poll1t", "kb.poll1d"], ["cloud", "kb.poll2t", "kb.poll2d"],
+    ["shield", "kb.poll3t", "kb.poll3d"], ["flower", "kb.poll4t", "kb.poll4d"],
+    ["droplet", "kb.poll5t", "kb.poll5d"], ["wind", "kb.poll6t", "kb.poll6d"]
+  ];
+  document.getElementById("pollutants").innerHTML = poll.map(function (p) {
+    return '<div class="pollutant"><div class="p-ico">' + PM_ICON(p[0]) + '</div><h5>' + esc(t(p[1])) + '</h5><p>' + esc(t(p[2])) + '</p></div>';
+  }).join("");
+
+  document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("kb.searchPh")) + '" aria-label="' + esc(t("kb.searchPh")) + '">';
+
+  var cats = A.map(function (a) { return a.category; }).filter(function (v, i, s) { return s.indexOf(v) === i; });
+  var current = window.__kbCat || "*";
+  function chips() {
+    var all = [["*", t("common.all")]].concat(cats.map(function (c) { return [c, PM_dict("categories", c)]; }));
+    document.getElementById("cat-filter").innerHTML = all.map(function (c) {
+      return '<button class="chip' + (c[0] === current ? " active" : "") + '" data-c="' + esc(c[0]) + '" aria-pressed="' + (c[0] === current) + '">' + esc(c[1]) + '</button>';
+    }).join("");
+    document.querySelectorAll("#cat-filter .chip").forEach(function (b) {
+      b.addEventListener("click", function () { current = window.__kbCat = b.getAttribute("data-c"); chips(); render(); });
+    });
+  }
+  function render() {
+    var q = (document.getElementById("q").value || "").toLowerCase();
+    var list = A.filter(function (a) {
+      var title = lc("articles", a.id, "title", a.title), ex = lc("articles", a.id, "excerpt", a.excerpt);
+      return (current === "*" || a.category === current) &&
+             (!q || (a.title + " " + title + " " + ex + " " + a.excerpt + " " + a.category).toLowerCase().indexOf(q) > -1);
+    });
+    document.getElementById("rc").textContent = list.length === 1 ? t("kb.countOne") : t("kb.count", { n: PM_fmtNum(list.length) });
+    document.getElementById("kb-grid").innerHTML = list.map(function (a) {
+      var mins = parseInt(a.read, 10) || 3;
+      return '<a class="kb-card" href="article.html?id=' + a.id + '">' +
+        '<div class="kb-card__icon">' + PM_ICON(a.icon) + '</div>' +
+        '<span class="cat">' + esc(PM_dict("categories", a.category)) + '</span>' +
+        '<h3>' + esc(lc("articles", a.id, "title", a.title)) + '</h3><p>' + esc(lc("articles", a.id, "excerpt", a.excerpt)) + '</p>' +
+        '<span class="flex items-center gap muted" style="font-size:12px;font-weight:600">' + PM_ICON("book") + esc(t("common.minRead", { n: mins })) + '</span></a>';
+    }).join("") || '<div class="empty" style="grid-column:1/-1">' + PM_ICON("book") + '<h4>' + esc(t("kb.emptyTitle")) + '</h4><p>' + esc(t("kb.emptyText")) + '</p></div>';
+  }
+  if (!window.__kbBound) {
+    window.__kbBound = true;
+    document.addEventListener("input", function (e) { if (e.target && e.target.id === "q") render(); });
+  }
+  chips(); render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campagnes - PlasmaMade Partner Center</title>
+<meta name="description" content="Actuele PlasmaMade-campagnes en seizoensacties voor partners.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="campaigns">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.campaigns">Campagnes</h2>
+        <p data-i18n="camps.intro">Actuele en doorlopende PlasmaMade-campagnes.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="chips" id="status-filter"></div>
+        <span class="result-count" id="rc" aria-live="polite"></span>
+      </div>
+
+      <section class="grid grid--3" id="camp-grid"></section>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, C = D.campaigns, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.campaigns") + " - PlasmaMade Partner Center";
+  var tags = C.map(function (c) { return c.status.split(" ")[0]; }).filter(function (v, i, s) { return s.indexOf(v) === i; });
+  var current = window.__campStatus || "*";
+  function chips() {
+    var all = [["*", t("common.all")]].concat(tags.map(function (tg) { return [tg, PM_dict("statuses", tg)]; }));
+    document.getElementById("status-filter").innerHTML = all.map(function (tg) {
+      return '<button class="chip' + (tg[0] === current ? " active" : "") + '" data-t="' + esc(tg[0]) + '" aria-pressed="' + (tg[0] === current) + '">' + esc(tg[1]) + '</button>';
+    }).join("");
+    document.querySelectorAll("#status-filter .chip").forEach(function (b) {
+      b.addEventListener("click", function () { current = window.__campStatus = b.getAttribute("data-t"); chips(); render(); });
+    });
+  }
+  function render() {
+    var list = C.filter(function (c) { return current === "*" || c.status.indexOf(current) === 0; });
+    document.getElementById("rc").textContent = list.length === 1 ? t("camps.countOne") : t("camps.count", { n: PM_fmtNum(list.length) });
+    document.getElementById("camp-grid").innerHTML = list.map(function (c) {
+      return '<a class="campaign-card" href="campaign.html?id=' + c.id + '">' +
+        '<img src="' + esc(c.image) + '" alt="" loading="lazy">' +
+        '<div class="campaign-card__body"><span class="badge badge--green">' + esc(PM_dict("statuses", c.status)) + '</span>' +
+        '<h3>' + esc(lc("campaigns", c.id, "title", c.title)) + '</h3><p>' + esc(lc("campaigns", c.id, "core", c.core)) + '</p>' +
+        '<div class="flex items-center gap" style="margin-top:10px;font-size:12px;opacity:.9;font-weight:600">' + PM_ICON("target") + esc(PM_dict("audiences", c.audience)) + '</div></div></a>';
+    }).join("") || '<div class="empty" style="grid-column:1/-1">' + PM_ICON("megaphone") + '<h4>' + esc(t("camps.emptyTitle")) + '</h4><p>' + esc(t("camps.emptyText")) + '</p></div>';
+  }
+  chips(); render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landingspagina - PlasmaMade Partner Center</title>
+<meta name="description" content="Custom landingspagina binnen het PlasmaMade Partner Center.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="custom-page">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content" id="custom-page-root"></main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var id = PM_param("id");
+  var root = document.getElementById("custom-page-root");
+  if (window.PM_CUSTOM_PAGES) PM_CUSTOM_PAGES.renderInto(root, id);
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

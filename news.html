@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nieuws &amp; updates - PlasmaMade Partner Center</title>
+<meta name="description" content="Nieuws en updates van PlasmaMade voor partners, dealers en installateurs.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="news">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content" id="news-root"></main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  var N = D.news.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+  var id = PM_param("id");
+  var root = document.getElementById("news-root");
+  document.title = t("nav.news") + " - PlasmaMade Partner Center";
+
+  if (id) {
+    var n = N.find(function (x) { return x.id === id; });
+    if (!n) {
+      PM_notFound(root, { title: t("common.notFound"), text: t("common.notFoundText"), href: "news.html", back: t("news.back"), cta: t("nav.news") });
+      return;
+    }
+    var title = lc("news", n.id, "title", n.title);
+    document.title = title + " - PlasmaMade Partner Center";
+    PM_RECENT.push("news", n.id);
+    root.innerHTML =
+      '<a href="news.html" class="flex items-center gap green" style="font-weight:700;font-size:13px;margin-bottom:18px"><span style="display:inline-flex;transform:rotate(180deg)">' + PM_ICON("arrowRight") + '</span>' + esc(t("news.back")) + '</a>' +
+      '<article class="article"><span class="badge badge--green-soft">' + esc(PM_dict("categories", n.category)) + '</span>' +
+      '<h1 style="margin-top:12px">' + esc(title) + '</h1>' +
+      '<p class="lead">' + esc(lc("news", n.id, "excerpt", n.excerpt)) + '</p>' +
+      '<div class="flex items-center gap muted" style="font-size:13px;margin-bottom:20px">' + PM_ICON("calendar") + esc(PM_fmtDate(n.date)) + '</div>' +
+      '<p>' + esc(lc("news", n.id, "body", n.body)) + '</p>' +
+      '<div class="callout" style="margin-top:18px">' + t("news.questions") + '</div>' +
+      '</article>';
+    return;
+  }
+
+  // Lijstweergave
+  var cats = N.map(function (n) { return n.category; }).filter(function (v, i, s) { return s.indexOf(v) === i; });
+  var current = window.__newsCat || "*";
+  root.innerHTML =
+    '<div class="page-head"><h2>' + esc(t("nav.news")) + '</h2><p>' + esc(t("news.intro")) + '</p></div>' +
+    '<div class="toolbar"><div class="chips" id="cat-filter"></div><span class="result-count" id="rc" aria-live="polite"></span></div>' +
+    '<div class="grid" style="gap:14px" id="news-list"></div>';
+
+  function chips() {
+    var all = [["*", t("common.all")]].concat(cats.map(function (c) { return [c, PM_dict("categories", c)]; }));
+    document.getElementById("cat-filter").innerHTML = all.map(function (c) {
+      return '<button class="chip' + (c[0] === current ? " active" : "") + '" data-c="' + esc(c[0]) + '" aria-pressed="' + (c[0] === current) + '">' + esc(c[1]) + '</button>';
+    }).join("");
+    document.querySelectorAll("#cat-filter .chip").forEach(function (b) {
+      b.addEventListener("click", function () { current = window.__newsCat = b.getAttribute("data-c"); chips(); render(); });
+    });
+  }
+  function render() {
+    var list = N.filter(function (n) { return current === "*" || n.category === current; });
+    document.getElementById("rc").textContent = list.length === 1 ? t("news.countOne") : t("news.count", { n: PM_fmtNum(list.length) });
+    document.getElementById("news-list").innerHTML = list.map(function (n) {
+      var dt = PM_date(n.date);
+      var fresh = (Date.now() - new Date(n.date + "T00:00:00").getTime()) < 2592000000;
+      return '<a class="news-item" href="news.html?id=' + n.id + '">' +
+        '<div class="news-item__date"><span class="d">' + dt.d + '</span><span class="m">' + esc(dt.m) + '</span></div>' +
+        '<div class="news-item__body">' + (fresh ? '<span class="badge badge--green" style="margin-right:6px">' + esc(t("common.new")) + '</span>' : '') + '<span class="badge badge--green-soft">' + esc(PM_dict("categories", n.category)) + '</span>' +
+        '<h4>' + esc(lc("news", n.id, "title", n.title)) + '</h4><p>' + esc(lc("news", n.id, "excerpt", n.excerpt)) + '</p>' +
+        '<span class="green flex items-center gap" style="font-size:12.5px;font-weight:700;margin-top:6px">' + esc(t("common.readMore")) + ' ' + PM_ICON("arrowRight") + '</span></div></a>';
+    }).join("") || '<div class="empty">' + PM_ICON("newspaper") + '<h4>' + esc(t("news.emptyTitle")) + '</h4><p>' + esc(t("news.emptyText")) + '</p></div>';
+  }
+  chips(); render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

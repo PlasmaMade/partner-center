@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Downloads - PlasmaMade Partner Center</title>
+<meta name="description" content="Download brochures, productsheets, handleidingen en logo's van PlasmaMade.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="downloads">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.downloads">Downloads</h2>
+        <p data-i18n="dl.intro">Alle bestanden centraal. Filter op categorie, product, type en documenttaal.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box" id="sb"></div>
+        <select class="select" id="f-prod"></select>
+        <select class="select" id="f-type"></select>
+        <select class="select" id="f-lang"></select>
+        <select class="select" id="f-sort"></select>
+        <button type="button" class="btn btn--ghost btn--sm" id="f-reset" data-i18n="common.reset">Filters wissen</button>
+        <span class="result-count" id="rc" aria-live="polite"></span>
+      </div>
+
+      <div class="callout" style="margin-bottom:18px;font-size:13px" data-i18n="dl.langNote">De taalvermelding geldt voor het document zelf.</div>
+
+      <div class="chips" id="cat-filter" style="margin-bottom:18px"></div>
+
+      <div id="dl-list"></div>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, DL = D.downloads, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.downloads") + " - PlasmaMade Partner Center";
+  document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("dl.searchPh")) + '" aria-label="' + esc(t("dl.searchPh")) + '">';
+
+  function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
+  var cats = uniq(DL.map(function (d) { return d.cat; }));
+  var current = window.__dlCat || "*";
+
+  function fill(sel, label, pairs) {
+    var el = document.getElementById(sel);
+    el.innerHTML = '<option value="">' + esc(label) + '</option>' + pairs.map(function (v) { return '<option value="' + esc(v[0]) + '">' + esc(v[1]) + '</option>'; }).join("");
+    el.setAttribute("aria-label", label);
+  }
+  fill("f-prod", t("dl.allProducts"), uniq(DL.map(function (d) { return d.product; })).sort().map(function (v) { return [v, PM_dict("audiences", v)]; }));
+  fill("f-type", t("dl.allTypes"), uniq(DL.map(function (d) { return d.type; })).map(function (v) { return [v, v]; }));
+  fill("f-lang", t("dl.allLangs"), uniq(DL.map(function (d) { return d.lang; })).filter(function (l) { return l !== "-"; }).map(function (v) { return [v, PM_dict("langLabels", v)]; }));
+  document.getElementById("f-sort").innerHTML =
+    '<option value="cat">' + esc(t("dl.sortCat")) + '</option>' +
+    '<option value="name">' + esc(t("dl.sortName")) + '</option>' +
+    '<option value="size">' + esc(t("dl.sortSize")) + '</option>';
+  document.getElementById("f-sort").setAttribute("aria-label", t("dl.sort"));
+
+  var typeColor = { PDF: "badge--info", ZIP: "badge--warn" };
+
+  function sizeToKb(s) {
+    var m = /([\d.,]+)\s*(KB|MB)/i.exec(s || "");
+    if (!m) return 0;
+    var n = parseFloat(m[1].replace(",", "."));
+    return m[2].toUpperCase() === "MB" ? n * 1024 : n;
+  }
+
+  function chips() {
+    var all = [["*", t("common.all"), DL.length]].concat(cats.map(function (c) {
+      return [c, PM_dict("categories", c), DL.filter(function (d) { return d.cat === c; }).length];
+    }));
+    document.getElementById("cat-filter").innerHTML = all.map(function (c) {
+      return '<button class="chip' + (c[0] === current ? " active" : "") + '" data-c="' + esc(c[0]) + '" aria-pressed="' + (c[0] === current) + '">' + esc(c[1]) + ' <b style="opacity:.6;font-weight:700">' + c[2] + '</b></button>';
+    }).join("");
+    document.querySelectorAll("#cat-filter .chip").forEach(function (b) {
+      b.addEventListener("click", function () { current = window.__dlCat = b.getAttribute("data-c"); chips(); render(); });
+    });
+  }
+
+  function rowHtml(d, i) {
+    var ext = d.type === "ZIP" ? ".zip" : ".pdf";
+    return '<a id="d-' + d.id + '" href="assets/downloads/' + d.file + ext + '" download class="flex items-center between" style="padding:15px 20px;' + (i ? "border-top:1px solid var(--line);" : "") + 'gap:14px">' +
+      '<span class="flex items-center gap" style="min-width:0">' +
+        '<span style="width:42px;height:42px;border-radius:10px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON(d.type === "ZIP" ? "layers" : "fileText") + '</span>' +
+        '<span style="min-width:0"><span style="font-weight:600;font-size:14.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(lc("downloads", d.id, "title", d.title)) + '</span>' +
+        '<span class="asset__meta" style="margin-top:3px"><span>' + PM_ICON("box") + esc(PM_dict("audiences", d.product)) + '</span><span class="badge ' + (typeColor[d.type] || "badge--grey") + '" style="font-size:10px;padding:2px 8px">' + esc(d.type) + '</span><span>' + esc(PM_fmtSize(d.size)) + '</span>' + (d.lang !== "-" ? '<span title="' + esc(t("common.docLang")) + '">' + PM_ICON("globe") + esc(PM_dict("langLabels", d.lang)) + '</span>' : '') + '</span></span>' +
+      '</span>' +
+      '<span class="btn btn--ghost btn--sm">' + PM_ICON("download") + esc(t("common.download")) + '</span></a>';
+  }
+
+  function render() {
+    var q = (document.getElementById("q").value || "").toLowerCase();
+    var fp = document.getElementById("f-prod").value, ft = document.getElementById("f-type").value, fl = document.getElementById("f-lang").value;
+    var sort = document.getElementById("f-sort").value;
+    var list = DL.filter(function (d) {
+      var title = lc("downloads", d.id, "title", d.title);
+      return (current === "*" || d.cat === current) &&
+             (!q || (d.title + " " + title + " " + d.product + " " + d.cat).toLowerCase().indexOf(q) > -1) &&
+             (!fp || d.product === fp) && (!ft || d.type === ft) && (!fl || d.lang === fl);
+    });
+    document.getElementById("rc").textContent = list.length === 1 ? t("dl.countOne") : t("dl.count", { n: PM_fmtNum(list.length) });
+
+    var html = "";
+    if (sort === "cat") {
+      var groups = {};
+      list.forEach(function (d) { (groups[d.cat] = groups[d.cat] || []).push(d); });
+      Object.keys(groups).forEach(function (g) {
+        html += '<div class="section-title" style="margin-top:18px"><h3>' + esc(PM_dict("categories", g)) + '</h3><div class="line"></div><span class="muted" style="font-size:12px">' + groups[g].length + '</span></div>';
+        html += '<div class="card"><div>';
+        groups[g].forEach(function (d, i) { html += rowHtml(d, i); });
+        html += '</div></div>';
+      });
+    } else {
+      var sorted = list.slice().sort(function (a, b) {
+        if (sort === "name") return lc("downloads", a.id, "title", a.title).localeCompare(lc("downloads", b.id, "title", b.title), PM_I18N.intl());
+        return sizeToKb(b.size) - sizeToKb(a.size);
+      });
+      html = '<div class="card"><div>' + sorted.map(function (d, i) { return rowHtml(d, i); }).join("") + '</div></div>';
+    }
+    document.getElementById("dl-list").innerHTML = html || '<div class="empty">' + PM_ICON("download") + '<h4>' + esc(t("dl.emptyTitle")) + '</h4><p>' + esc(t("dl.emptyText")) + '</p></div>';
+
+    var focus = PM_param("focus");
+    if (focus) { var el = document.getElementById("d-" + focus); if (el) { el.style.background = "var(--green-50)"; el.scrollIntoView({ behavior: "smooth", block: "center" }); } }
+  }
+
+  if (!window.__dlBound) {
+    window.__dlBound = true;
+    document.addEventListener("input", function (e) { if (e.target && e.target.id === "q") render(); });
+  }
+  ["f-prod", "f-type", "f-lang", "f-sort"].forEach(function (id) { document.getElementById(id).addEventListener("change", render); });
+  document.getElementById("f-reset").addEventListener("click", function () {
+    document.getElementById("q").value = "";
+    ["f-prod", "f-type", "f-lang"].forEach(function (id) { document.getElementById(id).value = ""; });
+    document.getElementById("f-sort").value = "cat";
+    current = window.__dlCat = "*";
+    chips(); render();
+  });
+  chips(); render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

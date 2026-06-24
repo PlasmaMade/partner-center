@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product - PlasmaMade Partner Center</title>
+<meta name="description" content="PlasmaMade-productinformatie: specificaties, voordelen en verkoopargumenten.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="product">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content" id="product-root"></main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  var idParam = PM_param("id");
+  var p = idParam ? D.products.find(function (x) { return x.id === idParam; }) : D.products[0];
+  if (!p) {
+    PM_notFound(document.getElementById("product-root"), {
+      title: t("product.notFoundTitle"), text: t("product.notFoundText"),
+      href: "products.html", back: t("product.back"), cta: t("product.allProducts")
+    });
+    return;
+  }
+  document.title = p.name + " - PlasmaMade Partner Center";
+  var tb = document.querySelector(".topbar__title h1"); if (tb) tb.textContent = p.name;
+  PM_RECENT.push("product", p.id);
+
+  // Gelokaliseerde velden
+  var L = {
+    type: lc("products", p.id, "type", p.type),
+    tagline: lc("products", p.id, "tagline", p.tagline),
+    description: lc("products", p.id, "description", p.description),
+    benefits: lc("products", p.id, "benefits", p.benefits),
+    applications: lc("products", p.id, "applications", p.applications),
+    installation: lc("products", p.id, "installation", p.installation),
+    maintenance: lc("products", p.id, "maintenance", p.maintenance),
+    salesArguments: lc("products", p.id, "salesArguments", p.salesArguments),
+    videoNote: p.videoNote ? lc("products", p.id, "videoNote", p.videoNote) : null
+  };
+  var objections = lc("sales", null, "objections", D.sales.objections);
+
+  // Gekoppelde downloads / video's / testdocumenten / beelden
+  var dls = (p.downloads || []).map(function (did) { return D.downloads.find(function (d) { return d.id === did; }); }).filter(Boolean);
+  var vids = (D.videos || []).filter(function (v) { return v.product === p.name; });
+  var tds = (D.testdocs || []).filter(function (td) { return td.product === p.name || td.product === p.family || td.product === "Merk algemeen"; });
+  var imgs = D.marketing.filter(function (m) { return m.product === p.name && (m.type === "render" || m.type === "foto" || m.type === "social"); });
+  var gallery = [{ img: p.image, contain: true }].concat(imgs.slice(0, 5).map(function (m) { return { img: m.img, contain: m.type === "render" }; }));
+
+  function specRows() {
+    return Object.keys(p.specs).map(function (k) {
+      return '<tr><td>' + esc(PM_dict("specLabels", k)) + '</td><td>' + esc(PM_dict("specValues", p.specs[k])) + '</td></tr>';
+    }).join("");
+  }
+  function iconList(items, ic) {
+    return '<ul class="icon-list">' + items.map(function (b) {
+      return '<li><span class="li-ico">' + PM_ICON(ic) + '</span><div><p style="color:var(--ink);font-size:14px">' + esc(b) + '</p></div></li>';
+    }).join("") + '</ul>';
+  }
+  function faq() {
+    return '<div class="accordion">' + objections.map(function (o) {
+      return '<div class="acc-item"><button class="acc-head" type="button" aria-expanded="false">' + esc(o.q.replace(/^"|"$/g, "")) + '<span class="ico">' + PM_ICON("plus") + '</span></button>' +
+        '<div class="acc-body"><div class="acc-body__inner">' + esc(o.a) + '</div></div></div>';
+    }).join("") + '</div>';
+  }
+  function dlList() {
+    if (!dls.length) return '<p class="muted">' + t("product.dlNone") + '</p>';
+    return '<div class="grid grid--2">' + dls.map(function (d) {
+      return '<a class="asset" href="assets/downloads/' + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") + '" download style="flex-direction:row;align-items:center;gap:14px;padding:14px 16px">' +
+        '<span style="width:42px;height:42px;border-radius:10px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON("fileText") + '</span>' +
+        '<span style="flex:1"><span style="font-weight:600;font-size:14px;display:block">' + esc(lc("downloads", d.id, "title", d.title)) + '</span><span class="muted" style="font-size:12px">' + esc(d.type) + ' · ' + esc(PM_fmtSize(d.size)) + ' · ' + esc(PM_dict("langLabels", d.lang)) + '</span></span>' +
+        '<span class="green">' + PM_ICON("download") + '</span></a>';
+    }).join("") + '</div>';
+  }
+  function videoBlock() {
+    if (!vids.length) return '<p class="muted">' + t("product.videoNone") + '</p>';
+    return '<div class="grid grid--2" style="align-items:start">' + vids.map(function (v) {
+      var poster = v.poster || (v.source === "youtube" && v.yt ? "https://img.youtube.com/vi/" + v.yt + "/hqdefault.jpg" : "");
+      return '<a class="asset" href="videos.html?focus=' + v.id + '">' +
+        '<div class="asset__thumb" style="aspect-ratio:16/9;background:#0d1117;position:relative"><img src="' + esc(poster) + '" alt="" loading="lazy" style="opacity:.9" onerror="this.style.display=\'none\'">' +
+        '<span style="position:absolute;inset:0;display:grid;place-items:center"><span style="width:52px;height:52px;border-radius:50%;background:rgba(19,165,56,.95);display:grid;place-items:center">' + PM_ICON("play") + '</span></span></div>' +
+        '<div class="asset__body"><span class="asset__cat">' + esc(PM_dict("topics", v.topic)) + '</span><h4>' + esc(lc("videos", v.id, "title", v.title)) + '</h4></div></a>';
+    }).join("") + '</div>';
+  }
+  function tdBlock() {
+    if (!tds.length) return '<p class="muted">' + esc(t("product.tdNone")) + '</p>';
+    return '<div class="grid grid--2" style="align-items:start">' + tds.map(function (td) {
+      return '<a class="asset" href="assets/testdocs/' + td.file + '.pdf" download style="flex-direction:row;align-items:center;gap:12px;padding:13px 15px">' +
+        '<span style="width:40px;height:40px;border-radius:10px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON("shieldCheck") + '</span>' +
+        '<span style="flex:1;min-width:0"><span style="font-weight:600;font-size:13.5px;display:block">' + esc(lc("testdocs", td.id, "title", td.title)) + '</span><span class="muted" style="font-size:12px">' + esc(PM_dict("categories", td.category)) + ' · ' + esc(PM_fmtSize(td.size)) + '</span></span>' +
+        '<span class="green">' + PM_ICON("download") + '</span></a>';
+    }).join("") + '</div>';
+  }
+
+  var relatedProducts = D.products.filter(function (x) { return x.id !== p.id && x.family === p.family; }).slice(0, 3);
+  var isFav = PM_FAVS.has("product", p.id);
+
+  document.getElementById("product-root").innerHTML =
+    '<a href="products.html" class="flex items-center gap green" style="font-weight:700;font-size:13px;margin-bottom:18px"><span style="display:inline-flex;transform:rotate(180deg)">' + PM_ICON("arrowRight") + '</span>' + esc(t("product.back")) + '</a>' +
+
+    '<div class="grid" style="grid-template-columns:0.95fr 1.05fr;gap:30px;align-items:start" id="phead">' +
+      '<div class="card" style="overflow:hidden">' +
+        '<div class="product-card__img" id="main-img" style="aspect-ratio:4/3;background:radial-gradient(circle at 50% 40%,#fff,#eef1f3)">' +
+          (p.flagship ? '<span class="product-card__flag"><span class="badge badge--green">' + esc(t("products.flagship")) + '</span></span>' : '') +
+          '<img src="' + p.image + '" alt="' + esc(p.name) + '" id="hero-img" onerror="this.onerror=null;this.src=\'assets/img/logo/logo-green.png\';this.style.objectFit=\'contain\';this.style.padding=\'30px\'"></div>' +
+        '<div style="display:flex;gap:8px;padding:14px;overflow-x:auto" id="thumbs"></div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="product-card__type" style="font-size:13px;margin-bottom:4px">' + esc(L.type) + ' · ' + esc(p.family) + '</div>' +
+        '<div class="flex items-center gap" style="gap:10px"><h2 style="font-size:30px;margin-bottom:8px">' + esc(p.name) + '</h2>' +
+          '<button type="button" class="fav-btn' + (isFav ? " on" : "") + '" id="fav-btn" aria-pressed="' + isFav + '" aria-label="' + esc(t(isFav ? "common.favRemove" : "common.favAdd")) + '">' + PM_ICON("star") + '</button></div>' +
+        '<p style="font-size:16px;color:var(--muted);margin-bottom:16px">' + esc(L.tagline) + '</p>' +
+        '<div class="pill-row" style="margin-bottom:18px">' + p.certifications.map(function (c) { return '<span class="badge badge--green-soft">' + esc(c) + '</span>'; }).join("") + '</div>' +
+        '<p style="margin-bottom:20px">' + esc(L.description) + '</p>' +
+        '<div class="grid grid--2" style="gap:10px;margin-bottom:22px" id="keyspecs"></div>' +
+        '<div class="flex gap wrap">' +
+          (function () { var sheet = dls.find(function (d) { return d.type !== "ZIP"; }); return sheet ? '<a class="btn btn--primary" href="assets/downloads/' + sheet.file + '.pdf" download>' + PM_ICON("download") + esc(t("product.dlSheet")) + '</a>' : ''; })() +
+          '<a class="btn btn--ghost" href="support.html?product=' + p.id + '">' + PM_ICON("mail") + esc(t("product.quote")) + '</a>' +
+          '<a class="btn btn--ghost" href="studio.html?template=product-card&product=' + p.id + '">' + PM_ICON("palette") + esc(t("product.makeMaterial")) + '</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div style="margin-top:34px"><div class="tabs" id="tabs" role="tablist">' +
+      '<button class="tab active" data-t="ov" role="tab" aria-selected="true">' + esc(t("product.tabOverview")) + '</button>' +
+      '<button class="tab" data-t="sp" role="tab" aria-selected="false">' + esc(t("product.tabSpecs")) + '</button>' +
+      '<button class="tab" data-t="to" role="tab" aria-selected="false">' + esc(t("product.tabApps")) + '</button>' +
+      '<button class="tab" data-t="in" role="tab" aria-selected="false">' + esc(t("product.tabInstall")) + '</button>' +
+      '<button class="tab" data-t="vk" role="tab" aria-selected="false">' + esc(t("product.tabSales")) + '</button>' +
+      '<button class="tab" data-t="dl" role="tab" aria-selected="false">' + esc(t("product.tabDl")) + '</button>' +
+      '<button class="tab" data-t="fq" role="tab" aria-selected="false">' + esc(t("product.tabFaq")) + '</button>' +
+    '</div>' +
+
+    '<div class="tab-panel active" data-p="ov"><div class="grid" style="grid-template-columns:1.3fr 1fr;gap:24px;align-items:start">' +
+      '<div class="card"><div class="card__body"><h3 style="margin-bottom:14px">' + esc(t("product.benefits")) + '</h3>' + iconList(L.benefits, "check") + '</div></div>' +
+      '<div class="card"><div class="card__body"><h3 style="margin-bottom:12px">' + esc(t("product.short")) + '</h3>' +
+        '<p class="muted" style="font-size:14px;margin-bottom:14px">' + esc(L.tagline) + '</p>' +
+        '<div class="pill-row">' + L.applications.slice(0, 6).map(function (a) { return '<span class="tag-static">' + esc(a) + '</span>'; }).join("") + '</div>' +
+        (L.videoNote ? '<div class="callout" style="margin-top:16px"><strong>' + esc(t("common.video")) + ':</strong> ' + esc(L.videoNote) + '</div>' : '') +
+      '</div></div>' +
+    '</div></div>' +
+
+    '<div class="tab-panel" data-p="sp"><div class="card"><div class="card__body" style="padding:0;overflow-x:auto"><table class="spec-table">' + specRows() + '</table></div></div></div>' +
+
+    '<div class="tab-panel" data-p="to"><div class="grid grid--2" style="align-items:start">' +
+      '<div class="card"><div class="card__body"><h3 style="margin-bottom:12px">' + esc(t("product.applications")) + '</h3><div class="pill-row">' + L.applications.map(function (a) { return '<span class="badge badge--grey">' + esc(a) + '</span>'; }).join("") + '</div></div></div>' +
+      '<div class="card"><div class="card__body"><h3 style="margin-bottom:12px">' + esc(t("product.audiences")) + '</h3><div class="pill-row">' + p.audiences.map(function (a) { return '<span class="badge badge--outline">' + esc(PM_dict("audiences", a)) + '</span>'; }).join("") + '</div></div></div>' +
+    '</div></div>' +
+
+    '<div class="tab-panel" data-p="in"><div class="grid grid--2" style="align-items:start">' +
+      '<div class="card"><div class="card__body"><h3 style="margin-bottom:10px">' + esc(t("product.installation")) + '</h3><p style="font-size:14px">' + esc(L.installation) + '</p></div></div>' +
+      '<div class="card"><div class="card__body"><h3 style="margin-bottom:10px">' + esc(t("product.maintenance")) + '</h3><p style="font-size:14px">' + esc(L.maintenance) + '</p></div></div>' +
+    '</div></div>' +
+
+    '<div class="tab-panel" data-p="vk"><div class="card"><div class="card__body"><h3 style="margin-bottom:14px">' + esc(t("product.salesArgs")) + '</h3>' + iconList(L.salesArguments, "target") +
+      '<div class="callout" style="margin-top:8px">' + t("product.salesTip") + '</div></div></div></div>' +
+
+    '<div class="tab-panel" data-p="dl"><div class="card"><div class="card__body">' +
+      '<h3 style="margin-bottom:14px">' + esc(t("product.downloads")) + '</h3>' + dlList() +
+      '<h3 style="margin:26px 0 12px">' + esc(t("product.videos")) + '</h3>' + videoBlock() +
+      '<h3 style="margin:26px 0 12px">' + esc(t("product.testdocs")) + '</h3>' + tdBlock() +
+      '</div></div></div>' +
+
+    '<div class="tab-panel" data-p="fq"><div class="card"><div class="card__body"><h3 style="margin-bottom:14px">' + esc(t("product.faq")) + '</h3>' + faq() + '</div></div></div>' +
+    '</div>' +
+
+    (relatedProducts.length ? '<div class="section-title"><h3>' + esc(t("product.related")) + '</h3><div class="line"></div></div><div class="grid grid--3" id="related"></div>' : '');
+
+  // Favoriet
+  document.getElementById("fav-btn").addEventListener("click", function () {
+    var nowFav = PM_FAVS.toggle("product", p.id);
+    this.classList.toggle("on", nowFav);
+    this.setAttribute("aria-pressed", String(nowFav));
+    this.setAttribute("aria-label", t(nowFav ? "common.favRemove" : "common.favAdd"));
+    PM_toast(t(nowFav ? "common.favAdded" : "common.favRemoved"));
+  });
+
+  // Kernspecificaties
+  var highlightKeys = ["Max. luchtdoorvoer", "Aansluiting", "Levensduur", "Garantie", "Geschikt voor", "Luchtcapaciteit", "Afmetingen", "Fijnstof reductie"];
+  var ks = highlightKeys.filter(function (k) { return p.specs[k]; }).slice(0, 4);
+  document.getElementById("keyspecs").innerHTML = ks.map(function (k) {
+    return '<div class="stat" style="padding:14px 16px"><div class="s-top"><span>' + esc(PM_dict("specLabels", k)) + '</span></div><div style="font-size:16px;font-weight:700;color:var(--black);margin-top:4px;line-height:1.25">' + esc(PM_dict("specValues", p.specs[k])) + '</div></div>';
+  }).join("");
+
+  // Miniaturen
+  document.getElementById("thumbs").innerHTML = gallery.map(function (g, i) {
+    return '<button class="thumb" type="button" data-src="' + esc(g.img) + '" aria-label="' + esc(t("product.thumbAria", { n: i + 1, name: p.name })) + '" style="width:62px;height:62px;border-radius:9px;border:2px solid ' + (i === 0 ? "var(--green)" : "var(--line)") + ';overflow:hidden;flex-shrink:0;background:#f8f9fa;padding:0">' +
+      '<img src="' + esc(g.img) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:' + (g.contain ? "contain" : "cover") + ';padding:' + (g.contain ? "6px" : "0") + '"></button>';
+  }).join("");
+  document.querySelectorAll(".thumb").forEach(function (th) {
+    th.addEventListener("click", function () {
+      document.getElementById("hero-img").src = th.getAttribute("data-src");
+      document.querySelectorAll(".thumb").forEach(function (x) { x.style.borderColor = "var(--line)"; });
+      th.style.borderColor = "var(--green)";
+    });
+  });
+
+  // Gerelateerd
+  var rel = document.getElementById("related");
+  if (rel) rel.innerHTML = relatedProducts.map(function (rp) {
+    return '<a class="product-card" href="product.html?id=' + rp.id + '">' +
+      '<div class="product-card__img"><img src="' + rp.image + '" alt="' + esc(rp.name) + '" loading="lazy" width="280" height="210"></div>' +
+      '<div class="product-card__body"><div class="product-card__type">' + esc(lc("products", rp.id, "type", rp.type)) + '</div><h3>' + esc(rp.name) + '</h3><p>' + esc(lc("products", rp.id, "tagline", rp.tagline)) + '</p></div></a>';
+  }).join("");
+
+  // Tabs
+  document.querySelectorAll("#tabs .tab").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      document.querySelectorAll("#tabs .tab").forEach(function (x) { x.classList.remove("active"); x.setAttribute("aria-selected", "false"); });
+      tab.classList.add("active"); tab.setAttribute("aria-selected", "true");
+      var key = tab.getAttribute("data-t");
+      document.querySelectorAll(".tab-panel").forEach(function (pan) { pan.classList.toggle("active", pan.getAttribute("data-p") === key); });
+    });
+  });
+  // Accordeon (FAQ)
+  if (!window.__accBound) {
+    window.__accBound = true;
+    document.addEventListener("click", function (e) {
+      var h = e.target.closest(".acc-head"); if (!h) return;
+      var open = h.parentElement.classList.toggle("open");
+      h.setAttribute("aria-expanded", String(open));
+    });
+  }
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

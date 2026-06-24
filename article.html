@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kennisbank - PlasmaMade Partner Center</title>
+<meta name="description" content="Kennisartikel uit de PlasmaMade kennisbank voor partners en installateurs.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="article">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content" id="art-root"></main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  var idParam = PM_param("id");
+  var a = idParam ? D.articles.find(function (x) { return x.id === idParam; }) : D.articles[0];
+  if (!a) {
+    PM_notFound(document.getElementById("art-root"), {
+      title: t("article.notFoundTitle"), text: t("article.notFoundText"),
+      href: "knowledge.html", back: t("article.back"), cta: t("article.toKb")
+    });
+    return;
+  }
+  var title = lc("articles", a.id, "title", a.title);
+  var body = lc("articles", a.id, "body", a.body);
+  document.title = title + " - PlasmaMade Partner Center";
+  var tb = document.querySelector(".topbar__title h1"); if (tb) tb.textContent = t("nav.knowledge");
+  PM_RECENT.push("article", a.id);
+
+  var related = (a.related || []).map(function (rid) { return D.articles.find(function (x) { return x.id === rid; }); }).filter(Boolean);
+  var vid = a.videoId ? (D.videos || []).find(function (v) { return v.id === a.videoId; }) : null;
+  var videoHtml = "";
+  if (vid) {
+    var vTitle = lc("videos", vid.id, "title", vid.title);
+    var vUrl = vid.url || (vid.yt ? "https://www.youtube.com/watch?v=" + vid.yt : "");
+    var embed = vid.source === "local" && vid.file
+      ? '<video src="' + esc(vid.file) + '" poster="' + esc(vid.poster || "") + '" controls playsinline preload="metadata" style="width:100%;height:100%"></video>'
+      : '<div style="height:100%;display:grid;place-items:center;text-align:center;color:#fff;padding:28px"><div><strong>' + esc(vTitle) + '</strong><p style="color:rgba(255,255,255,.76);margin:10px 0 16px">Bronlink beschikbaar zonder externe embed.</p>' + (vUrl ? '<a class="btn btn--sm" target="_blank" rel="noopener" href="' + esc(vUrl) + '">' + PM_ICON("external") + 'Open bronvideo</a>' : '') + '</div></div>';
+    videoHtml = '<div class="card" style="margin-top:22px;overflow:hidden"><div style="aspect-ratio:16/9;background:#000">' + embed + '</div>' +
+      '<div class="card__body" style="display:flex;align-items:center;gap:10px"><span class="badge badge--green-soft">' + esc(t("common.video")) + '</span><span style="font-weight:600;font-size:14px">' + esc(vTitle) + '</span><a href="videos.html" class="green" style="margin-left:auto;font-size:13px;font-weight:700">' + esc(t("article.allVideos")) + '</a></div></div>';
+  }
+  var mins = parseInt(a.read, 10) || 3;
+
+  document.getElementById("art-root").innerHTML =
+    '<a href="knowledge.html" class="flex items-center gap green" style="font-weight:700;font-size:13px;margin-bottom:18px"><span style="display:inline-flex;transform:rotate(180deg)">' + PM_ICON("arrowRight") + '</span>' + esc(t("article.back")) + '</a>' +
+    '<div class="grid" style="grid-template-columns:1fr 300px;gap:30px;align-items:start" id="art-cols">' +
+      '<div>' +
+        '<div class="flex items-center gap wrap" style="margin-bottom:16px;justify-content:space-between"><div class="flex items-center gap"><span class="kb-card__icon" style="width:52px;height:52px">' + PM_ICON(a.icon) + '</span>' +
+          '<div><span class="badge badge--green-soft">' + esc(PM_dict("categories", a.category)) + '</span><div class="muted" style="font-size:12px;margin-top:4px">' + esc(t("common.minRead", { n: mins })) + '</div></div></div>' +
+          '<button type="button" class="btn btn--ghost btn--sm" id="share-btn">' + PM_ICON("link") + esc(t("common.copyLink")) + '</button></div>' +
+        '<article class="article" style="max-width:none;margin:0" id="art-body"><h1>' + esc(title) + '</h1>' + body + '</article>' +
+        '<p class="muted" style="font-size:12px;margin-top:16px">' + esc(t("article.source")) + '</p>' +
+        videoHtml +
+        '<div class="card card--hover" style="margin-top:22px;background:var(--green-grad);border:none;color:#fff"><div class="card__body" style="display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:24px 28px">' +
+          '<div><h3 style="color:#fff;margin-bottom:3px">' + esc(t("article.tellTitle")) + '</h3><p style="opacity:.92;margin:0;font-size:14px">' + esc(t("article.tellText")) + '</p></div>' +
+          '<a href="studio.html" class="btn btn--white">' + esc(t("common.openStudio")) + '</a></div></div>' +
+      '</div>' +
+      '<aside>' +
+        '<div class="card" style="position:sticky;top:88px"><div class="card__body">' +
+          '<div id="art-toc"></div>' +
+          '<h4 style="margin-bottom:12px">' + esc(t("article.related")) + '</h4>' +
+          (related.length ? '<div class="grid" style="gap:10px">' + related.map(function (r) {
+            return '<a href="article.html?id=' + r.id + '" class="flex items-center gap" style="padding:10px;border-radius:10px;border:1px solid var(--line)">' +
+              '<span style="width:34px;height:34px;border-radius:8px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON(r.icon) + '</span>' +
+              '<span style="font-size:13px;font-weight:600;line-height:1.3">' + esc(lc("articles", r.id, "title", r.title)) + '</span></a>';
+          }).join("") + '</div>' : '<p class="muted" style="font-size:13px">' + esc(t("article.relatedNone")) + '</p>') +
+          '<div class="divider"></div>' +
+          '<h4 style="margin-bottom:10px">' + esc(t("article.more")) + '</h4>' +
+          '<a href="products.html" class="btn btn--ghost btn--sm btn--block" style="margin-bottom:8px">' + PM_ICON("box") + esc(t("nav.products")) + '</a>' +
+          '<a href="sales-tools.html" class="btn btn--ghost btn--sm btn--block">' + PM_ICON("target") + esc(t("nav.sales")) + '</a>' +
+        '</div></div>' +
+      '</aside>' +
+    '</div>';
+
+  // Inhoudsopgave uit h2-koppen
+  var heads = document.querySelectorAll("#art-body h2");
+  if (heads.length > 1) {
+    var toc = '<h4 style="margin-bottom:10px">' + esc(t("article.toc")) + '</h4><nav aria-label="' + esc(t("article.toc")) + '"><ol class="toc-list">';
+    heads.forEach(function (h, i) {
+      var hid = "sec-" + (i + 1);
+      h.id = hid;
+      toc += '<li><a href="#' + hid + '">' + esc(h.textContent) + '</a></li>';
+    });
+    toc += '</ol></nav><div class="divider"></div>';
+    document.getElementById("art-toc").innerHTML = toc;
+  }
+
+  // Deel/kopieer link
+  document.getElementById("share-btn").addEventListener("click", function () {
+    var url = location.origin + location.pathname + "?id=" + encodeURIComponent(a.id);
+    PM_copy(url, function () { PM_toast(t("common.linkCopied")); });
+  });
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

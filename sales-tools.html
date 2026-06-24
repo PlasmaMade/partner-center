@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verkooptools - PlasmaMade Partner Center</title>
+<meta name="description" content="Verkooptools, argumenten en presentaties om PlasmaMade te verkopen.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="sales">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div style="max-width:760px">
+          <h2 data-i18n="nav.sales">Verkooptools</h2>
+          <p data-i18n="sales.intro">Compacte, direct bruikbare hulpmiddelen voor klantgesprekken.</p>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="print-btn" style="margin-top:6px"></button>
+      </div>
+
+      <div class="tabs" id="tabs" role="tablist">
+        <button class="tab active" data-t="pitch" role="tab" aria-selected="true" data-i18n="sales.tabPitch">Pitches</button>
+        <button class="tab" data-t="args" role="tab" aria-selected="false" data-i18n="sales.tabArgs">Argumenten</button>
+        <button class="tab" data-t="seg" role="tab" aria-selected="false" data-i18n="sales.tabSeg">Per doelgroep</button>
+        <button class="tab" data-t="cmp" role="tab" aria-selected="false" data-i18n="sales.tabCmp">Vergelijking</button>
+        <button class="tab" data-t="calc" role="tab" aria-selected="false" data-i18n="sales.tabCalc">Besparingscalculator</button>
+        <button class="tab" data-t="obj" role="tab" aria-selected="false" data-i18n="sales.tabObj">Klantvragen</button>
+        <button class="tab" data-t="simple" role="tab" aria-selected="false" data-i18n="sales.tabSimple">Uitleg voor klanten</button>
+        <button class="tab" data-t="emails" role="tab" aria-selected="false" data-i18n="sales.tabEmails">Voorbeeldmails</button>
+      </div>
+
+      <!-- PITCHES -->
+      <div class="tab-panel active" data-p="pitch">
+        <div class="grid grid--2" style="margin-bottom:10px;align-items:start">
+          <div class="copy-block" style="border-left:4px solid var(--green)"><h5 data-i18n="sales.pitch10">Pitch van 10 seconden</h5><button class="copy-btn" type="button"></button><div class="txt" id="p10"></div></div>
+          <div class="copy-block" style="border-left:4px solid var(--green)"><h5 data-i18n="sales.pitch30">Pitch van 30 seconden</h5><button class="copy-btn" type="button"></button><div class="txt" id="p30"></div></div>
+        </div>
+        <div class="section-title"><h3 data-i18n="sales.perAudience">Pitch per doelgroep</h3><div class="line"></div></div>
+        <div class="grid grid--2" id="pitches" style="align-items:start"></div>
+      </div>
+
+      <!-- ARGUMENTEN -->
+      <div class="tab-panel" data-p="args">
+        <div class="grid" style="grid-template-columns:1.1fr 1fr;gap:24px;align-items:start">
+          <div class="card"><div class="card__body"><h3 style="margin-bottom:14px" data-i18n="sales.strongest">De sterkste argumenten</h3><ul class="icon-list" id="usps"></ul></div></div>
+          <div class="card"><div class="card__body"><h3 style="margin-bottom:14px" data-i18n="sales.sustainability">Duurzaamheidsargumenten</h3><ul class="icon-list" id="sustain"></ul></div></div>
+        </div>
+        <div class="section-title"><h3 data-i18n="sales.perProduct">Salesargumenten per product</h3><div class="line"></div></div>
+        <div class="grid grid--2" id="prodargs" style="align-items:start"></div>
+      </div>
+
+      <!-- PER DOELGROEP -->
+      <div class="tab-panel" data-p="seg">
+        <p class="muted" style="margin-bottom:16px" data-i18n="sales.segIntro">Argumentatie afgestemd op de omgeving van je klant.</p>
+        <div class="grid grid--2" id="segments" style="align-items:start"></div>
+      </div>
+
+      <!-- VERGELIJKING -->
+      <div class="tab-panel" data-p="cmp">
+        <p class="muted" style="margin-bottom:16px" data-i18n="sales.cmpIntro">PlasmaMade E-Filter versus een traditioneel koolstof-/vetfilter.</p>
+        <div style="overflow-x:auto"><table class="compare-table" id="cmp"></table></div>
+      </div>
+
+      <!-- BESPARINGSCALCULATOR -->
+      <div class="tab-panel" data-p="calc">
+        <p class="muted" style="margin-bottom:16px" data-i18n="sales.calcIntro">Laat in cijfers zien wat een klant bespaart door niet langer elk jaar een koolstoffilter te vervangen. Pas de waarden aan de situatie van je klant aan.</p>
+        <div class="calc">
+          <div class="card calc__inputs"><div class="card__body">
+            <h3 style="margin-bottom:4px" data-i18n="sales.calcInputsTitle">Situatie van de klant</h3>
+            <p class="muted" style="font-size:13px;margin-bottom:18px" data-i18n="sales.calcInputsSub">Schat de waarden in; alles is direct aanpasbaar.</p>
+            <div class="field">
+              <label for="c-price" data-i18n="sales.calcPrice">Prijs van een traditioneel koolstoffilter (EUR)</label>
+              <input type="number" id="c-price" min="0" step="1" value="35" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="c-freq" data-i18n="sales.calcFreq">Vervangingen per jaar</label>
+              <input type="number" id="c-freq" min="0" step="1" value="2" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="c-years" data-i18n="sales.calcYears">Vergelijkingsperiode (jaren)</label>
+              <input type="range" id="c-years" min="1" max="15" step="1" value="12" style="width:100%">
+              <div class="flex between" style="font-size:12px;color:var(--muted);margin-top:2px"><span>1</span><span id="c-years-val" style="font-weight:700;color:var(--green-700)">12 jaar</span><span>15</span></div>
+            </div>
+            <div class="field" style="margin-bottom:0">
+              <label for="c-units" data-i18n="sales.calcUnits">Aantal afzuigkappen / locaties</label>
+              <input type="number" id="c-units" min="1" step="1" value="1" inputmode="numeric">
+            </div>
+          </div></div>
+
+          <div class="card calc__out"><div class="card__body">
+            <div class="calc-hero">
+              <span class="calc-hero__label" data-i18n="sales.calcSaveLabel">Geschatte besparing over de periode</span>
+              <span class="calc-hero__val" id="c-save">EUR 0</span>
+              <span class="calc-hero__sub" id="c-save-sub"></span>
+            </div>
+            <div class="calc-bars">
+              <div class="calc-bar">
+                <div class="calc-bar__head"><span data-i18n="sales.calcTrad">Koolstoffilter (telkens vervangen)</span><b id="c-trad-amt">EUR 0</b></div>
+                <div class="calc-bar__track"><div class="calc-bar__fill calc-bar__fill--trad" id="c-trad-bar"></div></div>
+              </div>
+              <div class="calc-bar">
+                <div class="calc-bar__head"><span data-i18n="sales.calcPM">PlasmaMade E-Filter (10-15 jaar)</span><b id="c-pm-amt" class="green">EUR 0</b></div>
+                <div class="calc-bar__track"><div class="calc-bar__fill calc-bar__fill--pm" id="c-pm-bar"></div></div>
+              </div>
+            </div>
+            <div class="calc-stats">
+              <div class="calc-stat"><span class="calc-stat__v" id="c-waste">0</span><span class="calc-stat__l" data-i18n="sales.calcWaste">weggegooide filters vermeden</span></div>
+              <div class="calc-stat"><span class="calc-stat__v" id="c-replacements">0</span><span class="calc-stat__l" data-i18n="sales.calcReplacements">vervangbeurten uitgespaard</span></div>
+            </div>
+            <div class="copy-block" style="margin-top:18px;border-left:4px solid var(--green)">
+              <h5 data-i18n="sales.calcStatement">Klaar om te delen</h5>
+              <button class="copy-btn" type="button" id="c-copy"></button>
+              <div class="txt" id="c-statement"></div>
+            </div>
+            <p class="muted" style="font-size:11.5px;margin-top:12px" data-i18n="sales.calcDisclaimer">Indicatieve berekening op basis van vermeden vervangingskosten van koolstoffilters. De aanschafprijs van het E-Filter verschilt per uitvoering en dealer.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- KLANTVRAGEN -->
+      <div class="tab-panel" data-p="obj">
+        <p class="muted" style="margin-bottom:16px" data-i18n="sales.objIntro">Veelgehoorde klantvragen en bezwaren - met een sterk, eerlijk antwoord.</p>
+        <div class="accordion" id="obj"></div>
+      </div>
+
+      <!-- UITLEG VOOR KLANTEN -->
+      <div class="tab-panel" data-p="simple">
+        <p class="muted" style="margin-bottom:16px" data-i18n="sales.simpleIntro">Korte uitlegteksten in eenvoudige taal.</p>
+        <div class="grid grid--2" id="simple" style="align-items:start"></div>
+      </div>
+
+      <!-- VOORBEELDMAILS -->
+      <div class="tab-panel" data-p="emails">
+        <p class="muted" style="margin-bottom:16px" data-i18n="sales.emailsIntro">Kant-en-klare e-mails voor offertes, opvolging en introductie.</p>
+        <div class="grid grid--2" id="emails" style="align-items:start"></div>
+      </div>
+
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, S = D.sales, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.sales") + " - PlasmaMade Partner Center";
+
+  var pitches = lc("sales", null, "pitches", S.pitches);
+  var usps = lc("sales", null, "usps", S.usps);
+  var comparison = lc("sales", null, "comparison", S.comparison);
+  var objections = lc("sales", null, "objections", S.objections);
+  var productArgs = lc("sales", null, "productArgs", S.productArgs);
+  var segments = lc("sales", null, "segments", S.segments);
+  var sustainability = lc("sales", null, "sustainability", S.sustainability);
+  var simple = lc("sales", null, "simple", S.simple);
+  var emails = lc("sales", null, "emails", S.emails);
+
+  // Per-doelgroep iconen (volgorde gelijk aan data)
+  var segIcons = ["box", "building", "book", "shield", "globe"];
+
+  function copyBlock(title, text) {
+    return '<div class="copy-block"><h5>' + esc(title) + '</h5><button class="copy-btn" type="button">' + PM_ICON("copy") + esc(t("common.copy")) + '</button><div class="txt">' + esc(text) + '</div></div>';
+  }
+
+  document.getElementById("print-btn").innerHTML = PM_ICON("print") + esc(t("sales.print"));
+
+  document.getElementById("p10").textContent = lc("sales", null, "pitch10", S.pitch10);
+  document.getElementById("p30").textContent = lc("sales", null, "pitch30", S.pitch30);
+  document.querySelectorAll('[data-p="pitch"] .copy-btn').forEach(function (b) { b.innerHTML = PM_ICON("copy") + esc(t("common.copy")); });
+
+  document.getElementById("pitches").innerHTML = pitches.map(function (p) { return copyBlock(PM_dict("audiences", p.audience), p.text); }).join("");
+
+  document.getElementById("usps").innerHTML = usps.map(function (u) {
+    return '<li><span class="li-ico">' + PM_ICON("check") + '</span><div><p style="color:var(--ink);font-size:14px">' + esc(u) + '</p></div></li>';
+  }).join("");
+  document.getElementById("sustain").innerHTML = sustainability.map(function (u) {
+    return '<li><span class="li-ico">' + PM_ICON("leaf") + '</span><div><p style="color:var(--ink);font-size:14px">' + esc(u) + '</p></div></li>';
+  }).join("");
+
+  document.getElementById("prodargs").innerHTML = productArgs.map(function (pa) {
+    return '<div class="card"><div class="card__body"><div class="flex items-center gap" style="margin-bottom:10px"><span class="badge badge--green">' + esc(pa.product) + '</span></div><ul class="icon-list">' +
+      pa.args.map(function (a) { return '<li><span class="li-ico">' + PM_ICON("target") + '</span><div><p style="color:var(--ink);font-size:13.5px">' + esc(a) + '</p></div></li>'; }).join("") + '</ul></div></div>';
+  }).join("");
+
+  document.getElementById("segments").innerHTML = segments.map(function (s, i) {
+    return '<div class="card card--hover"><div class="card__body" style="display:flex;gap:14px">' +
+      '<span style="width:44px;height:44px;border-radius:11px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON(S.segments[i] ? S.segments[i].icon : segIcons[i % segIcons.length]) + '</span>' +
+      '<div><h4 style="margin-bottom:6px">' + esc(s.segment) + '</h4><p class="muted" style="font-size:13.5px">' + esc(s.text) + '</p></div></div></div>';
+  }).join("");
+
+  document.getElementById("cmp").innerHTML =
+    '<thead><tr><th>' + esc(t("sales.cmpFeature")) + '</th><th>' + esc(t("sales.cmpTrad")) + '</th><th class="hl">' + esc(t("sales.cmpPM")) + '</th></tr></thead><tbody>' +
+    comparison.map(function (r) { return '<tr><td class="feature">' + esc(r.feature) + '</td><td class="bad">' + esc(r.trad) + '</td><td class="good">' + esc(r.pm) + '</td></tr>'; }).join("") + '</tbody>';
+
+  document.getElementById("obj").innerHTML = objections.map(function (o) {
+    return '<div class="acc-item"><button class="acc-head" type="button" aria-expanded="false">' + esc(o.q.replace(/^"|"$/g, "")) + '<span class="ico">' + PM_ICON("plus") + '</span></button>' +
+      '<div class="acc-body"><div class="acc-body__inner">' + esc(o.a) + '</div></div></div>';
+  }).join("");
+
+  document.getElementById("simple").innerHTML = simple.map(function (s) { return copyBlock(s.title, s.text); }).join("");
+
+  // Voorbeeldmails
+  document.getElementById("emails").innerHTML = (emails || []).map(function (m) {
+    return '<div class="copy-block"><h5>' + esc(m.title) + '</h5><button class="copy-btn" type="button">' + PM_ICON("copy") + esc(t("common.copy")) + '</button>' +
+      '<div class="txt"><b>' + esc(t("sales.emailSubject")) + '</b> ' + esc(m.subject) + '\n\n' + esc(m.body) + '</div></div>';
+  }).join("");
+
+  // Besparingscalculator (TCO: vermeden vervangingskosten koolstoffilter)
+  function fmtEur(n) { return PM_fmtNum(Math.round(n), { style: "currency", currency: "EUR", maximumFractionDigits: 0 }); }
+  function calcUpdate() {
+    function num(id, def, min) {
+      var v = parseFloat((document.getElementById(id).value || "").replace(",", "."));
+      if (!isFinite(v) || v < (min == null ? 0 : min)) return def;
+      return v;
+    }
+    var price = num("c-price", 0), freq = num("c-freq", 0), years = Math.round(num("c-years", 12, 1)), units = Math.max(1, Math.round(num("c-units", 1, 1)));
+    var replacements = freq * years * units;
+    var tradCost = price * replacements;
+    var save = tradCost; // E-Filter is onderhoudsvrij -> vermeden vervangingskosten
+    var copyEl = document.getElementById("c-years-val");
+    if (copyEl) copyEl.textContent = t("sales.calcYearsVal", { n: years });
+    document.getElementById("c-save").textContent = fmtEur(save);
+    document.getElementById("c-save-sub").textContent = t("sales.calcSaveSub", { years: years, units: units });
+    document.getElementById("c-trad-amt").textContent = fmtEur(tradCost);
+    document.getElementById("c-pm-amt").textContent = fmtEur(0);
+    document.getElementById("c-trad-bar").style.width = tradCost > 0 ? "100%" : "0%";
+    document.getElementById("c-pm-bar").style.width = "2%";
+    document.getElementById("c-waste").textContent = PM_fmtNum(Math.round(replacements));
+    document.getElementById("c-replacements").textContent = PM_fmtNum(Math.round(replacements));
+    document.getElementById("c-statement").textContent =
+      t("sales.calcStatementText", { years: years, waste: PM_fmtNum(Math.round(replacements)), cost: fmtEur(tradCost) });
+  }
+  window.__pmCalcUpdate = calcUpdate;
+  document.getElementById("c-copy").innerHTML = PM_ICON("copy") + esc(t("common.copy"));
+  if (!window.__calcBound) {
+    window.__calcBound = true;
+    ["c-price", "c-freq", "c-years", "c-units"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("input", function () { if (window.__pmCalcUpdate) window.__pmCalcUpdate(); });
+    });
+  }
+  calcUpdate();
+
+  if (!window.__salesBound) {
+    window.__salesBound = true;
+    // Kopieren (gedelegeerd)
+    document.addEventListener("click", function (ev) {
+      var b = ev.target.closest(".copy-btn"); if (!b) return;
+      var block = b.closest(".copy-block");
+      var text = block ? block.querySelector(".txt").innerText : "";
+      PM_copy(text, function () {
+        if (block) block.classList.add("copied");
+        var orig = b.innerHTML; b.innerHTML = PM_ICON("check") + esc(window.PM_t("common.copied"));
+        PM_toast(window.PM_t("common.copiedClip"));
+        setTimeout(function () { if (block) block.classList.remove("copied"); b.innerHTML = orig; }, 1800);
+      });
+    });
+    // Accordeon
+    document.addEventListener("click", function (e) {
+      var h = e.target.closest(".acc-head"); if (!h) return;
+      var open = h.parentElement.classList.toggle("open");
+      h.setAttribute("aria-expanded", String(open));
+    });
+  }
+  // Tabs
+  document.querySelectorAll("#tabs .tab").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      document.querySelectorAll("#tabs .tab").forEach(function (x) { x.classList.remove("active"); x.setAttribute("aria-selected", "false"); });
+      tab.classList.add("active"); tab.setAttribute("aria-selected", "true");
+      var key = tab.getAttribute("data-t");
+      document.querySelectorAll(".tab-panel").forEach(function (pan) { pan.classList.toggle("active", pan.getAttribute("data-p") === key); });
+    });
+  });
+  // Print: toon alles
+  document.getElementById("print-btn").addEventListener("click", function () {
+    document.body.classList.add("print-all");
+    window.print();
+    setTimeout(function () { document.body.classList.remove("print-all"); }, 500);
+  });
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

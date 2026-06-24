@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketingmateriaal - PlasmaMade Partner Center</title>
+<meta name="description" content="Marketingmateriaal van PlasmaMade: beeld, social posts en campagnebeelden.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="marketing">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.marketing">Marketingmateriaal</h2>
+        <p data-i18n="mkt.intro">Alle merkassets op een plek. Filter op categorie, product, campagne, taal en bestandstype.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box" id="sb"></div>
+        <select class="select" id="f-cat"></select>
+        <select class="select" id="f-prod"></select>
+        <select class="select" id="f-camp"></select>
+        <select class="select" id="f-type"></select>
+        <select class="select" id="f-lang"></select>
+        <button type="button" class="btn btn--ghost btn--sm" id="f-reset" data-i18n="common.reset">Filters wissen</button>
+        <span class="result-count" id="rc" aria-live="polite"></span>
+      </div>
+
+      <section class="grid grid--auto" id="asset-grid"></section>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, M = D.marketing, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  document.title = t("nav.marketing") + " - PlasmaMade Partner Center";
+
+  document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("mkt.searchPh")) + '" aria-label="' + esc(t("mkt.searchPh")) + '">';
+
+  function uniq(arr) { return arr.filter(function (v, i) { return arr.indexOf(v) === i; }); }
+  function typeLabel(tp) { var key = "mkt.type." + tp; var v = t(key); return v === key ? tp : v; }
+
+  // Campagnekoppeling: welk materiaal hoort bij welke campagne
+  var assetCampaigns = {};
+  D.campaigns.forEach(function (c) {
+    (c.assets || []).forEach(function (aid) {
+      (assetCampaigns[aid] = assetCampaigns[aid] || []).push(c.id);
+    });
+  });
+
+  function fill(sel, label, pairs) {
+    var el = document.getElementById(sel);
+    el.innerHTML = '<option value="">' + esc(label) + '</option>' +
+      pairs.map(function (v) { return '<option value="' + esc(v[0]) + '">' + esc(v[1]) + '</option>'; }).join("");
+    el.setAttribute("aria-label", label);
+  }
+  fill("f-cat", t("mkt.allCats"), uniq(M.map(function (m) { return m.category; })).sort().map(function (c) { return [c, PM_dict("categories", c)]; }));
+  fill("f-prod", t("mkt.allProducts"), uniq(M.map(function (m) { return m.product; })).sort().map(function (p) { return [p, PM_dict("audiences", p)]; }));
+  fill("f-camp", t("mkt.allCampaigns"), D.campaigns.map(function (c) { return [c.id, lc("campaigns", c.id, "title", c.title)]; }));
+  fill("f-type", t("mkt.allTypes"), uniq(M.map(function (m) { return m.type; })).map(function (tp) { return [tp, typeLabel(tp)]; }));
+  fill("f-lang", t("mkt.allLangs"), uniq(M.map(function (m) { return m.lang; })).filter(function (l) { return l !== "-"; }).map(function (l) { return [l, l]; }));
+
+  function dlHref(m) {
+    if (m.file) {
+      var d = D.downloads.find(function (x) { return x.id === m.file; });
+      var ext = (d && d.type === "ZIP") ? ".zip" : ".pdf";
+      return "assets/downloads/" + m.file + ext;
+    }
+    return m.img;
+  }
+  function prodId(name) { var p = D.products.find(function (x) { return x.name === name; }); return p ? p.id : ""; }
+  function studioLink(m) {
+    var tpl = m.type === "render" ? "product-card"
+            : m.type === "banner" ? "banner"
+            : m.type === "foto" ? "campagne-getfresh"
+            : (m.category === "Social media" ? "social-getfresh" : "social-product");
+    var pid = prodId(m.product);
+    return "studio.html?template=" + tpl + (pid ? "&product=" + pid : "");
+  }
+
+  function render() {
+    var q = (document.getElementById("q").value || "").toLowerCase();
+    var fc = document.getElementById("f-cat").value, fp = document.getElementById("f-prod").value,
+        fcamp = document.getElementById("f-camp").value,
+        ft = document.getElementById("f-type").value, fl = document.getElementById("f-lang").value;
+    var list = M.filter(function (m) {
+      var title = lc("marketing", m.id, "title", m.title), desc = lc("marketing", m.id, "desc", m.desc || "");
+      return (!q || (m.title + " " + title + " " + m.category + " " + m.product + " " + (m.desc || "") + " " + desc).toLowerCase().indexOf(q) > -1) &&
+             (!fc || m.category === fc) && (!fp || m.product === fp) && (!ft || m.type === ft) && (!fl || m.lang === fl) &&
+             (!fcamp || (assetCampaigns[m.id] || []).indexOf(fcamp) > -1);
+    });
+    document.getElementById("rc").textContent = list.length === 1 ? t("mkt.countOne") : t("mkt.count", { n: PM_fmtNum(list.length) });
+    document.getElementById("asset-grid").innerHTML = list.map(function (m) {
+      var canStudio = ["social", "render", "foto", "banner"].indexOf(m.type) > -1;
+      var title = lc("marketing", m.id, "title", m.title);
+      return '<div class="asset" id="m-' + m.id + '">' +
+        '<div class="asset__thumb' + (m.type === "render" ? " contain" : "") + '"><img src="' + esc(m.img) + '" alt="' + esc(title) + '" loading="lazy">' +
+          '<span class="type-tag">' + esc(typeLabel(m.type)) + '</span>' +
+          (m.lang && m.lang !== "-" ? '<span class="lang-tag">' + esc(m.lang) + '</span>' : '') + '</div>' +
+        '<div class="asset__body"><span class="asset__cat">' + esc(PM_dict("categories", m.category)) + '</span><h4>' + esc(title) + '</h4>' +
+          '<p>' + esc(lc("marketing", m.id, "desc", m.desc || "")) + '</p>' +
+          '<div class="asset__meta"><span>' + PM_ICON("box") + esc(PM_dict("audiences", m.product)) + '</span></div></div>' +
+        '<div class="asset__foot">' +
+          (m.type === "video"
+            ? '<a class="btn btn--ghost btn--sm btn--block" href="mailto:sales@plasmamade.com?subject=' + encodeURIComponent(t("mkt.requestSubject") + " " + m.title) + '">' + PM_ICON("play") + esc(t("mkt.request")) + '</a>'
+            : '<a class="btn btn--primary btn--sm" href="' + esc(dlHref(m)) + '" download>' + PM_ICON("download") + esc(t("common.download")) + '</a>' +
+              (canStudio ? '<a class="btn btn--ghost btn--sm" href="' + esc(studioLink(m)) + '" title="' + esc(t("mkt.studioTitle")) + '">' + PM_ICON("palette") + esc(t("mkt.studio")) + '</a>' : '')) +
+        '</div></div>';
+    }).join("") || '<div class="empty" style="grid-column:1/-1">' + PM_ICON("image") + '<h4>' + esc(t("mkt.emptyTitle")) + '</h4><p>' + esc(t("mkt.emptyText")) + '</p></div>';
+
+    var focus = PM_param("focus");
+    if (focus) { var el = document.getElementById("m-" + focus); if (el) { el.style.outline = "2px solid var(--green)"; el.scrollIntoView({ behavior: "smooth", block: "center" }); } }
+  }
+
+  if (!window.__mktBound) {
+    window.__mktBound = true;
+    document.addEventListener("input", function (e) { if (e.target && e.target.id === "q") render(); });
+  }
+  ["f-cat", "f-prod", "f-camp", "f-type", "f-lang"].forEach(function (id) { document.getElementById(id).addEventListener("change", render); });
+  document.getElementById("f-reset").addEventListener("click", function () {
+    document.getElementById("q").value = "";
+    ["f-cat", "f-prod", "f-camp", "f-type", "f-lang"].forEach(function (id) { document.getElementById(id).value = ""; });
+    render();
+  });
+  render();
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

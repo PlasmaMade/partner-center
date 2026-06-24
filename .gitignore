@@ -1,0 +1,25 @@
+# Local runtime files
+.server-pid
+.server-*-pid
+.server-out.log
+.server-err.log
+*.log
+
+# Local QA and tool state
+.qa-*/
+.qa-sync/
+.agents/
+.codex/
+.netlify/
+partner-center/
+
+# Dependencies and local env
+node_modules/
+.env
+.env.*
+!.env.example
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini

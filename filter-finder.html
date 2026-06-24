@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filter Finder - PlasmaMade Partner Center</title>
+<meta name="description" content="Vind het juiste PlasmaMade E-Filter voor elke afzuigkap met de Filter Finder.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="finder">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <div class="page-head">
+        <h2 data-i18n="nav.finder">Filter Finder</h2>
+        <p data-i18n="finder.intro">Beantwoord een paar korte vragen en ontdek welk PlasmaMade-filter het beste past bij de situatie van je klant - inclusief onderbouwing en doorverwijzing naar de productpagina.</p>
+      </div>
+
+      <div class="finder" id="finder"></div>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc, icon = window.PM_ICON;
+  document.title = t("nav.finder") + " - PlasmaMade Partner Center";
+
+  // ---- Beslisboom (verwijst naar echte product-id's) ----
+  var TREE = {
+    start: "q_where",
+    nodes: {
+      q_where: {
+        q: "finder.q.where",
+        opts: [
+          { id: "kitchen", ic: "box",      next: "q_hood" },
+          { id: "pro",     ic: "building", next: "q_room" },
+          { id: "desk",    ic: "smartphone", result: "table-air-cleaner" }
+        ]
+      },
+      q_hood: {
+        q: "finder.q.hood",
+        opts: [
+          { id: "design",   ic: "wind",   result: "guc1223" },
+          { id: "compact",  ic: "refresh", result: "guc1212" },
+          { id: "downdraft", ic: "layers", result: "guc1323" },
+          { id: "unknown",  ic: "info",   result: "guc1223" }
+        ]
+      },
+      q_room: {
+        q: "finder.q.room",
+        opts: [
+          { id: "small",  ic: "building", result: "airclean-ultrafine" },
+          { id: "medium", ic: "building", result: "airclean-ultrafine" },
+          { id: "large",  ic: "building", result: "airclean-ultrafine", units: true }
+        ]
+      }
+    }
+  };
+
+  // Persoonlijke alternatieven per advies (zelfde familie of logische tweede keuze)
+  var ALT = {
+    "guc1223": "guc1323",
+    "guc1212": "guc1223",
+    "guc1323": "guc1223",
+    "airclean-ultrafine": "table-air-cleaner",
+    "table-air-cleaner": "airclean-ultrafine"
+  };
+
+  // Belangrijkste specs om te tonen per product
+  var KEY_SPECS = {
+    "guc1223": ["Max. luchtdoorvoer", "Aansluiting", "Levensduur", "Garantie"],
+    "guc1212": ["Max. luchtdoorvoer", "Aansluiting", "Levensduur", "Garantie"],
+    "guc1323": ["Max. luchtdoorvoer", "Aansluiting", "Levensduur", "Garantie"],
+    "airclean-ultrafine": ["Geschikt voor", "Luchtcapaciteit", "Fijnstof reductie", "Ziekteverwekkers"],
+    "table-air-cleaner": ["Type", "Toepassing", "Technologie", "Onderhoud"]
+  };
+
+  var path = [];      // bezochte nodes
+  var answers = [];   // gekozen opties {nodeId, optId}
+
+  var root = document.getElementById("finder");
+
+  function product(id) { return D.products.find(function (p) { return p.id === id; }); }
+
+  function progressBar() {
+    // Elke vraagroute telt maximaal 2 vragen; de huidige (nog onbeantwoorde) vraag is path.length + 1
+    var total = 2;
+    var step = Math.min(path.length + 1, total);
+    var dots = "";
+    for (var i = 1; i <= total; i++) {
+      dots += '<span class="finder-dot' + (i <= step ? " on" : "") + '"></span>';
+    }
+    return '<div class="finder-progress"><span class="finder-step">' + esc(t("finder.step", { n: step, total: total })) +
+      '</span><div class="finder-dots">' + dots + '</div></div>';
+  }
+
+  function renderQuestion(nodeId) {
+    var node = TREE.nodes[nodeId];
+    var canBack = path.length > 0;
+    var html = '<div class="finder-card">' + progressBar() +
+      '<h3 class="finder-q">' + esc(t(node.q)) + '</h3>' +
+      '<div class="finder-opts">';
+    node.opts.forEach(function (o) {
+      html += '<button type="button" class="finder-opt" data-node="' + esc(nodeId) + '" data-opt="' + esc(o.id) + '">' +
+        '<span class="finder-opt__ic">' + icon(o.ic) + '</span>' +
+        '<span class="finder-opt__txt"><span class="finder-opt__t">' + esc(t("finder.opt." + o.id + ".t")) + '</span>' +
+        '<span class="finder-opt__d">' + esc(t("finder.opt." + o.id + ".d")) + '</span></span>' +
+        '<span class="finder-opt__arr">' + icon("arrowRight") + '</span></button>';
+    });
+    html += '</div>';
+    html += '<div class="finder-foot">' +
+      (canBack ? '<button type="button" class="btn btn--ghost btn--sm" id="finder-back"><span style="display:inline-flex;transform:rotate(180deg)">' + icon("arrowRight") + '</span>' + esc(t("finder.back")) + '</button>' : '<span></span>') +
+      '<a class="finder-help" href="support.html">' + icon("lifebuoy") + esc(t("finder.help")) + '</a>' +
+      '</div></div>';
+    root.innerHTML = html;
+
+    root.querySelectorAll(".finder-opt").forEach(function (b) {
+      b.addEventListener("click", function () { choose(nodeId, b.getAttribute("data-opt")); });
+    });
+    var back = document.getElementById("finder-back");
+    if (back) back.addEventListener("click", goBack);
+    root.querySelector(".finder-card").animate
+      ? root.querySelector(".finder-card").animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 280, easing: "cubic-bezier(.16,1,.3,1)" })
+      : null;
+  }
+
+  function choose(nodeId, optId) {
+    var node = TREE.nodes[nodeId];
+    var opt = node.opts.find(function (o) { return o.id === optId; });
+    if (!opt) return;
+    path.push(nodeId);
+    answers.push({ nodeId: nodeId, optId: optId, units: !!opt.units });
+    if (opt.result) { renderResult(opt.result, opt); }
+    else if (opt.next) { renderQuestion(opt.next); }
+    if (window.PM_track) window.PM_track("finder", nodeId + ":" + optId);
+  }
+
+  function goBack() {
+    if (!path.length) return;
+    answers.pop();
+    var prev = path.pop();
+    renderQuestion(prev);
+  }
+
+  function specRow(id) {
+    var p = product(id);
+    var keys = (KEY_SPECS[id] || []).filter(function (k) { return p.specs[k]; });
+    return keys.map(function (k) {
+      return '<div class="finder-spec"><span class="finder-spec__k">' + esc(PM_dict("specLabels", k)) + '</span>' +
+        '<span class="finder-spec__v">' + esc(PM_dict("specValues", p.specs[k])) + '</span></div>';
+    }).join("");
+  }
+
+  function renderResult(id, opt) {
+    var p = product(id);
+    if (!p) { renderQuestion(TREE.start); return; }
+    var tagline = lc("products", p.id, "type", p.type);
+    var sheet = (p.downloads || []).map(function (d) { return D.downloads.find(function (x) { return x.id === d; }); })
+      .filter(Boolean).find(function (d) { return d.type !== "ZIP"; });
+    var reasons = [1, 2, 3].map(function (n) { return t("finder.reason." + id + "." + n); })
+      .filter(function (r) { return r && r.indexOf("finder.reason.") !== 0; });
+    var altId = ALT[id];
+    var alt = altId ? product(altId) : null;
+    var unitsNote = opt && opt.units ? '<div class="callout" style="margin-top:4px">' + esc(t("finder.unitsNote")) + '</div>' : '';
+
+    var html = '<div class="finder-card finder-result">' +
+      '<div class="finder-result__badge"><span class="badge badge--green">' + icon("check") + esc(t("finder.result.match")) + '</span></div>' +
+      '<div class="finder-result__head">' +
+        '<div class="finder-result__img">' + (p.flagship ? '<span class="product-card__flag"><span class="badge badge--green">' + esc(t("products.flagship")) + '</span></span>' : '') +
+          '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" onerror="this.onerror=null;this.src=\'assets/img/logo/logo-green.png\';this.style.padding=\'24px\'"></div>' +
+        '<div class="finder-result__body">' +
+          '<span class="finder-result__eyebrow">' + esc(t("finder.result.advice")) + '</span>' +
+          '<h3>' + esc(p.name) + '</h3>' +
+          '<p class="finder-result__tag">' + esc(lc("products", p.id, "tagline", p.tagline)) + '</p>' +
+          '<div class="pill-row" style="margin:12px 0 16px">' + p.certifications.map(function (c) { return '<span class="badge badge--green-soft">' + esc(c) + '</span>'; }).join("") + '</div>' +
+          '<div class="finder-cta">' +
+            '<a class="btn btn--primary" href="product.html?id=' + esc(p.id) + '">' + icon("box") + esc(t("finder.result.cta")) + '</a>' +
+            (sheet ? '<a class="btn btn--ghost" href="assets/downloads/' + esc(sheet.file) + '.pdf" download>' + icon("download") + esc(t("finder.result.sheet")) + '</a>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      unitsNote +
+      '<div class="finder-result__grid">' +
+        '<div class="finder-block"><h4>' + icon("check") + esc(t("finder.result.why")) + '</h4><ul class="finder-reasons">' +
+          reasons.map(function (r) { return '<li>' + icon("check") + '<span>' + esc(r) + '</span></li>'; }).join("") + '</ul></div>' +
+        '<div class="finder-block"><h4>' + icon("list") + esc(t("finder.result.specs")) + '</h4><div class="finder-specs">' + specRow(id) + '</div></div>' +
+      '</div>' +
+      (alt ? '<div class="finder-alt"><span class="finder-alt__label">' + esc(t("finder.result.alt")) + '</span>' +
+        '<a class="finder-alt__card" href="product.html?id=' + esc(alt.id) + '">' +
+          '<span class="finder-alt__img"><img src="' + esc(alt.image) + '" alt="" onerror="this.style.opacity=0"></span>' +
+          '<span class="finder-alt__txt"><b>' + esc(alt.name) + '</b><span>' + esc(lc("products", alt.id, "type", alt.type)) + '</span></span>' +
+          '<span class="green">' + icon("arrowRight") + '</span></a></div>' : '') +
+      '<div class="finder-foot">' +
+        '<button type="button" class="btn btn--ghost btn--sm" id="finder-restart">' + icon("refresh") + esc(t("finder.restart")) + '</button>' +
+        '<a class="finder-help" href="support.html?product=' + esc(p.id) + '">' + icon("mail") + esc(t("finder.result.contact")) + '</a>' +
+      '</div>' +
+    '</div>';
+    root.innerHTML = html;
+    var rb = document.getElementById("finder-restart");
+    if (rb) rb.addEventListener("click", restart);
+    var card = root.querySelector(".finder-card");
+    if (card && card.animate) card.animate([{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }], { duration: 320, easing: "cubic-bezier(.16,1,.3,1)" });
+    if (window.PM_track) window.PM_track("finder-result", id);
+  }
+
+  function restart() { path = []; answers = []; renderQuestion(TREE.start); }
+
+  renderQuestion(TREE.start);
+};
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

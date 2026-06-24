@@ -1,0 +1,9 @@
+{
+  "name": "plasmamade-partner-center",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static PlasmaMade Partner Center with Netlify Functions state sync.",
+  "dependencies": {
+    "@netlify/blobs": "^8.2.0"
+  }
+}

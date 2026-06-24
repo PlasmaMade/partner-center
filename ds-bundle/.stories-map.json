@@ -1,0 +1,247 @@
+{
+  "global": "PlasmaMade",
+  "pkg": "@plasmamade/ds",
+  "pkgDir": "C:\\My Web Sites\\plasma web\\www.plasmamade.com - kopie - kopie\\.design-sync\\ds-src",
+  "extraEntries": [],
+  "exported": [
+    "Accordion",
+    "AssetCard",
+    "Avatar",
+    "Badge",
+    "Button",
+    "Callout",
+    "CampaignCard",
+    "Card",
+    "Chip",
+    "CompareTable",
+    "EmptyState",
+    "Field",
+    "Hero",
+    "IconButton",
+    "KbCard",
+    "NewsItem",
+    "ProductCard",
+    "SearchBox",
+    "SectionTitle",
+    "Select",
+    "SpecTable",
+    "StatCard",
+    "Switch",
+    "Tabs",
+    "Tile",
+    "Toast"
+  ],
+  "storybookStatic": null,
+  "keyRecipe": 7,
+  "cfgSliceGlobal": "a139d95ad8ab0a8ba08b44a258c54602e36090304087f48fe923c61aa5a8ae08",
+  "components": [
+    {
+      "name": "Accordion",
+      "group": "navigation",
+      "srcSha": null,
+      "sourceKey": "9e620c089decc19f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "AssetCard",
+      "group": "catalog",
+      "srcSha": null,
+      "sourceKey": "cde0180f03b343a2",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Avatar",
+      "group": "media",
+      "srcSha": null,
+      "sourceKey": "880b93da18448d33",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Badge",
+      "group": "feedback",
+      "srcSha": null,
+      "sourceKey": "2d148038dc954b80",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Button",
+      "group": "actions",
+      "srcSha": null,
+      "sourceKey": "cd1fe160d7c4bff7",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Callout",
+      "group": "feedback",
+      "srcSha": null,
+      "sourceKey": "6280b89b898e9f00",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CampaignCard",
+      "group": "catalog",
+      "srcSha": null,
+      "sourceKey": "1b312a4a17c86a46",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Card",
+      "group": "surfaces",
+      "srcSha": null,
+      "sourceKey": "b221b062ba2f6213",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Chip",
+      "group": "actions",
+      "srcSha": null,
+      "sourceKey": "1fc924411e269002",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "CompareTable",
+      "group": "data",
+      "srcSha": null,
+      "sourceKey": "505a59defbe6967b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "EmptyState",
+      "group": "feedback",
+      "srcSha": null,
+      "sourceKey": "b0dacee5e4e5c4a8",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Field",
+      "group": "forms",
+      "srcSha": null,
+      "sourceKey": "5b53c07b19c42958",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Hero",
+      "group": "surfaces",
+      "srcSha": null,
+      "sourceKey": "74435e84ef46e62b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "IconButton",
+      "group": "actions",
+      "srcSha": null,
+      "sourceKey": "312e55e60d6938c0",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "KbCard",
+      "group": "catalog",
+      "srcSha": null,
+      "sourceKey": "5ad4897315636b6b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "NewsItem",
+      "group": "catalog",
+      "srcSha": null,
+      "sourceKey": "0589bb9b36a8367b",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "ProductCard",
+      "group": "catalog",
+      "srcSha": null,
+      "sourceKey": "684c8ab550049b47",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SearchBox",
+      "group": "forms",
+      "srcSha": null,
+      "sourceKey": "e68dc6dec5ea4e34",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SectionTitle",
+      "group": "navigation",
+      "srcSha": null,
+      "sourceKey": "e5a2aad4c9cdde0f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Select",
+      "group": "forms",
+      "srcSha": null,
+      "sourceKey": "78d0e78c337e7134",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "SpecTable",
+      "group": "data",
+      "srcSha": null,
+      "sourceKey": "a3784045ddb1c7db",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "StatCard",
+      "group": "surfaces",
+      "srcSha": null,
+      "sourceKey": "3a07ccd8e71da3bf",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Switch",
+      "group": "forms",
+      "srcSha": null,
+      "sourceKey": "40cafff7b00f873f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Tabs",
+      "group": "navigation",
+      "srcSha": null,
+      "sourceKey": "91d8675fdc475cb0",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Tile",
+      "group": "surfaces",
+      "srcSha": null,
+      "sourceKey": "2a85240378de0b08",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    },
+    {
+      "name": "Toast",
+      "group": "feedback",
+      "srcSha": null,
+      "sourceKey": "e5d8bb6f1e4a520f",
+      "cfgSlice": "5ff899b099eb6923833804cda955efdd69101524bec86f67dac5537cd81802e8",
+      "stories": []
+    }
+  ]
+}
