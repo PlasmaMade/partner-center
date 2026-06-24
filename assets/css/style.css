@@ -1095,8 +1095,8 @@ body[data-pm-spacing=wide] .card__body{padding:26px}
   .hero{flex-direction:column;align-items:flex-start;text-align:left;padding:28px}
   .hero__media{width:100%;justify-items:center}
   .portal-hero{grid-template-columns:1fr}
-  .portal-hero__media{border-left:0;border-top:1px solid var(--line);min-height:230px}
-  .portal-hero__product{right:22px;width:min(72%,330px)}
+  .portal-hero__media{border-left:0;border-top:1px solid var(--line);min-height:260px;display:grid;place-items:end center;overflow:hidden;padding:18px 22px 0}
+  .portal-hero__product{position:relative;right:auto;bottom:auto;width:min(66%,330px);max-height:300px}
   .portal-hero__butterflies{left:24px;right:auto;width:145px}
   .login-wrap{grid-template-columns:1fr}
   .login-side{display:none}
@@ -1117,8 +1117,8 @@ body[data-pm-spacing=wide] .card__body{padding:26px}
   .hero__txt h2{font-size:25px}
   .portal-hero h2{font-size:26px}
   .portal-hero__copy{padding:24px 20px 26px}
-  .portal-hero__media{min-height:190px}
-  .portal-hero__product{right:12px;bottom:10px;width:min(82%,280px)}
+  .portal-hero__media{min-height:245px;display:grid;place-items:end center;overflow:hidden;padding:16px 16px 0}
+  .portal-hero__product{position:relative;right:auto;bottom:auto;width:min(78%,260px);max-height:245px}
   .portal-hero__butterflies{width:112px;top:14px;left:16px}
   .portal-actions{grid-template-columns:1fr}
   .portal-action{min-height:84px;padding:15px}
