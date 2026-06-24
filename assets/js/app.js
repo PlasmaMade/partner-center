@@ -150,12 +150,81 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
+  const PORTAL_BUILD_VERSION = "20260624-github-pages-4";
+  const PORTAL_BUILD_KEY = "pm_portal_build_version";
+  const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
+  const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
+  const PRESENTATION_RESET_KEYS = [
+    "pm_cms_overrides",
+    "pm_page_edits",
+    "pm_portal_settings",
+    "pm_standard_phrases",
+    "pm_partner_groups",
+    "pm_media_library",
+    "pm_custom_pages"
+  ];
   function isCentralKey(key) { return CENTRAL_STATE_KEYS.indexOf(key) > -1; }
   function syncEndpoint() {
     try { return String(window.PM_REMOTE_SYNC_ENDPOINT || "").trim(); } catch (e) { return ""; }
   }
   function isSyncOnline() { return !!syncEndpoint() && /^https?:$/i.test(location.protocol) && typeof fetch === "function"; }
   function isLocalDevHost() { return /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname || ""); }
+  function isGitHubPagesHost() { return /github\.io$/i.test(location.hostname || ""); }
+  function portalArchivePresentation(keys, reason, fromVersion) {
+    try {
+      var values = {};
+      (keys || []).forEach(function (key) {
+        var raw = localStorage.getItem(key);
+        if (raw != null) values[key] = raw;
+      });
+      if (!Object.keys(values).length) return null;
+      var rows = readStore(PORTAL_ARCHIVE_KEY, []);
+      var row = {
+        id: "portal_" + Date.now().toString(36),
+        reason: reason || "presentation_reset",
+        fromVersion: fromVersion || "",
+        toVersion: PORTAL_BUILD_VERSION,
+        createdAt: new Date().toISOString(),
+        keys: Object.keys(values),
+        values: values
+      };
+      rows.unshift(row);
+      localStorage.setItem(PORTAL_ARCHIVE_KEY, JSON.stringify(rows.slice(0, 5)));
+      return row;
+    } catch (e) { return null; }
+  }
+  function portalResetPresentation(reason) {
+    try {
+      var keys = PRESENTATION_RESET_KEYS.filter(function (key) { return localStorage.getItem(key) != null; });
+      if (keys.length) portalArchivePresentation(keys, reason || "manual_reset", localStorage.getItem(PORTAL_BUILD_KEY) || "");
+      keys.forEach(function (key) { localStorage.removeItem(key); });
+      localStorage.removeItem(SYNC_DIRTY_KEY);
+      localStorage.setItem(PORTAL_LAST_RESET_KEY, JSON.stringify({
+        from: localStorage.getItem(PORTAL_BUILD_KEY) || "",
+        to: PORTAL_BUILD_VERSION,
+        at: new Date().toISOString(),
+        resetKeys: keys
+      }));
+      localStorage.setItem(PORTAL_BUILD_KEY, PORTAL_BUILD_VERSION);
+      return keys;
+    } catch (e) { return []; }
+  }
+  function migratePortalBuild() {
+    try {
+      var previous = localStorage.getItem(PORTAL_BUILD_KEY) || "";
+      if (previous === PORTAL_BUILD_VERSION) return;
+      if (isGitHubPagesHost() && !isLocalDevHost()) portalResetPresentation("github_pages_build_migration");
+      else localStorage.setItem(PORTAL_BUILD_KEY, PORTAL_BUILD_VERSION);
+    } catch (e) {}
+  }
+  migratePortalBuild();
+  window.PM_PORTAL_BUILD = {
+    version: PORTAL_BUILD_VERSION,
+    resetKeys: PRESENTATION_RESET_KEYS.slice(),
+    lastReset: function () { return readStore(PORTAL_LAST_RESET_KEY, null); },
+    archives: function () { return readStore(PORTAL_ARCHIVE_KEY, []); },
+    resetPresentation: function () { var keys = portalResetPresentation("admin_manual_reset"); if (location && location.reload) location.reload(); return keys; }
+  };
   function syncActor() {
     try {
       var u = (typeof getUser === "function") ? getUser() : null;
@@ -556,6 +625,7 @@
       var nextRole = internal ? "internal" : normalizeRole(payload.partnerType || payload.role || "dealer", payload.email);
       var existing = this.findByEmail(payload.email);
       var list = this.list();
+      var needsNotification = !internal && !(existing && existing.status !== "approved" && existing.notificationLoggedAt);
       if (existing && existing.status !== "approved") {
         Object.assign(existing, payload, {
           status: internal ? "approved" : "pending",
@@ -579,8 +649,10 @@
         });
         list.unshift(existing);
       }
+      if (needsNotification && existing.status === "pending") existing.notificationLoggedAt = now;
       writeStore(REQUEST_KEY, list.slice(0, 300));
       if (window.PM_AUDIT) PM_AUDIT.add("account_request", existing.email, { status: existing.status, company: existing.company || "" });
+      if (needsNotification && existing.status === "pending" && window.PM_MAIL && PM_MAIL.logRequest) PM_MAIL.logRequest(existing);
       if (internal) {
         if (window.PM_ADMINS) PM_ADMINS.grant(existing.email, { source: "internal_account_request", name: requestName(existing) });
         if (window.PM_PARTNERS) {
@@ -674,8 +746,75 @@
       "PlasmaMade"
     ].join("\n");
   }
+  function adminPortalUrl() {
+    try {
+      var u = new URL("admin.html#account-requests", location.href);
+      return u.href;
+    } catch (e) {
+      return "admin.html#account-requests";
+    }
+  }
+  function requestMailSubject(req) {
+    var who = (req && (req.company || requestName(req))) || "nieuwe partner";
+    return "Nieuwe Partner Center aanvraag - " + who;
+  }
+  function requestMailText(req) {
+    req = req || {};
+    return [
+      "Nieuwe aanvraag voor het PlasmaMade Partner Center.",
+      "",
+      "Naam: " + requestName(req),
+      "Bedrijf: " + (req.company || "-"),
+      "E-mail: " + (req.email || "-"),
+      "Telefoon: " + (req.phone || "-"),
+      "Functie: " + (req.functionTitle || "-"),
+      "Land/regio: " + (req.country || "-"),
+      "Partnertype: " + (req.partnerType || req.role || "-"),
+      "Website: " + (req.website || "-"),
+      "",
+      "Toelichting:",
+      req.reason || "-",
+      "",
+      "Verwerken in de adminomgeving:",
+      adminPortalUrl(),
+      "",
+      "Let op: GitHub Pages is statisch. Deze mailmelding zorgt dat PlasmaMade de aanvraag ook buiten de browseropslag ontvangt."
+    ].join("\n");
+  }
   window.PM_MAIL = {
     list: function () { return readStore(MAIL_KEY, []); },
+    requestBody: requestMailText,
+    requestHref: function (req) {
+      return "mailto:" + encodeURIComponent("bjonkeren@plasmamade.com") +
+        "?cc=" + encodeURIComponent("sales@plasmamade.com") +
+        "&subject=" + encodeURIComponent(requestMailSubject(req)) +
+        "&body=" + encodeURIComponent(requestMailText(req));
+    },
+    logRequest: function (req) {
+      if (!req || !req.email) return null;
+      var row = {
+        id: makeId("mail"),
+        type: "account_request_notification",
+        to: "bjonkeren@plasmamade.com",
+        cc: "sales@plasmamade.com",
+        subject: requestMailSubject(req),
+        body: requestMailText(req),
+        requestId: req.id || "",
+        createdAt: new Date().toISOString()
+      };
+      var rows = this.list();
+      rows.unshift(row);
+      writeStore(MAIL_KEY, rows.slice(0, 200));
+      if (window.PM_AUDIT) PM_AUDIT.add("request_mail_prepared", req.email, { to: row.to });
+      return row;
+    },
+    openRequest: function (req) {
+      this.logRequest(req);
+      var href = this.requestHref(req);
+      try { window.open(href, "_blank"); }
+      catch (e) { location.href = href; }
+      return href;
+    },
     approvalHref: function (req) {
       var subject = "Je toegang tot het PlasmaMade Partner Center is goedgekeurd";
       return "mailto:" + encodeURIComponent(req.email || "") +
@@ -859,6 +998,18 @@
       if (removed && window.PM_AUDIT) PM_AUDIT.add("support_ticket_deleted", removed.id, { email: removed.email || "" });
       return removed;
     }
+  };
+
+  function adminNoticeCounts() {
+    var requests = window.PM_REQUESTS ? PM_REQUESTS.list().filter(function (r) { return (r.status || "pending") === "pending"; }).length : 0;
+    var designCounts = window.PM_DESIGNS && PM_DESIGNS.counts ? PM_DESIGNS.counts() : {};
+    var designs = (designCounts.submitted || 0) + (designCounts.in_review || 0) + (designCounts.changes_requested || 0);
+    var tickets = window.PM_TICKETS ? PM_TICKETS.list().filter(function (t) { return (t.status || "open") !== "closed"; }).length : 0;
+    var mail = window.PM_MAIL ? PM_MAIL.list().filter(function (m) { return m.type === "account_request_notification"; }).length : 0;
+    return { requests: requests, designs: designs, tickets: tickets, mail: mail, total: requests + designs + tickets };
+  }
+  window.PM_ADMIN_NOTICES = {
+    counts: adminNoticeCounts
   };
 
   const PORTAL_SETTINGS_KEY = "pm_portal_settings";
@@ -2983,8 +3134,14 @@
         nav += '<div class="nav-group"><div class="nav-group__label">' + esc(g.label || t(g.key)) + '</div>';
         items.forEach(it => {
           const active = (page === it.id || (page === "product" && it.id === "products") || (page === "article" && it.id === "knowledge") || (page === "campaign" && it.id === "campaigns")) ? " active" : "";
+          var itemBadge = it.badge || "";
+          if (it.id === "admin" && isAdminUser(user) && window.PM_ADMIN_NOTICES) {
+            var navNotices = PM_ADMIN_NOTICES.counts();
+            itemBadge = navNotices.total ? String(navNotices.total) : itemBadge;
+          }
+          var badgeClass = it.id === "admin" && itemBadge ? " nav-badge--alert" : "";
           nav += '<a class="nav-item' + active + '" href="' + it.href + '"' + (active ? ' aria-current="page"' : '') + '>' + icon(it.icon) +
-                 '<span>' + esc(it.label || t("nav." + it.id)) + '</span>' + (it.badge ? '<span class="nav-badge">' + esc(it.badge) + '</span>' : '') + '</a>';
+                 '<span>' + esc(it.label || t("nav." + it.id)) + '</span>' + (itemBadge ? '<span class="nav-badge' + badgeClass + '">' + esc(itemBadge) + '</span>' : '') + '</a>';
         });
         nav += '</div>';
       });
@@ -3002,8 +3159,13 @@
       const title = window.PM_PAGE_TITLE_OVERRIDE || (PAGE_TITLE_KEY[page] ? t(PAGE_TITLE_KEY[page]) : "Partner Center");
       const crumb = PAGE_GROUP_KEY[page] ? t(PAGE_GROUP_KEY[page]) : "PlasmaMade Partner Center";
       const cur = window.PM_I18N.meta(window.PM_lang());
+      const adminNotice = isAdminUser(user) && window.PM_ADMIN_NOTICES ? PM_ADMIN_NOTICES.counts() : { total: 0 };
+      const noticeLabel = adminNotice.total
+        ? "Adminmeldingen: " + adminNotice.total + " open"
+        : "Adminmeldingen";
       const adminBtns = isAdminUser(user)
-        ? '<button class="icon-btn" id="pm-edit-page" type="button" title="Pagina bewerken" aria-label="Pagina bewerken" aria-pressed="false">' + icon("edit") + '</button>' +
+        ? '<a class="icon-btn pm-admin-notice" href="admin.html#account-requests" title="' + esc(noticeLabel) + '" aria-label="' + esc(noticeLabel) + '">' + icon(adminNotice.total ? "bellRing" : "bell") + (adminNotice.total ? '<span class="pm-admin-notice__count">' + esc(adminNotice.total) + '</span>' : '') + '</a>' +
+          '<button class="icon-btn" id="pm-edit-page" type="button" title="Pagina bewerken" aria-label="Pagina bewerken" aria-pressed="false">' + icon("edit") + '</button>' +
           '<button class="icon-btn" id="pm-ai-coder-open" type="button" title="AI-bewerker" aria-label="AI-bewerker">' + icon("sparkles") + '</button>'
         : '';
       tb.innerHTML =
