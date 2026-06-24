@@ -76,6 +76,19 @@
 .cms-editor textarea{width:100%;min-height:360px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12.5px;line-height:1.45;background:#fff;color:var(--ink)}
 .cms-editor__foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
 .partner-actions{display:flex;gap:6px;flex-wrap:wrap}
+.account-view-ov{position:fixed;inset:0;background:rgba(13,17,23,.54);backdrop-filter:blur(3px);z-index:920;display:grid;place-items:center;padding:22px}
+.account-view{width:min(720px,100%);max-height:90vh;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);display:flex;flex-direction:column}
+.account-view__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 22px;border-bottom:1px solid var(--line)}
+.account-view__head h3{font-size:22px;margin:4px 0 4px}
+.account-view__head p{font-size:13px;color:var(--muted)}
+.account-view__body{padding:18px 22px;overflow:auto}
+.account-view__kicker{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--green-700)}
+.account-view__grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.account-view__row{border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);padding:10px 12px;min-width:0}
+.account-view__row span{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px}
+.account-view__row b{display:block;font-size:13.5px;color:var(--ink);word-break:break-word}
+.account-view__note{margin-top:12px;border:1px solid var(--green-100);background:var(--green-50);border-radius:var(--radius);padding:12px 13px;color:var(--green-700);font-size:13px;line-height:1.5}
+.account-view__foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;background:var(--surface-2);border-top:1px solid var(--line);flex-wrap:wrap}
 .audit-row{display:flex;gap:10px;border-bottom:1px solid var(--line);padding:9px 0;font-size:12.5px}
 .audit-row:last-child{border-bottom:0}
 .audit-row b{font-size:13px}
@@ -105,6 +118,7 @@
   .cms-row{grid-template-columns:1fr}
   .cms-actions{justify-content:flex-start}
   .admin-item__top{flex-direction:column}
+  .account-view__grid{grid-template-columns:1fr}
   .adm-hbar .n{width:130px}
   .gov-row{flex-direction:column;gap:4px}
   .gov-row .k{width:auto}
@@ -382,8 +396,9 @@ window.PM_PAGE_INIT = function () {
   }).join("");
 
   function statusBadge(status) {
-    var map = { pending: "Wacht op goedkeuring", approved: "Goedgekeurd", rejected: "Afgewezen", suspended: "Geblokkeerd", draft: "Concept", submitted: "Ingediend", in_review: "In beoordeling", changes_requested: "Aanpassing nodig", downloaded: "Gedownload" };
+    var map = { pending: "Wacht op goedkeuring", approved: "Goedgekeurd", active: "Actief", inactive: "Inactief", rejected: "Afgewezen", suspended: "Geblokkeerd", draft: "Concept", submitted: "Ingediend", in_review: "In beoordeling", changes_requested: "Aanpassing nodig", downloaded: "Gedownload" };
     var cls = status === "approved" ? "badge--green-soft" : (status === "rejected" || status === "suspended" ? "badge--grey" : "badge--warn");
+    if (status === "active") cls = "badge--green-soft";
     return '<span class="badge ' + cls + '">' + esc(map[status] || status || "-") + '</span>';
   }
 
@@ -574,14 +589,15 @@ window.PM_PAGE_INIT = function () {
       var name = ((r.firstName || "") + " " + (r.lastName || "")).trim() || r.email || "Partner";
       var mailInfo = r.approvalMailAt ? '<div class="admin-item__meta">Bevestigingsmail voorbereid: ' + esc(PM_fmtDate(r.approvalMailAt)) + '</div>' : '';
       var actions = r.status === "approved"
-        ? '<button class="btn btn--ghost" data-req-mail="' + esc(r.id) + '">Mail opnieuw openen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>'
-        : '<button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren + mail</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
+        ? '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--ghost" data-req-mail="' + esc(r.id) + '">Mail opnieuw openen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>'
+        : '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren + mail</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
       return '<div class="admin-item">' +
         '<div class="admin-item__top"><div><b>' + esc(name) + '</b><div class="admin-item__meta">' + esc(r.company || "-") + ' - ' + esc(r.email || "-") + '<br>' + esc(r.country || "-") + ' - ' + esc(r.functionTitle || "-") + '</div></div>' + statusBadge(r.status) + '</div>' +
         '<div class="admin-item__meta">' + esc(r.reason || "Geen toelichting opgegeven.") + '</div>' +
         mailInfo +
         '<div class="admin-item__actions">' + actions + '</div></div>';
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen accountaanvragen.</p>';
+    document.querySelectorAll("[data-req-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("request", b.getAttribute("data-req-view")); }); });
     document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.approve(b.getAttribute("data-req-approve")); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); } PM_toast("Account goedgekeurd en bevestigingsmail geopend"); renderRequests(); renderAudit(); }); });
     document.querySelectorAll("[data-req-mail]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-mail"); }); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); PM_toast("Bevestigingsmail geopend"); renderRequests(); renderAudit(); } }); });
     document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { var reason = prompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid."); PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }); });
@@ -904,6 +920,88 @@ window.PM_PAGE_INIT = function () {
   function adminPartnerStatus(status) {
     return (status || "active") === "active" ? t("admin.active") : ((status || "") === "suspended" ? "Geblokkeerd" : t("admin.inactive"));
   }
+  function accountDisplayName(row) {
+    row = row || {};
+    return ((row.firstName || "") + " " + (row.lastName || "")).trim() || row.name || row.company || row.email || "Partner";
+  }
+  function findRequestByEmail(email) {
+    var e = String(email || "").toLowerCase();
+    return (window.PM_REQUESTS ? PM_REQUESTS.list() : []).find(function (r) { return String(r.email || "").toLowerCase() === e; }) || null;
+  }
+  function findPartnerByEmail(email) {
+    var e = String(email || "").toLowerCase();
+    return (window.PM_PARTNERS ? PM_PARTNERS.list() : []).find(function (p) { return String(p.email || "").toLowerCase() === e; }) || null;
+  }
+  function accountDetailRow(label, value) {
+    if (value == null || value === "") return "";
+    return '<div class="account-view__row"><span>' + esc(label) + '</span><b>' + esc(value) + '</b></div>';
+  }
+  function accountDate(value) {
+    if (!value) return "";
+    return PM_fmtDate(value);
+  }
+  function accountCountFor(key, email) {
+    var e = String(email || "").toLowerCase();
+    var rows = [];
+    try { rows = JSON.parse(localStorage.getItem(key) || "[]"); } catch (err) { rows = []; }
+    return rows.filter(function (row) { return String(row.ownerEmail || row.email || row.userEmail || "").toLowerCase() === e; }).length;
+  }
+  function closeAccountView() {
+    var ov = document.getElementById("account-view-ov");
+    if (ov) ov.remove();
+  }
+  function openAccountView(kind, key) {
+    var request = null, partner = null;
+    if (kind === "request") {
+      request = (window.PM_REQUESTS ? PM_REQUESTS.list() : []).find(function (r) { return r.id === key; }) || null;
+      partner = request ? findPartnerByEmail(request.email) : null;
+    } else {
+      partner = findPartnerByEmail(key);
+      request = partner ? findRequestByEmail(partner.email) : null;
+    }
+    var primary = kind === "request" ? request : partner;
+    if (!primary) return;
+    var email = primary.email || (request && request.email) || (partner && partner.email) || "";
+    var merged = Object.assign({}, request || {}, partner || {}, primary || {});
+    var name = accountDisplayName(merged);
+    var role = adminRoleLabel(merged.partnerType || merged.role || "dealer");
+    var status = kind === "request" ? (request.status || "pending") : (partner.status || "active");
+    var source = merged.source || (request ? "accountaanvraag" : "partnerbeheer");
+    var designCount = accountCountFor("pm_designs", email);
+    var ticketCount = accountCountFor("pm_support_tickets", email);
+    var rows = [
+      ["Naam", name],
+      ["E-mail", email],
+      ["Bedrijf", merged.company],
+      ["Rol", role],
+      ["Status", kind === "partner" ? adminPartnerStatus(status) : (status || "-")],
+      ["Telefoon", merged.phone],
+      ["Land", merged.country],
+      ["Functie", merged.functionTitle],
+      ["Website", merged.website],
+      ["Bron", source],
+      ["Ingediend", accountDate(merged.submittedAt || merged.createdAt)],
+      ["Goedgekeurd", accountDate(merged.approvedAt)],
+      ["Laatst actief", accountDate(merged.lastActiveAt || merged.updatedAt)],
+      ["Designs", designCount ? PM_fmtNum(designCount) : "0"],
+      ["Supporttickets", ticketCount ? PM_fmtNum(ticketCount) : "0"]
+    ].map(function (r) { return accountDetailRow(r[0], r[1]); }).join("");
+    var reason = request && request.reason ? '<div class="account-view__note"><b>Toelichting</b><br>' + esc(request.reason) + '</div>' : "";
+    var editAction = partner ? '<button type="button" class="btn btn--primary" data-account-edit-from-view="' + esc(email) + '">Bewerken</button>' : "";
+    closeAccountView();
+    document.body.insertAdjacentHTML("beforeend",
+      '<div class="account-view-ov" id="account-view-ov" role="dialog" aria-modal="true" aria-labelledby="account-view-title">' +
+        '<div class="account-view">' +
+          '<div class="account-view__head"><div><span class="account-view__kicker">' + esc(kind === "request" ? "Accountaanvraag" : "Partneraccount") + '</span><h3 id="account-view-title">' + esc(name) + '</h3><p>' + esc(email || "Geen e-mailadres") + '</p></div><button type="button" class="icon-btn" data-account-view-close aria-label="Sluiten">' + PM_ICON("x") + '</button></div>' +
+          '<div class="account-view__body">' + statusBadge(status) + '<div class="account-view__grid">' + rows + '</div>' + reason + '</div>' +
+          '<div class="account-view__foot"><button type="button" class="btn btn--ghost" data-account-view-close>Sluiten</button>' + editAction + '</div>' +
+        '</div>' +
+      '</div>');
+    var ov = document.getElementById("account-view-ov");
+    ov.addEventListener("click", function (e) { if (e.target === ov) closeAccountView(); });
+    ov.querySelectorAll("[data-account-view-close]").forEach(function (b) { b.addEventListener("click", closeAccountView); });
+    ov.querySelectorAll("[data-account-edit-from-view]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-account-edit-from-view"); closeAccountView(); adminEditPartner(email); }); });
+  }
   function adminSafePartnerRole(role, email) {
     var r = String(role || "dealer").trim().toLowerCase();
     if (r === "internal") {
@@ -988,8 +1086,9 @@ window.PM_PAGE_INIT = function () {
         var adminBtn = isAdm
           ? '<button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(p.email || "") + '">Admin intrekken</button>'
           : '<button type="button" class="btn btn--ghost" data-admin-grant="' + esc(p.email || "") + '">Admin maken</button>';
-        return '<tr><td style="font-weight:600">' + esc(p.company || p.name || p.email || "Partner") + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + '<button type="button" class="btn btn--ghost" data-partner-delete="' + esc(p.email || "") + '">Verwijderen</button></div></td></tr>';
+        return '<tr><td style="font-weight:600">' + esc(p.company || p.name || p.email || "Partner") + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-view="' + esc(p.email || "") + '">Bekijken</button><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + '<button type="button" class="btn btn--ghost" data-partner-delete="' + esc(p.email || "") + '">Verwijderen</button></div></td></tr>';
       }).join("") + '</tbody>';
+    document.querySelectorAll("[data-partner-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("partner", b.getAttribute("data-partner-view")); }); });
     document.querySelectorAll("[data-partner-edit]").forEach(function (b) { b.addEventListener("click", function () { adminEditPartner(b.getAttribute("data-partner-edit")); }); });
     document.querySelectorAll("[data-partner-delete]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-partner-delete"); if (email && confirm("Deze partner verwijderen?")) { PM_PARTNERS.remove(email); PM_toast("Partner verwijderd"); adminRenderPartners(); renderAudit(); } }); });
     document.querySelectorAll("#partners [data-admin-grant]").forEach(function (b) { b.addEventListener("click", function () { grantAdmin(b.getAttribute("data-admin-grant")); }); });
