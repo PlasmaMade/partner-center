@@ -257,7 +257,7 @@ window.PM_PAGE_INIT = function () {
         return;
       }
       if (access.reason === "sync_unavailable") {
-        showAlert("De centrale accountcontrole is tijdelijk niet bereikbaar. Probeer opnieuw of controleer de Netlify Functions-instelling.", "warn");
+        showAlert("De centrale accountcontrole is tijdelijk niet bereikbaar. De portal gebruikt nu lokale GitHub Pages-opslag; probeer opnieuw of vraag de beheerder de aanvraag lokaal te controleren.", "warn");
         return;
       }
       if (access.request) {
@@ -284,7 +284,7 @@ window.PM_PAGE_INIT = function () {
     role = (access.internal || access.admin) ? "internal" : ((req && (req.partnerType || req.role)) || "dealer");
     var now = new Date().toISOString();
     PM_AUTH.setUser({ name: name, role: role, email: email, company: company, joinedAt: now, lastLoginAt: now, approvalStatus: "approved", admin: !!(access.internal || access.admin) });
-    if ((access.internal || access.admin) && window.PM_ADMINS) PM_ADMINS.grant(email, { source: "netlify_admin", name: name });
+    if ((access.internal || access.admin) && window.PM_ADMINS) PM_ADMINS.grant(email, { source: "static_admin_login", name: name });
     if (window.PM_PARTNERS) {
       PM_PARTNERS.upsert({ name: name, role: role, email: email, company: company, status: "active", source: "login", lastActiveAt: now });
     }
@@ -338,7 +338,7 @@ window.PM_PAGE_INIT = function () {
     if (!req && remoteRequired) {
       requestBtn.disabled = false;
       requestBtn.textContent = "Aanvraag indienen";
-      showAlert("De aanvraag kon niet naar PlasmaMade worden verzonden. Controleer de Netlify Function en probeer opnieuw.", "warn");
+      showAlert("De aanvraag kon niet centraal worden verzonden. De portal draait nu statisch via GitHub Pages; de aanvraag wordt lokaal opgeslagen zodra centrale sync uit staat.", "warn");
       return;
     }
     if (!req) req = PM_REQUESTS.create(payload);

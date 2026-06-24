@@ -1026,6 +1026,9 @@ window.PM_PAGE_INIT = function () {
     }
     return r;
   }
+  function isBootstrapAdminEmail(email) {
+    return String(email || "").trim().toLowerCase() === "bjonkeren@plasmamade.com";
+  }
   function grantAdmin(email) {
     email = String(email || "").trim().toLowerCase();
     if (!email) return;
@@ -1047,6 +1050,11 @@ window.PM_PAGE_INIT = function () {
   function revokeAdmin(email) {
     email = String(email || "").trim().toLowerCase();
     if (!email) return;
+    if (isBootstrapAdminEmail(email)) {
+      PM_toast("Dit vaste PlasmaMade-adminaccount blijft actief");
+      renderAdminGrants(); adminRenderPartners();
+      return;
+    }
     if (window.PM_ADMINS) PM_ADMINS.revoke(email);
     if (window.PM_PARTNERS) PM_PARTNERS.update(email, { role: "dealer" });
     PM_toast("Adminrechten ingetrokken");
@@ -1056,7 +1064,9 @@ window.PM_PAGE_INIT = function () {
     var grants = window.PM_ADMINS ? PM_ADMINS.list() : [];
     document.getElementById("admin-grant-count").textContent = grants.length + " admins";
     document.getElementById("admin-grants-list").innerHTML = grants.length ? grants.map(function (g) {
-      return '<div class="admin-item"><div class="admin-item__top"><div><b>' + esc(g.email) + '</b><div class="admin-item__meta">Toegevoegd door ' + esc(g.grantedBy || "beheerder") + ' - ' + esc(PM_fmtDate(g.grantedAt || g.updatedAt || new Date().toISOString())) + '</div></div><span class="badge badge--green-soft">Admin</span></div><div class="admin-item__actions"><button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(g.email) + '">Admin intrekken</button></div></div>';
+      var fixed = isBootstrapAdminEmail(g.email);
+      var action = fixed ? '<span class="badge badge--green-soft">Vast account</span>' : '<button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(g.email) + '">Admin intrekken</button>';
+      return '<div class="admin-item"><div class="admin-item__top"><div><b>' + esc(g.email) + '</b><div class="admin-item__meta">Toegevoegd door ' + esc(g.grantedBy || "beheerder") + ' - ' + esc(PM_fmtDate(g.grantedAt || g.updatedAt || new Date().toISOString())) + '</div></div><span class="badge badge--green-soft">Admin</span></div><div class="admin-item__actions">' + action + '</div></div>';
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen extra adminrechten toegewezen.</p>';
     document.querySelectorAll("#admin-grants-list [data-admin-revoke]").forEach(function (b) { b.addEventListener("click", function () { revokeAdmin(b.getAttribute("data-admin-revoke")); }); });
   }
@@ -1100,10 +1110,14 @@ window.PM_PAGE_INIT = function () {
         var on = (p.status || "active") === "active";
         var region = p.email ? String(p.email).split("@")[1] || "-" : "-";
         var isAdm = window.PM_ADMINS && PM_ADMINS.has(p.email);
-        var adminBtn = isAdm
+        var fixedAdmin = isBootstrapAdminEmail(p.email);
+        var adminBtn = fixedAdmin
+          ? '<span class="badge badge--green-soft">Vast adminaccount</span>'
+          : (isAdm
           ? '<button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(p.email || "") + '">Admin intrekken</button>'
-          : '<button type="button" class="btn btn--ghost" data-admin-grant="' + esc(p.email || "") + '">Admin maken</button>';
-        return '<tr><td style="font-weight:600">' + esc(p.company || p.name || p.email || "Partner") + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-view="' + esc(p.email || "") + '">Bekijken</button><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + '<button type="button" class="btn btn--ghost" data-partner-delete="' + esc(p.email || "") + '">Verwijderen</button></div></td></tr>';
+          : '<button type="button" class="btn btn--ghost" data-admin-grant="' + esc(p.email || "") + '">Admin maken</button>');
+        var deleteBtn = fixedAdmin ? "" : '<button type="button" class="btn btn--ghost" data-partner-delete="' + esc(p.email || "") + '">Verwijderen</button>';
+        return '<tr><td style="font-weight:600">' + esc(p.company || p.name || p.email || "Partner") + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-view="' + esc(p.email || "") + '">Bekijken</button><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + deleteBtn + '</div></td></tr>';
       }).join("") + '</tbody>';
     document.querySelectorAll("[data-partner-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("partner", b.getAttribute("data-partner-view")); }); });
     document.querySelectorAll("[data-partner-edit]").forEach(function (b) { b.addEventListener("click", function () { adminEditPartner(b.getAttribute("data-partner-edit")); }); });

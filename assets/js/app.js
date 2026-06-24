@@ -1,7 +1,7 @@
 /* ============================================================
    PlasmaMade Partner Center — App shell & runtime
    - Injecteert sidebar / topbar / footer op elke pagina
-   - Login-guard (Netlify state sync + lokale sessie)
+   - Login-guard (GitHub Pages/localStorage + optionele externe sync)
    - Globale zoekfunctie over alle content (PM_DATA), meertalig
    - Taalmenu (15 talen, via PM_I18N in assets/js/i18n.js)
    - Iconen, toasts, dialogen, favorieten, recent bekeken
@@ -151,7 +151,10 @@
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
   function isCentralKey(key) { return CENTRAL_STATE_KEYS.indexOf(key) > -1; }
-  function isSyncOnline() { return /^https?:$/i.test(location.protocol) && typeof fetch === "function"; }
+  function syncEndpoint() {
+    try { return String(window.PM_REMOTE_SYNC_ENDPOINT || "").trim(); } catch (e) { return ""; }
+  }
+  function isSyncOnline() { return !!syncEndpoint() && /^https?:$/i.test(location.protocol) && typeof fetch === "function"; }
   function isLocalDevHost() { return /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname || ""); }
   function syncActor() {
     try {
@@ -172,7 +175,8 @@
     return { signal: controller.signal, done: function () { clearTimeout(timer); } };
   }
   window.PM_SYNC = {
-    endpoint: "/.netlify/functions/portal-state",
+    endpoint: "",
+    getEndpoint: syncEndpoint,
     pending: {},
     muted: false,
     lastPullAt: null,
@@ -242,9 +246,11 @@
     pull: async function (opts) {
       opts = opts || {};
       if (!this.online()) return false;
+      var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
+      if (!endpoint) return false;
       var timeout = withTimeout(opts.timeout || 4500);
       try {
-        var res = await fetch(this.endpoint, { cache: "no-store", signal: timeout.signal });
+        var res = await fetch(endpoint, { cache: "no-store", signal: timeout.signal });
         if (!res.ok) return false;
         var data = await res.json();
         if (data && data.state) {
@@ -263,11 +269,13 @@
     },
     push: async function (keys) {
       if (!this.online()) return false;
+      var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
+      if (!endpoint) return false;
       keys = (keys || []).filter(isCentralKey);
       if (!keys.length) return false;
       var timeout = withTimeout(5500);
       try {
-        var res = await fetch(this.endpoint, {
+        var res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json", "x-pm-actor": syncActor() },
           body: JSON.stringify({ action: "saveState", actor: syncActor(), state: this.snapshot(keys) }),
@@ -305,9 +313,11 @@
     },
     submitRequest: async function (payload) {
       if (!this.online()) return null;
+      var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
+      if (!endpoint) return null;
       var timeout = withTimeout(6500);
       try {
-        var res = await fetch(this.endpoint, {
+        var res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ action: "accountRequest", request: payload || {} }),
@@ -326,9 +336,11 @@
     },
     login: async function (email, password) {
       if (!this.online()) return null;
+      var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
+      if (!endpoint) return null;
       var timeout = withTimeout(6500);
       try {
-        var res = await fetch(this.endpoint, {
+        var res = await fetch(endpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ action: "login", email: email, password: password }),
@@ -358,11 +370,66 @@
 
   function normEmail(email) { return String(email || "").trim().toLowerCase(); }
   const BOOTSTRAP_ADMIN_EMAIL = "bjonkeren@plasmamade.com";
+  const BOOTSTRAP_ADMIN_NAME = "Bjorn Jonkeren";
+  const BOOTSTRAP_ADMIN_COMPANY = "PlasmaMade";
+  const BOOTSTRAP_ADMIN_CREATED_AT = "2026-06-24T00:00:00.000Z";
   function isBootstrapAdminEmailValue(email) { return normEmail(email) === BOOTSTRAP_ADMIN_EMAIL; }
+  function bootstrapAdminGrantRow(existing) {
+    return Object.assign({}, existing || {}, {
+      id: (existing && existing.id) || "adm_bootstrap_bjonkeren",
+      email: BOOTSTRAP_ADMIN_EMAIL,
+      name: (existing && existing.name) || BOOTSTRAP_ADMIN_NAME,
+      source: "bootstrap_admin",
+      grantedBy: (existing && existing.grantedBy) || "system",
+      grantedAt: (existing && existing.grantedAt) || BOOTSTRAP_ADMIN_CREATED_AT
+    });
+  }
+  function bootstrapAdminPartnerRow(existing) {
+    return Object.assign({}, existing || {}, {
+      id: (existing && existing.id) || "pt_bootstrap_bjonkeren",
+      name: BOOTSTRAP_ADMIN_NAME,
+      email: BOOTSTRAP_ADMIN_EMAIL,
+      company: BOOTSTRAP_ADMIN_COMPANY,
+      country: (existing && existing.country) || "Nederland",
+      phone: (existing && existing.phone) || "",
+      role: "internal",
+      roleLocked: true,
+      status: "active",
+      source: "bootstrap_admin",
+      createdAt: (existing && existing.createdAt) || BOOTSTRAP_ADMIN_CREATED_AT,
+      updatedAt: (existing && existing.updatedAt) || BOOTSTRAP_ADMIN_CREATED_AT,
+      lastActiveAt: (existing && existing.lastActiveAt) || BOOTSTRAP_ADMIN_CREATED_AT
+    });
+  }
+  function withBootstrapAdminGrant(rows) {
+    var list = Array.isArray(rows) ? rows.slice() : [];
+    var idx = list.findIndex(function (row) { return isBootstrapAdminEmailValue(row && row.email); });
+    if (idx > -1) list[idx] = bootstrapAdminGrantRow(list[idx]);
+    else list.unshift(bootstrapAdminGrantRow());
+    return list.slice(0, 100);
+  }
+  function withBootstrapAdminPartner(rows) {
+    var list = Array.isArray(rows) ? rows.slice() : [];
+    var idx = list.findIndex(function (row) { return isBootstrapAdminEmailValue(row && row.email); });
+    if (idx > -1) list[idx] = bootstrapAdminPartnerRow(list[idx]);
+    else list.unshift(bootstrapAdminPartnerRow());
+    return list.slice(0, 300);
+  }
+  function sameJson(a, b) {
+    try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+  }
+  function ensureBootstrapAdminState() {
+    var grants = readStore(ADMIN_GRANTS_KEY, []);
+    var nextGrants = withBootstrapAdminGrant(grants);
+    if (!sameJson(grants, nextGrants)) writeStore(ADMIN_GRANTS_KEY, nextGrants);
+    var partners = readStore(PARTNER_KEY, []);
+    var nextPartners = withBootstrapAdminPartner(partners);
+    if (!sameJson(partners, nextPartners)) writeStore(PARTNER_KEY, nextPartners);
+  }
   function makeId(prefix) { return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 6); }
   const ADMIN_GRANTS_KEY = "pm_admin_grants";
   window.PM_ADMINS = {
-    list: function () { return readStore(ADMIN_GRANTS_KEY, []); },
+    list: function () { return withBootstrapAdminGrant(readStore(ADMIN_GRANTS_KEY, [])); },
     has: function (email) {
       var e = normEmail(email);
       if (!e) return false;
@@ -387,6 +454,7 @@
     },
     revoke: function (email) {
       var e = normEmail(email);
+      if (isBootstrapAdminEmailValue(e)) return false;
       var rows = this.list().filter(function (a) { return normEmail(a.email) !== e; });
       writeStore(ADMIN_GRANTS_KEY, rows);
       if (window.PM_AUDIT) PM_AUDIT.add("admin_revoked", e, {});
@@ -1097,7 +1165,7 @@
 
   const PARTNER_KEY = "pm_partners";
   window.PM_PARTNERS = {
-    list: function () { return readStore(PARTNER_KEY, []); },
+    list: function () { return withBootstrapAdminPartner(readStore(PARTNER_KEY, [])); },
     upsert: function (partner) {
       if (!partner || !partner.email) return null;
       var list = this.list();
@@ -1123,6 +1191,7 @@
     },
     remove: function (email) {
       var target = normEmail(email);
+      if (isBootstrapAdminEmailValue(target)) return false;
       var list = this.list().filter(function (p) { return normEmail(p.email) !== target; });
       writeStore(PARTNER_KEY, list);
       if (window.PM_AUDIT) PM_AUDIT.add("partner_deleted", target, {});
@@ -1276,7 +1345,7 @@
     passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
     firstName: "Bjorn",
     lastName: "Jonkeren",
-    company: "PlasmaMade"
+    company: BOOTSTRAP_ADMIN_COMPANY
   };
   function getUser() { return readStore(AUTH_KEY, null); }
   function setUser(u) { writeStore(AUTH_KEY, u); }
@@ -1382,7 +1451,7 @@
   async function verifyLogin(email, password) {
     var bootstrap = await bootstrapAdminAccess(email, password);
     if (bootstrap) return bootstrap;
-    if (window.PM_SYNC && PM_SYNC.login) {
+    if (window.PM_SYNC && PM_SYNC.login && PM_SYNC.online && PM_SYNC.online()) {
       var remote = await PM_SYNC.login(email, password);
       if (remote && remote.remote) return remote;
       if (PM_SYNC.online && PM_SYNC.online() && !(PM_SYNC.isLocalDev && PM_SYNC.isLocalDev())) {
@@ -2890,11 +2959,11 @@
             '</div></div>' +
           '<a class="icon-btn" href="news.html" title="' + esc(t("nav.news")) + '" aria-label="' + esc(t("nav.news")) + '">' + icon("bell") + '</a>' +
           '<div class="user-wrap">' +
-            '<button class="user-chip" id="pm-user" type="button" aria-label="' + esc(t("ui.accountMenu")) + '" aria-haspopup="menu" aria-expanded="false" aria-controls="pm-user-menu">' +
+            '<a class="user-chip" id="pm-user" href="account.html" aria-label="' + esc(t("ui.myAccount")) + '">' +
               '<div class="avatar" aria-hidden="true">' + avatarHtml(user) + '</div>' +
               '<div class="user-chip__txt"><div class="u-name">' + esc(user.name || "Partner") + '</div><div class="u-role">' + esc(t(roleKey(user.role)) || user.role || "Partner") + '</div></div>' +
-              '<span class="user-chip__caret" aria-hidden="true">' + icon("chevronRight") + '</span>' +
-            '</button>' +
+            '</a>' +
+            '<button class="icon-btn user-menu-toggle" id="pm-user-menu-toggle" type="button" aria-label="' + esc(t("ui.accountMenu")) + '" aria-haspopup="menu" aria-expanded="false" aria-controls="pm-user-menu">' + icon("chevronRight") + '</button>' +
             '<div class="user-menu" id="pm-user-menu" role="menu" aria-label="' + esc(t("ui.accountMenu")) + '">' +
               '<a class="user-menu__head" href="account.html" role="menuitem">' +
                 '<span class="avatar avatar--lg" aria-hidden="true">' + avatarHtml(user) + '</span>' +
@@ -2948,19 +3017,20 @@
     });
 
     /* Gebruikersmenu (account / voorkeuren / uitloggen) */
-    const userChip = document.getElementById("pm-user"), userMenu = document.getElementById("pm-user-menu");
-    if (userChip && userMenu) {
+    const userChip = document.getElementById("pm-user"), userMenuToggle = document.getElementById("pm-user-menu-toggle"), userMenu = document.getElementById("pm-user-menu");
+    if (userMenuToggle && userMenu) {
       const setUserOpen = function (open) {
         userMenu.classList.toggle("open", open);
-        userChip.setAttribute("aria-expanded", String(open));
+        userMenuToggle.setAttribute("aria-expanded", String(open));
       };
-      userChip.addEventListener("click", function (e) { e.stopPropagation(); setUserOpen(!userMenu.classList.contains("open")); });
+      if (userChip) userChip.addEventListener("click", function () { setUserOpen(false); });
+      userMenuToggle.addEventListener("click", function (e) { e.stopPropagation(); setUserOpen(!userMenu.classList.contains("open")); });
       userMenu.addEventListener("click", function (e) { e.stopPropagation(); });
       document.addEventListener("click", function () { setUserOpen(false); });
-      userChip.addEventListener("keydown", function (e) {
+      userMenuToggle.addEventListener("keydown", function (e) {
         if (e.key === "ArrowDown") { e.preventDefault(); setUserOpen(true); var f = userMenu.querySelector(".user-menu__item"); if (f) f.focus(); }
       });
-      userMenu.addEventListener("keydown", function (e) { if (e.key === "Escape") { setUserOpen(false); userChip.focus(); } });
+      userMenu.addEventListener("keydown", function (e) { if (e.key === "Escape") { setUserOpen(false); userMenuToggle.focus(); } });
       const lo = document.getElementById("pm-logout");
       if (lo) lo.addEventListener("click", function () {
         setUserOpen(false);
@@ -3156,6 +3226,7 @@
     booted = true;
     const page = document.body.getAttribute("data-page");
     if (window.PM_SYNC) await PM_SYNC.pull({ quiet: true, timeout: 4500 });
+    ensureBootstrapAdminState();
     if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
     if (window.PM_CMS) PM_CMS.apply();
     // Auth guard (loginpagina is "login")
