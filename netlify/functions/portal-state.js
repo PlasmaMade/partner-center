@@ -9,7 +9,10 @@ let memoryState = null;
 const BOOTSTRAP_ADMIN = {
   email: "bjonkeren@plasmamade.com",
   passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
-  passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e"
+  passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
+  firstName: "Bjorn",
+  lastName: "Jonkeren",
+  company: "PlasmaMade"
 };
 
 const ARRAY_KEYS = new Set([
@@ -196,6 +199,46 @@ function adminEmails() {
     .filter(Boolean);
   if (!emails.includes(BOOTSTRAP_ADMIN.email)) emails.push(BOOTSTRAP_ADMIN.email);
   return emails;
+}
+
+function ensureBootstrapAdmin(state) {
+  const now = new Date().toISOString();
+  const email = BOOTSTRAP_ADMIN.email;
+  const fullName = `${BOOTSTRAP_ADMIN.firstName} ${BOOTSTRAP_ADMIN.lastName}`.trim();
+
+  const grants = Array.isArray(state.pm_admin_grants) ? state.pm_admin_grants : [];
+  let grant = grants.find((row) => normalizeEmail(row.email) === email);
+  if (grant) {
+    Object.assign(grant, { email, source: grant.source || "bootstrap_admin", grantedBy: grant.grantedBy || "system", grantedAt: grant.grantedAt || now });
+  } else {
+    grants.unshift({ id: "adm_bootstrap_bjonkeren", email, source: "bootstrap_admin", grantedAt: now, grantedBy: "system" });
+  }
+  state.pm_admin_grants = grants.slice(0, 100);
+
+  const partners = Array.isArray(state.pm_partners) ? state.pm_partners : [];
+  const partnerRow = {
+    name: fullName,
+    email,
+    company: BOOTSTRAP_ADMIN.company,
+    phone: "",
+    country: "Nederland",
+    role: "internal",
+    status: "active",
+    source: "bootstrap_admin"
+  };
+  const partner = partners.find((row) => normalizeEmail(row.email) === email);
+  if (partner) {
+    Object.assign(partner, partnerRow, {
+      id: partner.id || "pt_bootstrap_bjonkeren",
+      createdAt: partner.createdAt || now,
+      updatedAt: partner.updatedAt || now,
+      lastActiveAt: partner.lastActiveAt || partner.updatedAt || now
+    });
+  } else {
+    partners.unshift(Object.assign({ id: "pt_bootstrap_bjonkeren", createdAt: now, updatedAt: now, lastActiveAt: now }, partnerRow));
+  }
+  state.pm_partners = partners.slice(0, 300);
+  return state;
 }
 
 function envAdminPassword() {
@@ -385,6 +428,7 @@ exports.handler = async function handler(event) {
 
   try {
     const state = await readPersistedState();
+    ensureBootstrapAdmin(state);
 
     if (event.httpMethod === "GET") {
       return json(200, { ok: true, updatedAt: state.updatedAt || null, state: publicState(state) });
@@ -419,6 +463,7 @@ exports.handler = async function handler(event) {
       const publicOnly = keys.length > 0 && keys.every((key) => PUBLIC_WRITE_KEYS.has(key));
       if (!actorIsAdmin && !publicOnly) return json(403, { ok: false, error: "admin_required" });
       const merged = mergeIncomingState(state, incoming, actorIsAdmin);
+      ensureBootstrapAdmin(merged);
       if (actorIsAdmin) addAudit(merged, "state_synced", keys.join(", "), { keys }, actor);
       const saved = await writePersistedState(merged);
       return json(200, { ok: true, updatedAt: saved.updatedAt, state: publicState(saved) });

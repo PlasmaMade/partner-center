@@ -124,6 +124,7 @@
   function writeStore(key, val) {
     try {
       localStorage.setItem(key, JSON.stringify(val));
+      if (window.PM_SYNC && PM_SYNC.noteLocalChange) PM_SYNC.noteLocalChange(key);
       if (window.PM_SYNC && PM_SYNC.shouldPush && PM_SYNC.shouldPush(key)) PM_SYNC.schedule(key);
       return true;
     } catch (e) { return false; }
@@ -148,6 +149,7 @@
     "pm_page_edits"
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
+  const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
   function isCentralKey(key) { return CENTRAL_STATE_KEYS.indexOf(key) > -1; }
   function isSyncOnline() { return /^https?:$/i.test(location.protocol) && typeof fetch === "function"; }
   function isLocalDevHost() { return /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname || ""); }
@@ -180,6 +182,31 @@
     interval: null,
     online: isSyncOnline,
     isLocalDev: isLocalDevHost,
+    dirtyKeys: function () {
+      try {
+        var rows = JSON.parse(localStorage.getItem(SYNC_DIRTY_KEY) || "[]");
+        return Array.isArray(rows) ? rows.filter(isCentralKey) : [];
+      } catch (e) { return []; }
+    },
+    saveDirtyKeys: function (keys) {
+      try { localStorage.setItem(SYNC_DIRTY_KEY, JSON.stringify(Array.from(new Set((keys || []).filter(isCentralKey))))); } catch (e) {}
+    },
+    markDirty: function (key) {
+      if (!isCentralKey(key)) return;
+      var keys = this.dirtyKeys();
+      if (keys.indexOf(key) === -1) keys.push(key);
+      this.saveDirtyKeys(keys);
+    },
+    clearDirty: function (keys) {
+      keys = (keys || []).filter(isCentralKey);
+      if (!keys.length) return;
+      var remove = new Set(keys);
+      this.saveDirtyKeys(this.dirtyKeys().filter(function (key) { return !remove.has(key); }));
+    },
+    noteLocalChange: function (key) {
+      if (this.muted || !isCentralKey(key)) return;
+      this.markDirty(key);
+    },
     shouldPush: function (key) {
       if (this.muted || !isCentralKey(key) || !this.online()) return false;
       return syncIsAdmin() || PUBLIC_SYNC_KEYS.indexOf(key) > -1;
@@ -187,10 +214,13 @@
     applyState: function (state, opts) {
       if (!state || typeof state !== "object") return false;
       opts = opts || {};
+      var preserveDirty = opts.source !== "push" && opts.source !== "request";
+      var dirty = preserveDirty ? this.dirtyKeys() : [];
       this.muted = true;
       try {
         CENTRAL_STATE_KEYS.forEach(function (key) {
           if (!Object.prototype.hasOwnProperty.call(state, key)) return;
+          if (dirty.indexOf(key) > -1 && localStorage.getItem(key) != null) return;
           localStorage.setItem(key, JSON.stringify(state[key]));
         });
       } catch (e) {}
@@ -246,6 +276,7 @@
         if (!res.ok) return false;
         var data = await res.json();
         if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
+        this.clearDirty(keys);
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "push" });
         this.lastPushAt = new Date().toISOString();
         return true;
@@ -254,6 +285,12 @@
       } finally {
         if (timeout.done) timeout.done();
       }
+    },
+    flushDirty: function () {
+      var self = this;
+      var keys = this.dirtyKeys().filter(function (key) { return self.shouldPush(key); });
+      if (!keys.length) return false;
+      return this.push(keys);
     },
     schedule: function (key) {
       if (!isCentralKey(key)) return;
@@ -320,6 +357,8 @@
   };
 
   function normEmail(email) { return String(email || "").trim().toLowerCase(); }
+  const BOOTSTRAP_ADMIN_EMAIL = "bjonkeren@plasmamade.com";
+  function isBootstrapAdminEmailValue(email) { return normEmail(email) === BOOTSTRAP_ADMIN_EMAIL; }
   function makeId(prefix) { return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 6); }
   const ADMIN_GRANTS_KEY = "pm_admin_grants";
   window.PM_ADMINS = {
@@ -327,6 +366,7 @@
     has: function (email) {
       var e = normEmail(email);
       if (!e) return false;
+      if (isBootstrapAdminEmailValue(e)) return true;
       return this.list().some(function (a) { return normEmail(a.email) === e; });
     },
     grant: function (email, meta) {
@@ -356,8 +396,8 @@
   function normalizeRole(role, email) {
     var r = String(role || "dealer").trim().toLowerCase();
     var allowed = ["dealer", "distributor", "installer", "studio", "retailpartner", "international", "support"];
-    if (r === "internal") return (window.PM_ADMINS && PM_ADMINS.has(email)) ? "internal" : "dealer";
-    if (r === "admin") return (window.PM_ADMINS && PM_ADMINS.has(email)) ? "internal" : "dealer";
+    if (r === "internal") return ((window.PM_ADMINS && PM_ADMINS.has(email)) || isBootstrapAdminEmailValue(email)) ? "internal" : "dealer";
+    if (r === "admin") return ((window.PM_ADMINS && PM_ADMINS.has(email)) || isBootstrapAdminEmailValue(email)) ? "internal" : "dealer";
     return allowed.indexOf(r) > -1 ? r : "dealer";
   }
 
@@ -1231,7 +1271,7 @@
   /* ---------------- AUTH ---------------- */
   const AUTH_KEY = "pm_partner_auth";
   const BOOTSTRAP_ADMIN = {
-    email: "bjonkeren@plasmamade.com",
+    email: BOOTSTRAP_ADMIN_EMAIL,
     passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
     passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
     firstName: "Bjorn",
@@ -3148,6 +3188,7 @@
       if (e.key === "Escape") { closeSearch(); closeDialog(); }
     });
     if (window.PM_PAGE_INIT) try { window.PM_PAGE_INIT(); } catch (e) { console.error("Page init error:", e); }
+    if (window.PM_SYNC && page !== "login" && PM_SYNC.flushDirty) PM_SYNC.flushDirty();
     if (page !== "login") initPageEditor();
     if (page !== "login") {
       document.addEventListener("pm:state-sync", function (ev) {

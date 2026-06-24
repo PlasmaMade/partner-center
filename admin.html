@@ -367,18 +367,34 @@ window.PM_PAGE_INIT = function () {
   var designs = []; try { designs = JSON.parse(localStorage.getItem("pm_designs") || "[]"); } catch (e) {}
   var tickets = window.PM_TICKETS ? PM_TICKETS.list() : [];
   var authUser = PM_AUTH.getUser() || {};
-  if (authUser.email && window.PM_PARTNERS) {
-    PM_PARTNERS.upsert({
-      name: authUser.name || "Partner",
-      email: authUser.email,
-      company: authUser.company || PM_companyFromEmail(authUser.email),
-      phone: authUser.phone || "",
-      role: authUser.role || "dealer",
+  function ensureCurrentAdminPartner() {
+    authUser = PM_AUTH.getUser() || {};
+    if (!authUser.email || !window.PM_PARTNERS) return null;
+    var email = String(authUser.email).trim().toLowerCase();
+    var admin = !!(PM_AUTH.isAdmin && PM_AUTH.isAdmin(authUser));
+    var role = admin ? "internal" : (authUser.role || "dealer");
+    var company = authUser.company || PM_companyFromEmail(email);
+    var name = authUser.name || company || "Partner";
+    var rows = PM_PARTNERS.list();
+    var existing = rows.find(function (p) { return String(p.email || "").toLowerCase() === email; });
+    var needsWrite = !existing ||
+      existing.role !== role ||
+      (existing.status || "active") !== "active" ||
+      (existing.company || "") !== company ||
+      (existing.name || "") !== name;
+    if (!needsWrite) return existing;
+    return PM_PARTNERS.upsert({
+      name: name,
+      email: email,
+      company: company,
+      phone: authUser.phone || (existing && existing.phone) || "",
+      role: role,
       status: "active",
-      source: "account",
-      lastActiveAt: new Date().toISOString()
+      source: admin ? "current_admin" : "account",
+      lastActiveAt: (existing && existing.lastActiveAt) || new Date().toISOString()
     });
   }
+  ensureCurrentAdminPartner();
   var partnersData = window.PM_PARTNERS ? PM_PARTNERS.list() : [];
   var requestsData = window.PM_REQUESTS ? PM_REQUESTS.list() : [];
   var designCounts = window.PM_DESIGNS ? PM_DESIGNS.counts() : { submitted: 0, in_review: 0, changes_requested: 0, approved: 0, rejected: 0 };
@@ -1063,6 +1079,7 @@ window.PM_PAGE_INIT = function () {
     adminRenderPartners(); renderAudit();
   }
   function adminRenderPartners() {
+    ensureCurrentAdminPartner();
     var rows = window.PM_PARTNERS ? PM_PARTNERS.list() : [];
     if (!rows.length && authUser.email) {
       rows.push({
