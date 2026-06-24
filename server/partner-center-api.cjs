@@ -54,16 +54,32 @@ const ARRAY_STATE_KEYS = new Set([
   "pm_partners"
 ]);
 
-const BOOTSTRAP_ADMIN = {
-  email: "bjonkeren@plasmamade.com",
-  name: "Bjorn Jonkeren",
-  firstName: "Bjorn",
-  lastName: "Jonkeren",
-  company: "PlasmaMade",
-  passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
-  passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
-  createdAt: "2026-06-24T00:00:00.000Z"
-};
+const BOOTSTRAP_ADMINS = [
+  {
+    email: "bjonkeren@plasmamade.com",
+    name: "Bjorn Jonkeren",
+    firstName: "Bjorn",
+    lastName: "Jonkeren",
+    company: "PlasmaMade",
+    passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
+    passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
+    grantId: "adm_bootstrap_bjonkeren",
+    partnerId: "pt_bootstrap_bjonkeren",
+    createdAt: "2026-06-24T00:00:00.000Z"
+  },
+  {
+    email: "wmarckelbach@plasmamade.com",
+    name: "Wim Marckelbach",
+    firstName: "Wim",
+    lastName: "Marckelbach",
+    company: "PlasmaMade",
+    passwordSalt: "pm_bootstrap_wmarckelbach_2026_06_v1",
+    passwordHash: "1a109b139caef5af8114d4a99e71ab4413961303270b4c6dd1e8f58b3180a022",
+    grantId: "adm_bootstrap_wmarckelbach",
+    partnerId: "pt_bootstrap_wmarckelbach",
+    createdAt: "2026-06-24T00:00:00.000Z"
+  }
+];
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -259,36 +275,43 @@ function isInternalEmail(email) {
   return /@plasmamade\.(com|nl)$/i.test(String(email || ""));
 }
 
-function isBootstrapAdmin(email) {
-  return normEmail(email) === BOOTSTRAP_ADMIN.email;
+function bootstrapAdminForEmail(email) {
+  const e = normEmail(email);
+  return BOOTSTRAP_ADMINS.find((admin) => admin.email === e) || null;
 }
 
-function bootstrapGrant(existing) {
+function isBootstrapAdmin(email) {
+  return !!bootstrapAdminForEmail(email);
+}
+
+function bootstrapGrant(existing, admin) {
+  admin = admin || bootstrapAdminForEmail(existing && existing.email) || BOOTSTRAP_ADMINS[0];
   return Object.assign({}, existing || {}, {
-    id: (existing && existing.id) || "adm_bootstrap_bjonkeren",
-    email: BOOTSTRAP_ADMIN.email,
-    name: (existing && existing.name) || BOOTSTRAP_ADMIN.name,
+    id: (existing && existing.id) || admin.grantId,
+    email: admin.email,
+    name: (existing && existing.name) || admin.name,
     source: "bootstrap_admin",
     grantedBy: (existing && existing.grantedBy) || "system",
-    grantedAt: (existing && existing.grantedAt) || BOOTSTRAP_ADMIN.createdAt
+    grantedAt: (existing && existing.grantedAt) || admin.createdAt
   });
 }
 
-function bootstrapPartner(existing) {
+function bootstrapPartner(existing, admin) {
+  admin = admin || bootstrapAdminForEmail(existing && existing.email) || BOOTSTRAP_ADMINS[0];
   return Object.assign({}, existing || {}, {
-    id: (existing && existing.id) || "pt_bootstrap_bjonkeren",
-    name: BOOTSTRAP_ADMIN.name,
-    email: BOOTSTRAP_ADMIN.email,
-    company: BOOTSTRAP_ADMIN.company,
+    id: (existing && existing.id) || admin.partnerId,
+    name: admin.name,
+    email: admin.email,
+    company: admin.company,
     country: (existing && existing.country) || "Nederland",
     phone: (existing && existing.phone) || "",
     role: "internal",
     roleLocked: true,
     status: "active",
     source: "bootstrap_admin",
-    createdAt: (existing && existing.createdAt) || BOOTSTRAP_ADMIN.createdAt,
-    updatedAt: (existing && existing.updatedAt) || BOOTSTRAP_ADMIN.createdAt,
-    lastActiveAt: (existing && existing.lastActiveAt) || BOOTSTRAP_ADMIN.createdAt
+    createdAt: (existing && existing.createdAt) || admin.createdAt,
+    updatedAt: (existing && existing.updatedAt) || admin.createdAt,
+    lastActiveAt: (existing && existing.lastActiveAt) || admin.createdAt
   });
 }
 
@@ -304,13 +327,15 @@ function upsertByEmail(rows, row) {
 function ensureBootstrapState(db) {
   const state = db.state || (db.state = blankState());
   const grants = Array.isArray(state.pm_admin_grants) ? state.pm_admin_grants.slice() : [];
-  const grantIdx = grants.findIndex((row) => isBootstrapAdmin(row && row.email));
-  if (grantIdx > -1) grants[grantIdx] = bootstrapGrant(grants[grantIdx]);
-  else grants.unshift(bootstrapGrant());
   const partners = Array.isArray(state.pm_partners) ? state.pm_partners.slice() : [];
-  const partnerIdx = partners.findIndex((row) => isBootstrapAdmin(row && row.email));
-  if (partnerIdx > -1) partners[partnerIdx] = bootstrapPartner(partners[partnerIdx]);
-  else partners.unshift(bootstrapPartner());
+  BOOTSTRAP_ADMINS.slice().reverse().forEach((admin) => {
+    const grantIdx = grants.findIndex((row) => normEmail(row && row.email) === admin.email);
+    if (grantIdx > -1) grants[grantIdx] = bootstrapGrant(grants[grantIdx], admin);
+    else grants.unshift(bootstrapGrant(null, admin));
+    const partnerIdx = partners.findIndex((row) => normEmail(row && row.email) === admin.email);
+    if (partnerIdx > -1) partners[partnerIdx] = bootstrapPartner(partners[partnerIdx], admin);
+    else partners.unshift(bootstrapPartner(null, admin));
+  });
   if (!sameJson(state.pm_admin_grants, grants)) state.pm_admin_grants = grants.slice(0, 100);
   if (!sameJson(state.pm_partners, partners)) state.pm_partners = partners.slice(0, 300);
 }
@@ -499,10 +524,11 @@ function login(db, email, password) {
   ensureBootstrapState(db);
   const state = db.state;
   const e = normEmail(email);
-  if (isBootstrapAdmin(e)) {
-    const ok = timingSafeEqualText(hashPassword(password, BOOTSTRAP_ADMIN.passwordSalt), BOOTSTRAP_ADMIN.passwordHash);
-    if (!ok) return { ok: false, status: "approved", request: bootstrapRequest(), reason: "bad_password" };
-    return withToken({ ok: true, status: "approved", request: bootstrapRequest(), admin: true, internal: true }, state, e);
+  const bootstrapAdmin = bootstrapAdminForEmail(e);
+  if (bootstrapAdmin) {
+    const ok = timingSafeEqualText(hashPassword(password, bootstrapAdmin.passwordSalt), bootstrapAdmin.passwordHash);
+    if (!ok) return { ok: false, status: "approved", request: bootstrapRequest(bootstrapAdmin), reason: "bad_password" };
+    return withToken({ ok: true, status: "approved", request: bootstrapRequest(bootstrapAdmin), admin: true, internal: true }, state, e);
   }
   const req = findRequest(state, e);
   if (req) {
@@ -520,12 +546,13 @@ function login(db, email, password) {
   return { ok: false, status: "none" };
 }
 
-function bootstrapRequest() {
+function bootstrapRequest(admin) {
+  admin = admin || BOOTSTRAP_ADMINS[0];
   return {
-    email: BOOTSTRAP_ADMIN.email,
-    firstName: BOOTSTRAP_ADMIN.firstName,
-    lastName: BOOTSTRAP_ADMIN.lastName,
-    company: BOOTSTRAP_ADMIN.company,
+    email: admin.email,
+    firstName: admin.firstName,
+    lastName: admin.lastName,
+    company: admin.company,
     role: "internal",
     partnerType: "internal",
     status: "approved"

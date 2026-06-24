@@ -150,7 +150,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260624-render-api-1";
+  const PORTAL_BUILD_VERSION = "20260624-admin-wim-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -481,50 +481,82 @@
   };
 
   function normEmail(email) { return String(email || "").trim().toLowerCase(); }
-  const BOOTSTRAP_ADMIN_EMAIL = "bjonkeren@plasmamade.com";
-  const BOOTSTRAP_ADMIN_NAME = "Bjorn Jonkeren";
-  const BOOTSTRAP_ADMIN_COMPANY = "PlasmaMade";
-  const BOOTSTRAP_ADMIN_CREATED_AT = "2026-06-24T00:00:00.000Z";
-  function isBootstrapAdminEmailValue(email) { return normEmail(email) === BOOTSTRAP_ADMIN_EMAIL; }
-  function bootstrapAdminGrantRow(existing) {
+  const BOOTSTRAP_ADMIN_ROWS = [
+    {
+      email: "bjonkeren@plasmamade.com",
+      name: "Bjorn Jonkeren",
+      firstName: "Bjorn",
+      lastName: "Jonkeren",
+      company: "PlasmaMade",
+      passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
+      passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
+      grantId: "adm_bootstrap_bjonkeren",
+      partnerId: "pt_bootstrap_bjonkeren",
+      createdAt: "2026-06-24T00:00:00.000Z"
+    },
+    {
+      email: "wmarckelbach@plasmamade.com",
+      name: "Wim Marckelbach",
+      firstName: "Wim",
+      lastName: "Marckelbach",
+      company: "PlasmaMade",
+      passwordSalt: "pm_bootstrap_wmarckelbach_2026_06_v1",
+      passwordHash: "1a109b139caef5af8114d4a99e71ab4413961303270b4c6dd1e8f58b3180a022",
+      grantId: "adm_bootstrap_wmarckelbach",
+      partnerId: "pt_bootstrap_wmarckelbach",
+      createdAt: "2026-06-24T00:00:00.000Z"
+    }
+  ];
+  function bootstrapAdminForEmail(email) {
+    var e = normEmail(email);
+    return BOOTSTRAP_ADMIN_ROWS.find(function (admin) { return admin.email === e; }) || null;
+  }
+  function isBootstrapAdminEmailValue(email) { return !!bootstrapAdminForEmail(email); }
+  function bootstrapAdminGrantRow(existing, admin) {
+    admin = admin || bootstrapAdminForEmail(existing && existing.email) || BOOTSTRAP_ADMIN_ROWS[0];
     return Object.assign({}, existing || {}, {
-      id: (existing && existing.id) || "adm_bootstrap_bjonkeren",
-      email: BOOTSTRAP_ADMIN_EMAIL,
-      name: (existing && existing.name) || BOOTSTRAP_ADMIN_NAME,
+      id: (existing && existing.id) || admin.grantId,
+      email: admin.email,
+      name: (existing && existing.name) || admin.name,
       source: "bootstrap_admin",
       grantedBy: (existing && existing.grantedBy) || "system",
-      grantedAt: (existing && existing.grantedAt) || BOOTSTRAP_ADMIN_CREATED_AT
+      grantedAt: (existing && existing.grantedAt) || admin.createdAt
     });
   }
-  function bootstrapAdminPartnerRow(existing) {
+  function bootstrapAdminPartnerRow(existing, admin) {
+    admin = admin || bootstrapAdminForEmail(existing && existing.email) || BOOTSTRAP_ADMIN_ROWS[0];
     return Object.assign({}, existing || {}, {
-      id: (existing && existing.id) || "pt_bootstrap_bjonkeren",
-      name: BOOTSTRAP_ADMIN_NAME,
-      email: BOOTSTRAP_ADMIN_EMAIL,
-      company: BOOTSTRAP_ADMIN_COMPANY,
+      id: (existing && existing.id) || admin.partnerId,
+      name: admin.name,
+      email: admin.email,
+      company: admin.company,
       country: (existing && existing.country) || "Nederland",
       phone: (existing && existing.phone) || "",
       role: "internal",
       roleLocked: true,
       status: "active",
       source: "bootstrap_admin",
-      createdAt: (existing && existing.createdAt) || BOOTSTRAP_ADMIN_CREATED_AT,
-      updatedAt: (existing && existing.updatedAt) || BOOTSTRAP_ADMIN_CREATED_AT,
-      lastActiveAt: (existing && existing.lastActiveAt) || BOOTSTRAP_ADMIN_CREATED_AT
+      createdAt: (existing && existing.createdAt) || admin.createdAt,
+      updatedAt: (existing && existing.updatedAt) || admin.createdAt,
+      lastActiveAt: (existing && existing.lastActiveAt) || admin.createdAt
     });
   }
   function withBootstrapAdminGrant(rows) {
     var list = Array.isArray(rows) ? rows.slice() : [];
-    var idx = list.findIndex(function (row) { return isBootstrapAdminEmailValue(row && row.email); });
-    if (idx > -1) list[idx] = bootstrapAdminGrantRow(list[idx]);
-    else list.unshift(bootstrapAdminGrantRow());
+    BOOTSTRAP_ADMIN_ROWS.slice().reverse().forEach(function (admin) {
+      var idx = list.findIndex(function (row) { return normEmail(row && row.email) === admin.email; });
+      if (idx > -1) list[idx] = bootstrapAdminGrantRow(list[idx], admin);
+      else list.unshift(bootstrapAdminGrantRow(null, admin));
+    });
     return list.slice(0, 100);
   }
   function withBootstrapAdminPartner(rows) {
     var list = Array.isArray(rows) ? rows.slice() : [];
-    var idx = list.findIndex(function (row) { return isBootstrapAdminEmailValue(row && row.email); });
-    if (idx > -1) list[idx] = bootstrapAdminPartnerRow(list[idx]);
-    else list.unshift(bootstrapAdminPartnerRow());
+    BOOTSTRAP_ADMIN_ROWS.slice().reverse().forEach(function (admin) {
+      var idx = list.findIndex(function (row) { return normEmail(row && row.email) === admin.email; });
+      if (idx > -1) list[idx] = bootstrapAdminPartnerRow(list[idx], admin);
+      else list.unshift(bootstrapAdminPartnerRow(null, admin));
+    });
     return list.slice(0, 300);
   }
   function sameJson(a, b) {
@@ -1528,14 +1560,6 @@
 
   /* ---------------- AUTH ---------------- */
   const AUTH_KEY = "pm_partner_auth";
-  const BOOTSTRAP_ADMIN = {
-    email: BOOTSTRAP_ADMIN_EMAIL,
-    passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
-    passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
-    firstName: "Bjorn",
-    lastName: "Jonkeren",
-    company: BOOTSTRAP_ADMIN_COMPANY
-  };
   function getUser() { return readStore(AUTH_KEY, null); }
   function setUser(u) { writeStore(AUTH_KEY, u); }
   function updateUser(patch) {
@@ -1569,23 +1593,25 @@
     location.href = "index.html";
   }
   function isInternalEmail(email) { return /@plasmamade\.(com|nl)$/i.test(String(email || "")); }
-  function isBootstrapAdminEmail(email) { return normEmail(email) === BOOTSTRAP_ADMIN.email; }
-  function bootstrapAdminRequest() {
+  function isBootstrapAdminEmail(email) { return !!bootstrapAdminForEmail(email); }
+  function bootstrapAdminRequest(admin) {
+    admin = admin || BOOTSTRAP_ADMIN_ROWS[0];
     return {
-      email: BOOTSTRAP_ADMIN.email,
-      firstName: BOOTSTRAP_ADMIN.firstName,
-      lastName: BOOTSTRAP_ADMIN.lastName,
-      company: BOOTSTRAP_ADMIN.company,
+      email: admin.email,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      company: admin.company,
       role: "internal",
       partnerType: "internal",
       status: "approved"
     };
   }
   async function bootstrapAdminAccess(email, password) {
-    if (!isBootstrapAdminEmail(email)) return null;
-    var ok = await PM_SECURITY.verifyPassword(password, BOOTSTRAP_ADMIN.passwordSalt, BOOTSTRAP_ADMIN.passwordHash);
-    if (!ok) return { ok: false, status: "approved", request: bootstrapAdminRequest(), reason: "bad_password" };
-    return { ok: true, status: "approved", request: bootstrapAdminRequest(), admin: true, internal: true, bootstrap: true };
+    var admin = bootstrapAdminForEmail(email);
+    if (!admin) return null;
+    var ok = await PM_SECURITY.verifyPassword(password, admin.passwordSalt, admin.passwordHash);
+    if (!ok) return { ok: false, status: "approved", request: bootstrapAdminRequest(admin), reason: "bad_password" };
+    return { ok: true, status: "approved", request: bootstrapAdminRequest(admin), admin: true, internal: true, bootstrap: true };
   }
   function approvedRequest(email) {
     var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(email);
