@@ -342,14 +342,39 @@ window.PM_PAGE_INIT = function () {
       return;
     }
     if (!req) req = PM_REQUESTS.create(payload);
+    var reqStatus = req.status || "pending";
+    var reqAdmin = req.role === "internal" || req.partnerType === "internal" || (PM_AUTH.isInternalEmail && PM_AUTH.isInternalEmail(payload.email) && reqStatus === "approved");
+    var reqRole = reqAdmin ? "internal" : (req.partnerType || payload.partnerType || "dealer");
+    var fullName = (payload.firstName + " " + payload.lastName).trim();
     PM_AUTH.setUser({
-      name: (payload.firstName + " " + payload.lastName).trim(),
-      role: payload.partnerType,
+      name: fullName,
+      role: reqRole,
       email: payload.email,
       company: payload.company,
-      approvalStatus: req.status || "pending"
+      approvalStatus: reqStatus,
+      admin: !!reqAdmin
     });
-    location.href = "account-status.html?status=pending";
+    if (reqStatus === "approved") {
+      var now = new Date().toISOString();
+      if (reqAdmin && window.PM_ADMINS) PM_ADMINS.grant(payload.email, { source: "account_request", name: fullName });
+      if (window.PM_PARTNERS) {
+        PM_PARTNERS.upsert({
+          name: fullName,
+          email: payload.email,
+          company: payload.company || (reqAdmin ? "PlasmaMade" : ""),
+          phone: payload.phone,
+          country: payload.country,
+          role: reqRole,
+          roleLocked: !!reqAdmin,
+          status: "active",
+          source: "account_request",
+          lastActiveAt: now
+        });
+      }
+      location.href = "dashboard.html";
+      return;
+    }
+    location.href = "account-status.html?status=" + encodeURIComponent(reqStatus);
   });
 };
 </script>

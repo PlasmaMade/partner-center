@@ -96,7 +96,8 @@ window.PM_PAGE_INIT = function () {
   }
 
   // Rolgerichte aanbevelingen
-  var role = user.role && t("role." + user.role) !== "role." + user.role ? user.role : "dealer";
+  var isAdmin = window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(user);
+  var role = isAdmin ? "internal" : (user.role && t("role." + user.role) !== "role." + user.role ? user.role : "dealer");
   var roleTiles = {
     dealer: ["finder", "sales", "marketing", "products"],
     distributor: ["products", "finder", "downloads", "testdocs"],
@@ -104,7 +105,7 @@ window.PM_PAGE_INIT = function () {
     studio: ["finder", "marketing", "studio", "sales"],
     internal: ["admin", "campaigns", "marketing", "products"]
   };
-  var rt = (roleTiles[role] || roleTiles.dealer).filter(function (id) { return id !== "admin" || role === "internal"; });
+  var rt = (roleTiles[role] || roleTiles.dealer).filter(function (id) { return id !== "admin" || isAdmin; });
   document.getElementById("role-intro").textContent = t("dash.roleIntro." + role);
   document.getElementById("role-actions").innerHTML = rt.map(function (id) {
     if (id === "admin") return '<a class="portal-action" href="admin.html"><span class="portal-action__icon">' + PM_ICON("chart") + '</span>' +

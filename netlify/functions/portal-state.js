@@ -195,6 +195,18 @@ function envAdminPassword() {
   return String(process.env.PM_ADMIN_PASSWORD || "");
 }
 
+function isInternalEmail(email) {
+  return /@plasmamade\.(com|nl)$/i.test(String(email || ""));
+}
+
+function isApprovedAccount(state, email) {
+  const e = normalizeEmail(email);
+  const req = findByEmail(state.pm_account_requests, e);
+  if (req && req.status === "approved") return true;
+  const partner = findByEmail(state.pm_partners, e);
+  return !!(partner && (partner.status || "active") === "active");
+}
+
 function isAdminActor(state, email) {
   const e = normalizeEmail(email);
   if (!e) return false;
@@ -202,7 +214,8 @@ function isAdminActor(state, email) {
   const grants = Array.isArray(state.pm_admin_grants) ? state.pm_admin_grants : [];
   if (grants.some((grant) => normalizeEmail(grant.email) === e)) return true;
   const partners = Array.isArray(state.pm_partners) ? state.pm_partners : [];
-  return partners.some((partner) => normalizeEmail(partner.email) === e && partner.status !== "suspended" && partner.role === "internal");
+  if (partners.some((partner) => normalizeEmail(partner.email) === e && partner.status !== "suspended" && partner.role === "internal")) return true;
+  return isInternalEmail(e) && isApprovedAccount(state, e);
 }
 
 function hashPassword(password, salt) {
@@ -248,6 +261,7 @@ function submitAccountRequest(state, payload) {
   const now = new Date().toISOString();
   const clean = Object.assign({}, payload || {});
   clean.email = normalizeEmail(clean.email);
+  const internal = isInternalEmail(clean.email);
   if (!clean.email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean.email)) {
     return { error: "invalid_email" };
   }
@@ -259,20 +273,48 @@ function submitAccountRequest(state, payload) {
     return { request: scrubRequest(hit), alreadyApproved: true };
   }
   if (hit) {
-    Object.assign(hit, clean, { status: "pending", updatedAt: now, submittedAt: now });
+    Object.assign(hit, clean, { status: internal ? "approved" : "pending", role: internal ? "internal" : (clean.partnerType || clean.role || "dealer"), partnerType: internal ? "internal" : (clean.partnerType || clean.role || "dealer"), updatedAt: now, submittedAt: now, approvedAt: internal ? now : hit.approvedAt });
   } else {
     hit = Object.assign({
       id: makeRequestId(),
-      status: "pending",
-      role: clean.partnerType || clean.role || "dealer",
       submittedAt: now,
       createdAt: now,
       updatedAt: now
-    }, clean);
+    }, clean, {
+      status: internal ? "approved" : "pending",
+      role: internal ? "internal" : (clean.partnerType || clean.role || "dealer"),
+      partnerType: internal ? "internal" : (clean.partnerType || clean.role || "dealer"),
+      approvedAt: internal ? now : null
+    });
     rows.unshift(hit);
   }
   state.pm_account_requests = rows.slice(0, 300);
+  if (internal) {
+    const grants = Array.isArray(state.pm_admin_grants) ? state.pm_admin_grants : [];
+    if (!grants.some((grant) => normalizeEmail(grant.email) === clean.email)) {
+      grants.unshift({ id: `adm_${Date.now().toString(36)}`, email: clean.email, source: "internal_account_request", grantedAt: now, grantedBy: "system" });
+    }
+    state.pm_admin_grants = grants.slice(0, 100);
+    const partners = Array.isArray(state.pm_partners) ? state.pm_partners : [];
+    const existingPartner = findByEmail(partners, clean.email);
+    const partnerRow = {
+      name: requestName(hit),
+      email: clean.email,
+      company: clean.company || "PlasmaMade",
+      phone: clean.phone || "",
+      country: clean.country || "",
+      role: "internal",
+      status: "active",
+      source: "internal_account_request",
+      lastActiveAt: now,
+      updatedAt: now
+    };
+    if (existingPartner) Object.assign(existingPartner, partnerRow);
+    else partners.unshift(Object.assign({ id: `pt_${Date.now().toString(36)}`, createdAt: now }, partnerRow));
+    state.pm_partners = partners.slice(0, 300);
+  }
   addAudit(state, "account_request", clean.email, { company: clean.company || "" }, clean.email);
+  if (internal) addAudit(state, "internal_account_approved", clean.email, { company: clean.company || "PlasmaMade" }, "system");
   return { request: scrubRequest(hit) };
 }
 

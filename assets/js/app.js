@@ -175,6 +175,7 @@
     muted: false,
     lastPullAt: null,
     lastPushAt: null,
+    remoteUpdatedAt: null,
     timer: null,
     interval: null,
     online: isSyncOnline,
@@ -197,7 +198,7 @@
       if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
       if (window.PM_CMS) PM_CMS.apply();
       if (!opts.quiet && window.PM_rebuildShell) PM_rebuildShell();
-      try { document.dispatchEvent(new CustomEvent("pm:state-sync", { detail: { source: opts.source || "remote" } })); } catch (e) {}
+      try { document.dispatchEvent(new CustomEvent("pm:state-sync", { detail: { source: opts.source || "remote", changed: !!opts.changed } })); } catch (e) {}
       return true;
     },
     snapshot: function (keys) {
@@ -217,7 +218,9 @@
         if (!res.ok) return false;
         var data = await res.json();
         if (data && data.state) {
-          this.applyState(data.state, { quiet: !!opts.quiet, source: "pull" });
+          var changed = !!(data.updatedAt && data.updatedAt !== this.remoteUpdatedAt);
+          this.applyState(data.state, { quiet: !!opts.quiet, source: "pull", changed: changed });
+          if (data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
           this.lastPullAt = new Date().toISOString();
           return true;
         }
@@ -242,6 +245,7 @@
         });
         if (!res.ok) return false;
         var data = await res.json();
+        if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "push" });
         this.lastPushAt = new Date().toISOString();
         return true;
@@ -274,6 +278,7 @@
         });
         if (!res.ok) return null;
         var data = await res.json();
+        if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "request" });
         return data && data.request ? data.request : null;
       } catch (e) {
@@ -294,6 +299,7 @@
         });
         if (!res.ok) return null;
         var data = await res.json();
+        if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "login" });
         if (data && Object.prototype.hasOwnProperty.call(data, "ok")) {
           data.remote = true;
@@ -309,7 +315,7 @@
     startAutoRefresh: function () {
       if (this.interval || !this.online()) return;
       var self = this;
-      this.interval = setInterval(function () { self.pull({ quiet: true, timeout: 3500 }); }, 60000);
+      this.interval = setInterval(function () { self.pull({ quiet: true, timeout: 3500 }); }, 30000);
     }
   };
 
@@ -438,23 +444,53 @@
     create: function (payload) {
       payload = payload || {};
       var now = new Date().toISOString();
+      var internal = isInternalEmail(payload.email);
+      var nextRole = internal ? "internal" : normalizeRole(payload.partnerType || payload.role || "dealer", payload.email);
       var existing = this.findByEmail(payload.email);
       var list = this.list();
       if (existing && existing.status !== "approved") {
-        Object.assign(existing, payload, { status: "pending", updatedAt: now, submittedAt: now });
+        Object.assign(existing, payload, {
+          status: internal ? "approved" : "pending",
+          role: nextRole,
+          partnerType: nextRole,
+          updatedAt: now,
+          submittedAt: now,
+          approvedAt: internal ? now : existing.approvedAt
+        });
       } else {
         existing = Object.assign({
           id: makeId("req"),
-          status: "pending",
-          role: payload.partnerType || payload.role || "dealer",
           submittedAt: now,
           createdAt: now,
           updatedAt: now
-        }, payload);
+        }, payload, {
+          status: internal ? "approved" : "pending",
+          role: nextRole,
+          partnerType: nextRole,
+          approvedAt: internal ? now : null
+        });
         list.unshift(existing);
       }
       writeStore(REQUEST_KEY, list.slice(0, 300));
       if (window.PM_AUDIT) PM_AUDIT.add("account_request", existing.email, { status: existing.status, company: existing.company || "" });
+      if (internal) {
+        if (window.PM_ADMINS) PM_ADMINS.grant(existing.email, { source: "internal_account_request", name: requestName(existing) });
+        if (window.PM_PARTNERS) {
+          PM_PARTNERS.upsert({
+            name: requestName(existing),
+            email: existing.email,
+            company: existing.company || "PlasmaMade",
+            phone: existing.phone || "",
+            country: existing.country || "",
+            role: "internal",
+            roleLocked: true,
+            status: "active",
+            source: "internal_account_request",
+            lastActiveAt: now
+          });
+        }
+        if (window.PM_AUDIT) PM_AUDIT.add("internal_account_approved", existing.email, { company: existing.company || "PlasmaMade" });
+      }
       return existing;
     },
     update: function (id, patch) {
@@ -3083,6 +3119,21 @@
     });
     if (window.PM_PAGE_INIT) try { window.PM_PAGE_INIT(); } catch (e) { console.error("Page init error:", e); }
     if (page !== "login") initPageEditor();
+    if (page !== "login") {
+      document.addEventListener("pm:state-sync", function (ev) {
+        if (!ev.detail || ev.detail.source !== "pull") return;
+        if (!ev.detail.changed) return;
+        if (document.hidden) return;
+        var active = document.activeElement;
+        if (active && /^(INPUT|TEXTAREA|SELECT)$/i.test(active.tagName || "")) return;
+        if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
+        if (window.PM_CMS) PM_CMS.apply();
+        if (window.PM_rebuildShell) PM_rebuildShell();
+        if (window.PM_PAGE_INIT) {
+          try { window.PM_PAGE_INIT(); } catch (e) { console.error("Page refresh error:", e); }
+        }
+      });
+    }
     if (window.PM_SYNC && page !== "login") PM_SYNC.startAutoRefresh();
   }
 
