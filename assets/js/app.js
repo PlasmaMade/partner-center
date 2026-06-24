@@ -1230,6 +1230,14 @@
 
   /* ---------------- AUTH ---------------- */
   const AUTH_KEY = "pm_partner_auth";
+  const BOOTSTRAP_ADMIN = {
+    email: "bjonkeren@plasmamade.com",
+    passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
+    passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
+    firstName: "Bjorn",
+    lastName: "Jonkeren",
+    company: "PlasmaMade"
+  };
   function getUser() { return readStore(AUTH_KEY, null); }
   function setUser(u) { writeStore(AUTH_KEY, u); }
   function updateUser(patch) {
@@ -1263,6 +1271,24 @@
     location.href = "index.html";
   }
   function isInternalEmail(email) { return /@plasmamade\.(com|nl)$/i.test(String(email || "")); }
+  function isBootstrapAdminEmail(email) { return normEmail(email) === BOOTSTRAP_ADMIN.email; }
+  function bootstrapAdminRequest() {
+    return {
+      email: BOOTSTRAP_ADMIN.email,
+      firstName: BOOTSTRAP_ADMIN.firstName,
+      lastName: BOOTSTRAP_ADMIN.lastName,
+      company: BOOTSTRAP_ADMIN.company,
+      role: "internal",
+      partnerType: "internal",
+      status: "approved"
+    };
+  }
+  async function bootstrapAdminAccess(email, password) {
+    if (!isBootstrapAdminEmail(email)) return null;
+    var ok = await PM_SECURITY.verifyPassword(password, BOOTSTRAP_ADMIN.passwordSalt, BOOTSTRAP_ADMIN.passwordHash);
+    if (!ok) return { ok: false, status: "approved", request: bootstrapAdminRequest(), reason: "bad_password" };
+    return { ok: true, status: "approved", request: bootstrapAdminRequest(), admin: true, internal: true, bootstrap: true };
+  }
   function approvedRequest(email) {
     var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(email);
     return req && req.status === "approved" ? req : null;
@@ -1283,6 +1309,7 @@
     var partner = activePartner(email);
     if (window.PM_ADMINS && PM_ADMINS.has(email)) return true;
     if (partner && partner.role === "internal") return true;
+    if (isBootstrapAdminEmail(email) && user.admin === true) return true;
     if (isInternalEmail(email) && hasApprovedAccount(email)) return true;
     return !!(user.admin === true && hasApprovedAccount(email));
   }
@@ -1292,6 +1319,7 @@
     if (req) return req.status || "pending";
     var partner = activePartner(user.email);
     if (partner) return "approved";
+    if (isBootstrapAdminEmail(user.email) && user.admin === true) return "approved";
     if (user.approvalStatus && user.approvalStatus !== "approved") return user.approvalStatus;
     return "none";
   }
@@ -1312,6 +1340,8 @@
     return { ok: false, status: "none" };
   }
   async function verifyLogin(email, password) {
+    var bootstrap = await bootstrapAdminAccess(email, password);
+    if (bootstrap) return bootstrap;
     if (window.PM_SYNC && PM_SYNC.login) {
       var remote = await PM_SYNC.login(email, password);
       if (remote && remote.remote) return remote;
