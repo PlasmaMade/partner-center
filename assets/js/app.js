@@ -194,11 +194,9 @@
         });
       } catch (e) {}
       this.muted = false;
-      if (!opts.quiet) {
-        if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
-        if (window.PM_CMS) PM_CMS.apply();
-        if (window.PM_rebuildShell) PM_rebuildShell();
-      }
+      if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
+      if (window.PM_CMS) PM_CMS.apply();
+      if (!opts.quiet && window.PM_rebuildShell) PM_rebuildShell();
       try { document.dispatchEvent(new CustomEvent("pm:state-sync", { detail: { source: opts.source || "remote" } })); } catch (e) {}
       return true;
     },
@@ -1229,28 +1227,52 @@
     location.href = "index.html";
   }
   function isInternalEmail(email) { return /@plasmamade\.(com|nl)$/i.test(String(email || "")); }
+  function approvedRequest(email) {
+    var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(email);
+    return req && req.status === "approved" ? req : null;
+  }
+  function activePartner(email) {
+    var e = normEmail(email);
+    return window.PM_PARTNERS && PM_PARTNERS.list().find(function (p) {
+      return normEmail(p.email) === e && (p.status || "active") === "active";
+    }) || null;
+  }
+  function hasApprovedAccount(email) {
+    return !!(approvedRequest(email) || activePartner(email));
+  }
   function isAdminUser(user) {
     if (!user) return false;
-    if (user.admin === true) return true;
-    if (window.PM_ADMINS && PM_ADMINS.has(user.email)) return true;
-    var partner = window.PM_PARTNERS && PM_PARTNERS.list().find(function (p) { return normEmail(p.email) === normEmail(user.email); });
-    return !!(partner && partner.status !== "suspended" && partner.role === "internal");
+    var email = user.email;
+    if (!email) return false;
+    var partner = activePartner(email);
+    if (window.PM_ADMINS && PM_ADMINS.has(email)) return true;
+    if (partner && partner.role === "internal") return true;
+    if (isInternalEmail(email) && hasApprovedAccount(email)) return true;
+    return !!(user.admin === true && hasApprovedAccount(email));
   }
   function approvalStatus(user) {
     if (!user) return "";
-    if (isAdminUser(user)) return "approved";
     var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(user.email);
     if (req) return req.status || "pending";
-    return user.approvalStatus || "approved";
+    var partner = activePartner(user.email);
+    if (partner) return "approved";
+    if (user.approvalStatus && user.approvalStatus !== "approved") return user.approvalStatus;
+    return "none";
   }
   function canLogin(email) {
     var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(email);
     if (req) {
-      if (req.status === "approved") return { ok: true, status: "approved", request: req, admin: isAdminUser({ email: email }) };
+      if (req.status === "approved") {
+        var reqAdmin = isAdminUser({ email: email });
+        return { ok: true, status: "approved", request: req, admin: reqAdmin, internal: reqAdmin };
+      }
       return { ok: false, status: req.status || "pending", request: req };
     }
-    var partner = window.PM_PARTNERS && PM_PARTNERS.list().find(function (p) { return normEmail(p.email) === normEmail(email); });
-    if (partner && partner.status === "active") return { ok: true, status: "approved", request: partner, admin: isAdminUser({ email: email }) };
+    var partner = activePartner(email);
+    if (partner) {
+      var partnerAdmin = isAdminUser({ email: email });
+      return { ok: true, status: "approved", request: partner, admin: partnerAdmin, internal: partnerAdmin };
+    }
     return { ok: false, status: "none" };
   }
   async function verifyLogin(email, password) {
