@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-github-pages-2">
+<link rel="stylesheet" href="assets/css/style.css?v=20260624-github-pages-3">
 <style>
 .adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
 .adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
@@ -354,10 +354,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-github-pages-2"></script>
-<script src="assets/js/data.js?v=20260624-github-pages-2"></script>
+<script src="assets/js/i18n.js?v=20260624-github-pages-3"></script>
+<script src="assets/js/data.js?v=20260624-github-pages-3"></script>
 <!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
-<script src="assets/js/studio.js?v=20260624-github-pages-2"></script>
+<script src="assets/js/studio.js?v=20260624-github-pages-3"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
@@ -416,6 +416,21 @@ window.PM_PAGE_INIT = function () {
     var cls = status === "approved" ? "badge--green-soft" : (status === "rejected" || status === "suspended" ? "badge--grey" : "badge--warn");
     if (status === "active") cls = "badge--green-soft";
     return '<span class="badge ' + cls + '">' + esc(map[status] || status || "-") + '</span>';
+  }
+  function adminPrompt(message, value, onSubmit, opts) {
+    if (window.PM_prompt) {
+      PM_prompt(message, value, onSubmit, opts || {});
+      return;
+    }
+    var next = prompt(message, value || "");
+    if (next !== null) onSubmit(next);
+  }
+  function adminConfirm(message, onYes, opts) {
+    if (window.PM_confirm) {
+      PM_confirm(message, onYes, opts || {});
+      return;
+    }
+    if (confirm(message)) onYes();
   }
 
   function renderSettingsPanel() {
@@ -501,32 +516,34 @@ window.PM_PAGE_INIT = function () {
         var id = b.getAttribute("data-media-edit");
         var row = PM_MEDIA_LIBRARY.list().find(function (m) { return m.id === id; });
         if (!row) return;
-        var title = prompt("Titel:", row.title || "");
-        if (title === null) return;
-        var desc = prompt("Beschrijving:", row.description || "");
-        if (desc === null) return;
-        PM_MEDIA_LIBRARY.upsert(Object.assign({}, row, { title: title.trim(), description: desc.trim() }));
-        renderMediaPanel(); renderVersionsPanel();
+        adminPrompt("Titel:", row.title || "", function (title) {
+          adminPrompt("Beschrijving:", row.description || "", function (desc) {
+            PM_MEDIA_LIBRARY.upsert(Object.assign({}, row, { title: title.trim(), description: desc.trim() }));
+            renderMediaPanel(); renderVersionsPanel();
+          }, { ok: "Opslaan", multiline: true, rows: 3 });
+        }, { ok: "Volgende" });
       });
     });
     document.querySelectorAll("[data-media-delete]").forEach(function (b) {
       b.addEventListener("click", function () {
-        if (!confirm("Dit mediabestand verwijderen uit de bibliotheek?")) return;
-        PM_MEDIA_LIBRARY.remove(b.getAttribute("data-media-delete"));
-        renderMediaPanel(); renderVersionsPanel();
+        adminConfirm("Dit mediabestand verwijderen uit de bibliotheek?", function () {
+          PM_MEDIA_LIBRARY.remove(b.getAttribute("data-media-delete"));
+          renderMediaPanel(); renderVersionsPanel();
+        }, { ok: "Verwijderen" });
       });
     });
   }
   document.getElementById("media-upload").addEventListener("change", function () {
     var f = this.files && this.files[0];
     if (!f) return;
-    var title = prompt("Titel voor dit mediabestand:", f.name);
-    if (title === null) return;
-    PM_MEDIA_LIBRARY.createFromFile(f, { title: title.trim(), category: document.getElementById("media-cat").value }, function () {
-      PM_toast("Mediabestand toegevoegd");
-      renderMediaPanel(); renderVersionsPanel();
-    });
-    this.value = "";
+    var input = this;
+    adminPrompt("Titel voor dit mediabestand:", f.name, function (title) {
+      PM_MEDIA_LIBRARY.createFromFile(f, { title: title.trim(), category: document.getElementById("media-cat").value }, function () {
+        PM_toast("Mediabestand toegevoegd");
+        renderMediaPanel(); renderVersionsPanel();
+      });
+      input.value = "";
+    }, { ok: "Toevoegen" });
   });
 
   function renderPagesPanel() {
@@ -546,29 +563,31 @@ window.PM_PAGE_INIT = function () {
     });
     document.querySelectorAll("[data-page-delete]").forEach(function (b) {
       b.addEventListener("click", function () {
-        if (!confirm("Deze landingspagina verwijderen?")) return;
-        PM_CUSTOM_PAGES.remove(b.getAttribute("data-page-delete"));
-        renderPagesPanel(); renderVersionsPanel();
+        adminConfirm("Deze landingspagina verwijderen?", function () {
+          PM_CUSTOM_PAGES.remove(b.getAttribute("data-page-delete"));
+          renderPagesPanel(); renderVersionsPanel();
+        }, { ok: "Verwijderen" });
       });
     });
   }
   document.getElementById("page-add").addEventListener("click", function () {
-    var title = prompt("Titel van de nieuwe landingspagina:", "Nieuwe partnerpagina");
-    if (!title) return;
-    var id = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || ("pagina-" + Date.now());
-    PM_CUSTOM_PAGES.upsert({
-      id: id,
-      title: title.trim(),
-      audience: "Partners",
-      status: "draft",
-      intro: "Een nieuwe PlasmaMade-landingspagina. Pas tekst, beeld en blokken aan via de AI-bewerker of het contentbeheer.",
-      blocks: [
-        { title: "Heldere informatie", text: "Bundel documenten, campagnes en productinformatie voor een specifieke partnergroep." },
-        { title: "Bewaakte huisstijl", text: "Gebruik PlasmaMade-kleuren, Libre Franklin en echte merkassets." },
-        { title: "Publiceer wanneer klaar", text: "Laat de pagina als concept staan tot de inhoud gecontroleerd is." }
-      ]
-    });
-    renderPagesPanel(); renderVersionsPanel();
+    adminPrompt("Titel van de nieuwe landingspagina:", "Nieuwe partnerpagina", function (title) {
+      if (!title) return;
+      var id = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || ("pagina-" + Date.now());
+      PM_CUSTOM_PAGES.upsert({
+        id: id,
+        title: title.trim(),
+        audience: "Partners",
+        status: "draft",
+        intro: "Een nieuwe PlasmaMade-landingspagina. Pas tekst, beeld en blokken aan via de AI-bewerker of het contentbeheer.",
+        blocks: [
+          { title: "Heldere informatie", text: "Bundel documenten, campagnes en productinformatie voor een specifieke partnergroep." },
+          { title: "Bewaakte huisstijl", text: "Gebruik PlasmaMade-kleuren, Libre Franklin en echte merkassets." },
+          { title: "Publiceer wanneer klaar", text: "Laat de pagina als concept staan tot de inhoud gecontroleerd is." }
+        ]
+      });
+      renderPagesPanel(); renderVersionsPanel();
+    }, { ok: "Aanmaken" });
   });
 
   function renderVersionsPanel() {
@@ -580,11 +599,13 @@ window.PM_PAGE_INIT = function () {
     document.querySelectorAll("[data-version-restore]").forEach(function (b) {
       b.addEventListener("click", function () {
         var row = PM_VERSIONS.list().find(function (v) { return v.id === b.getAttribute("data-version-restore"); });
-        if (!row || !confirm("Deze versie herstellen?")) return;
-        PM_VERSIONS.restore(row.id);
-        PM_toast("Versie hersteld");
-        if (["cms", "page", "pages"].indexOf(row.type) > -1) location.reload();
-        renderSettingsPanel(); renderGroupsPanel(); renderMediaPanel(); renderPagesPanel(); renderVersionsPanel(); renderAudit();
+        if (!row) return;
+        adminConfirm("Deze versie herstellen?", function () {
+          PM_VERSIONS.restore(row.id);
+          PM_toast("Versie hersteld");
+          if (["cms", "page", "pages"].indexOf(row.type) > -1) location.reload();
+          renderSettingsPanel(); renderGroupsPanel(); renderMediaPanel(); renderPagesPanel(); renderVersionsPanel(); renderAudit();
+        }, { ok: "Herstellen" });
       });
     });
     document.querySelectorAll("[data-version-remove]").forEach(function (b) {
@@ -606,7 +627,7 @@ window.PM_PAGE_INIT = function () {
       var mailInfo = r.approvalMailAt ? '<div class="admin-item__meta">Bevestigingsmail voorbereid: ' + esc(PM_fmtDate(r.approvalMailAt)) + '</div>' : '';
       var actions = r.status === "approved"
         ? '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--ghost" data-req-mail="' + esc(r.id) + '">Mail opnieuw openen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>'
-        : '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren + mail</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
+        : '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--primary" data-req-approve="' + esc(r.id) + '">Goedkeuren</button><button class="btn btn--ghost" data-req-reject="' + esc(r.id) + '">Afwijzen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>';
       return '<div class="admin-item">' +
         '<div class="admin-item__top"><div><b>' + esc(name) + '</b><div class="admin-item__meta">' + esc(r.company || "-") + ' - ' + esc(r.email || "-") + '<br>' + esc(r.country || "-") + ' - ' + esc(r.functionTitle || "-") + '</div></div>' + statusBadge(r.status) + '</div>' +
         '<div class="admin-item__meta">' + esc(r.reason || "Geen toelichting opgegeven.") + '</div>' +
@@ -614,11 +635,11 @@ window.PM_PAGE_INIT = function () {
         '<div class="admin-item__actions">' + actions + '</div></div>';
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen accountaanvragen.</p>';
     document.querySelectorAll("[data-req-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("request", b.getAttribute("data-req-view")); }); });
-    document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.approve(b.getAttribute("data-req-approve")); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); } PM_toast("Account goedgekeurd en bevestigingsmail geopend"); renderRequests(); renderAudit(); }); });
+    document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.approve(b.getAttribute("data-req-approve")); if (req && window.PM_MAIL) { PM_MAIL.logApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); } PM_toast("Account goedgekeurd. De bevestigingsmail staat klaar bij Mail opnieuw openen."); renderRequests(); adminRenderPartners(); renderAudit(); }); });
     document.querySelectorAll("[data-req-mail]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-mail"); }); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); PM_toast("Bevestigingsmail geopend"); renderRequests(); renderAudit(); } }); });
-    document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { var reason = prompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid."); PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }); });
-    document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { var reason = prompt("Reden voor blokkade:", "Tijdelijk geblokkeerd."); PM_REQUESTS.suspend(b.getAttribute("data-req-suspend"), reason || ""); PM_toast("Account geblokkeerd"); renderRequests(); renderAudit(); }); });
-    document.querySelectorAll("[data-req-delete]").forEach(function (b) { b.addEventListener("click", function () { if (confirm("Deze accountaanvraag verwijderen?")) { PM_REQUESTS.remove(b.getAttribute("data-req-delete")); PM_toast("Aanvraag verwijderd"); renderRequests(); renderAudit(); } }); });
+    document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid.", function (reason) { PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor blokkade:", "Tijdelijk geblokkeerd.", function (reason) { PM_REQUESTS.suspend(b.getAttribute("data-req-suspend"), reason || ""); PM_toast("Account geblokkeerd"); renderRequests(); renderAudit(); }, { ok: "Blokkeren", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-req-delete]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Deze accountaanvraag verwijderen?", function () { PM_REQUESTS.remove(b.getAttribute("data-req-delete")); PM_toast("Aanvraag verwijderd"); renderRequests(); renderAudit(); }, { ok: "Verwijderen" }); }); });
   }
   function renderDesignApprovals() {
     var rows = window.PM_DESIGNS ? PM_DESIGNS.list().sort(function (a, b) { return (a.updated || "") < (b.updated || "") ? 1 : -1; }) : [];
@@ -638,9 +659,9 @@ window.PM_PAGE_INIT = function () {
         '</div></div>';
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen ontwerpen opgeslagen of ingediend.</p>';
     document.querySelectorAll("[data-des-approve]").forEach(function (b) { b.addEventListener("click", function () { PM_DESIGNS.setStatus(b.getAttribute("data-des-approve"), "approved", "Goedgekeurd voor gebruik."); PM_toast("Design goedgekeurd"); renderDesignApprovals(); renderAudit(); }); });
-    document.querySelectorAll("[data-des-changes]").forEach(function (b) { b.addEventListener("click", function () { var fb = prompt("Feedback voor partner:", "Pas tekst, logo of beeldgebruik aan volgens de PlasmaMade-richtlijnen."); PM_DESIGNS.setStatus(b.getAttribute("data-des-changes"), "changes_requested", fb || "Aanpassing nodig."); PM_toast("Feedback opgeslagen"); renderDesignApprovals(); renderAudit(); }); });
-    document.querySelectorAll("[data-des-reject]").forEach(function (b) { b.addEventListener("click", function () { var fb = prompt("Reden voor afwijzing:", "Niet geschikt voor externe communicatie."); PM_DESIGNS.setStatus(b.getAttribute("data-des-reject"), "rejected", fb || "Afgewezen."); PM_toast("Design afgewezen"); renderDesignApprovals(); renderAudit(); }); });
-    document.querySelectorAll("[data-des-delete]").forEach(function (b) { b.addEventListener("click", function () { if (confirm("Dit ontwerp verwijderen?")) { PM_DESIGNS.remove(b.getAttribute("data-des-delete")); PM_toast("Design verwijderd"); renderDesignApprovals(); renderAudit(); } }); });
+    document.querySelectorAll("[data-des-changes]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Feedback voor partner:", "Pas tekst, logo of beeldgebruik aan volgens de PlasmaMade-richtlijnen.", function (fb) { PM_DESIGNS.setStatus(b.getAttribute("data-des-changes"), "changes_requested", fb || "Aanpassing nodig."); PM_toast("Feedback opgeslagen"); renderDesignApprovals(); renderAudit(); }, { ok: "Opslaan", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-des-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet geschikt voor externe communicatie.", function (fb) { PM_DESIGNS.setStatus(b.getAttribute("data-des-reject"), "rejected", fb || "Afgewezen."); PM_toast("Design afgewezen"); renderDesignApprovals(); renderAudit(); }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-des-delete]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Dit ontwerp verwijderen?", function () { PM_DESIGNS.remove(b.getAttribute("data-des-delete")); PM_toast("Design verwijderd"); renderDesignApprovals(); renderAudit(); }, { ok: "Verwijderen" }); }); });
   }
   function renderPhrases() {
     var rows = window.PM_PHRASES ? PM_PHRASES.list() : [];
@@ -649,9 +670,9 @@ window.PM_PAGE_INIT = function () {
       return '<div class="admin-item"><div class="admin-item__top"><div><b>' + esc(p.text) + '</b><div class="admin-item__meta">' + esc(p.lang || "NL") + ' - ' + esc(p.category || "algemeen") + ' - ' + esc(p.product || "Merk algemeen") + '</div></div>' + statusBadge(p.active === false ? "suspended" : "approved") + '</div>' +
         '<div class="admin-item__actions"><button class="btn btn--ghost" data-ph-edit="' + esc(p.id) + '">Bewerken</button><button class="btn btn--ghost" data-ph-toggle="' + esc(p.id) + '">' + (p.active === false ? "Activeren" : "Deactiveren") + '</button><button class="btn btn--ghost" data-ph-remove="' + esc(p.id) + '">Verwijderen</button></div></div>';
     }).join("");
-    document.querySelectorAll("[data-ph-edit]").forEach(function (b) { b.addEventListener("click", function () { var row = PM_PHRASES.list().find(function (p) { return p.id === b.getAttribute("data-ph-edit"); }); if (!row) return; var text = prompt("Standaardzin:", row.text); if (text) PM_PHRASES.update(row.id, { text: text.trim() }); renderPhrases(); renderAudit(); }); });
+    document.querySelectorAll("[data-ph-edit]").forEach(function (b) { b.addEventListener("click", function () { var row = PM_PHRASES.list().find(function (p) { return p.id === b.getAttribute("data-ph-edit"); }); if (!row) return; adminPrompt("Standaardzin:", row.text, function (text) { if (text) PM_PHRASES.update(row.id, { text: text.trim() }); renderPhrases(); renderAudit(); }, { ok: "Opslaan", multiline: true, rows: 3 }); }); });
     document.querySelectorAll("[data-ph-toggle]").forEach(function (b) { b.addEventListener("click", function () { var row = PM_PHRASES.list().find(function (p) { return p.id === b.getAttribute("data-ph-toggle"); }); if (!row) return; PM_PHRASES.update(row.id, { active: row.active === false }); renderPhrases(); renderAudit(); }); });
-    document.querySelectorAll("[data-ph-remove]").forEach(function (b) { b.addEventListener("click", function () { if (confirm("Deze standaardzin verwijderen?")) { PM_PHRASES.remove(b.getAttribute("data-ph-remove")); renderPhrases(); renderAudit(); } }); });
+    document.querySelectorAll("[data-ph-remove]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Deze standaardzin verwijderen?", function () { PM_PHRASES.remove(b.getAttribute("data-ph-remove")); renderPhrases(); renderAudit(); }, { ok: "Verwijderen" }); }); });
   }
   function renderAudit() {
     var rows = window.PM_AUDIT ? PM_AUDIT.list() : [];
@@ -706,12 +727,12 @@ window.PM_PAGE_INIT = function () {
     });
     document.querySelectorAll("[data-cms-delete]").forEach(function (b) {
       b.addEventListener("click", function () {
-        if (confirm("Dit contentitem verwijderen?")) {
+        adminConfirm("Dit contentitem verwijderen?", function () {
           PM_CMS.remove(cmsCollection, b.getAttribute("data-cms-delete"));
           document.getElementById("cms-editor").hidden = true;
           PM_toast("Item verwijderd");
           renderCms(); renderAudit();
-        }
+        }, { ok: "Verwijderen" });
       });
     });
   }
@@ -725,20 +746,28 @@ window.PM_PAGE_INIT = function () {
   document.getElementById("cms-save").addEventListener("click", function () {
     var row;
     try { row = JSON.parse(document.getElementById("cms-json").value); }
-    catch (e) { alert("De JSON is niet geldig. Controleer komma's, aanhalingstekens en accolades."); return; }
-    if (!row.id) { alert("Elk item heeft een uniek id nodig."); return; }
+    catch (e) {
+      PM_toast("De JSON is niet geldig. Controleer komma's, aanhalingstekens en accolades.");
+      document.getElementById("cms-json").focus();
+      return;
+    }
+    if (!row.id) {
+      PM_toast("Elk item heeft een uniek id nodig.");
+      document.getElementById("cms-json").focus();
+      return;
+    }
     PM_CMS.upsert(cmsEditorCollection, row);
     PM_toast("Content opgeslagen");
     document.getElementById("cms-editor").hidden = true;
     renderCms(); renderAudit();
   });
   document.getElementById("cms-reset").addEventListener("click", function () {
-    if (confirm("Deze collectie terugzetten naar de originele design/data-bundel? Lokale wijzigingen in deze collectie verdwijnen.")) {
+    adminConfirm("Deze collectie terugzetten naar de originele design/data-bundel? Lokale wijzigingen in deze collectie verdwijnen.", function () {
       PM_CMS.reset(cmsCollection);
       document.getElementById("cms-editor").hidden = true;
       PM_toast("Collectie hersteld");
       renderCms(); renderAudit();
-    }
+    }, { ok: "Herstellen" });
   });
   document.getElementById("phrase-form").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -873,8 +902,8 @@ window.PM_PAGE_INIT = function () {
   document.getElementById("support-inbox").innerHTML = tickets.length ? tickets.slice(0, 8).map(function (tk) {
     return '<div class="act-row"><span class="ai">' + PM_ICON("lifebuoy") + '</span><div style="min-width:0">' +
       '<div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(tk.subject || tk.id) + '</div>' +
-      '<div class="muted" style="font-size:12px">' + esc(tk.id) + ' · ' + esc(t("admin.ticketMeta", { category: tk.category || "Support", date: PM_fmtDate(tk.createdAt) })) + '</div>' +
-      '<div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc((tk.company || "—") + " · " + (tk.email || "—")) + '</div>' +
+      '<div class="muted" style="font-size:12px">' + esc(tk.id) + ' Â· ' + esc(t("admin.ticketMeta", { category: tk.category || "Support", date: PM_fmtDate(tk.createdAt) })) + '</div>' +
+      '<div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc((tk.company || "â€”") + " Â· " + (tk.email || "â€”")) + '</div>' +
     '</div><span class="badge ' + (tk.status === "closed" ? "badge--grey" : "badge--green-soft") + '">' + esc(tk.status === "closed" ? t("support.ticketClosed") : t("support.ticketOpen")) + '</span></div>';
   }).join("") : '<p class="muted" style="font-size:13px">' + esc(t("admin.noTickets")) + '</p>';
 
@@ -909,7 +938,7 @@ window.PM_PAGE_INIT = function () {
     return {
       naam: p.company || p.name || p.email || "Partner",
       type: roleKey ? t(roleKey) : (p.role === "support" ? t("nav.support") : (p.role || "Partner")),
-      regio: p.email ? String(p.email).split("@")[1] || "—" : "—",
+      regio: p.email ? String(p.email).split("@")[1] || "â€”" : "â€”",
       days: days,
       on: (p.status || "active") === "active"
     };
@@ -918,14 +947,14 @@ window.PM_PAGE_INIT = function () {
     partners.push({
       naam: authUser.company || authUser.name || "Partner",
       type: t(PM_roleKey(authUser.role) || "role.dealer"),
-      regio: String(authUser.email).split("@")[1] || "—",
+      regio: String(authUser.email).split("@")[1] || "â€”",
       days: 0,
       on: true
     });
   }
   document.getElementById("partners").innerHTML =
     '<thead><tr><th>' + esc(t("admin.thPartner")) + '</th><th>' + esc(t("admin.thType")) + '</th><th>' + esc(t("admin.thRegion")) + '</th><th>' + esc(t("admin.thLastActive")) + '</th><th>' + esc(t("admin.thStatus")) + '</th></tr></thead><tbody>' +
-    (partners.length ? partners : [{ naam: t("admin.noData"), type: "—", regio: "—", days: 0, on: false }]).map(function (p) {
+    (partners.length ? partners : [{ naam: t("admin.noData"), type: "â€”", regio: "â€”", days: 0, on: false }]).map(function (p) {
       var when = p.days === 0 ? t("admin.agoToday") : t("admin.agoDays", { n: p.days });
       return '<tr><td style="font-weight:600">' + esc(p.naam) + '</td><td>' + esc(p.type) + '</td><td>' + esc(p.regio) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (p.on ? '' : ' off') + '"><i></i>' + esc(t(p.on ? "admin.active" : "admin.inactive")) + '</span></td></tr>';
     }).join("") + '</tbody>';
@@ -1073,20 +1102,20 @@ window.PM_PAGE_INIT = function () {
   function adminEditPartner(email) {
     var row = PM_PARTNERS.list().find(function (p) { return String(p.email || "").toLowerCase() === String(email || "").toLowerCase(); });
     if (!row) return;
-    var company = prompt("Bedrijfsnaam / weergavenaam:", row.company || row.name || "");
-    if (company === null) return;
-    var role = prompt("Rol (dealer, distributor, installer, studio, support):", row.role || "dealer");
-    if (role === null) return;
-    var status = prompt("Status (active, inactive, suspended):", row.status || "active");
-    if (status === null) return;
-    PM_PARTNERS.update(row.email, {
-      name: row.name || company.trim(),
-      company: company.trim(),
-      role: adminSafePartnerRole(role, row.email),
-      status: status.trim() || "active"
-    });
-    PM_toast("Partner bijgewerkt");
-    adminRenderPartners(); renderAudit();
+    adminPrompt("Bedrijfsnaam / weergavenaam:", row.company || row.name || "", function (company) {
+      adminPrompt("Rol (dealer, distributor, installer, studio, support):", row.role || "dealer", function (role) {
+        adminPrompt("Status (active, inactive, suspended):", row.status || "active", function (status) {
+          PM_PARTNERS.update(row.email, {
+            name: row.name || company.trim(),
+            company: company.trim(),
+            role: adminSafePartnerRole(role, row.email),
+            status: status.trim() || "active"
+          });
+          PM_toast("Partner bijgewerkt");
+          adminRenderPartners(); renderAudit();
+        }, { ok: "Opslaan" });
+      }, { ok: "Volgende" });
+    }, { ok: "Volgende" });
   }
   function adminRenderPartners() {
     ensureCurrentAdminPartner();
@@ -1121,7 +1150,7 @@ window.PM_PAGE_INIT = function () {
       }).join("") + '</tbody>';
     document.querySelectorAll("[data-partner-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("partner", b.getAttribute("data-partner-view")); }); });
     document.querySelectorAll("[data-partner-edit]").forEach(function (b) { b.addEventListener("click", function () { adminEditPartner(b.getAttribute("data-partner-edit")); }); });
-    document.querySelectorAll("[data-partner-delete]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-partner-delete"); if (email && confirm("Deze partner verwijderen?")) { PM_PARTNERS.remove(email); PM_toast("Partner verwijderd"); adminRenderPartners(); renderAudit(); } }); });
+    document.querySelectorAll("[data-partner-delete]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-partner-delete"); if (!email) return; adminConfirm("Deze partner verwijderen?", function () { PM_PARTNERS.remove(email); PM_toast("Partner verwijderd"); adminRenderPartners(); renderAudit(); }, { ok: "Verwijderen" }); }); });
     document.querySelectorAll("#partners [data-admin-grant]").forEach(function (b) { b.addEventListener("click", function () { grantAdmin(b.getAttribute("data-admin-grant")); }); });
     document.querySelectorAll("#partners [data-admin-revoke]").forEach(function (b) { b.addEventListener("click", function () { revokeAdmin(b.getAttribute("data-admin-revoke")); }); });
   }
@@ -1132,23 +1161,24 @@ window.PM_PAGE_INIT = function () {
     input.value = "";
   });
   document.getElementById("partner-add").addEventListener("click", function () {
-    var email = prompt("E-mailadres van partner:");
-    if (!email) return;
-    var company = prompt("Bedrijfsnaam:", PM_companyFromEmail(email));
-    if (company === null) return;
-    var role = prompt("Rol (dealer, distributor, installer, studio, support):", "dealer");
-    if (role === null) return;
-    PM_PARTNERS.upsert({
-      email: email.trim(),
-      company: company.trim(),
-      name: company.trim(),
-      role: adminSafePartnerRole(role, email),
-      status: "active",
-      source: "admin",
-      lastActiveAt: new Date().toISOString()
-    });
-    PM_toast("Partner toegevoegd");
-    adminRenderPartners(); renderAudit();
+    adminPrompt("E-mailadres van partner:", "", function (email) {
+      if (!email) return;
+      adminPrompt("Bedrijfsnaam:", PM_companyFromEmail(email), function (company) {
+        adminPrompt("Rol (dealer, distributor, installer, studio, support):", "dealer", function (role) {
+          PM_PARTNERS.upsert({
+            email: email.trim(),
+            company: company.trim(),
+            name: company.trim(),
+            role: adminSafePartnerRole(role, email),
+            status: "active",
+            source: "admin",
+            lastActiveAt: new Date().toISOString()
+          });
+          PM_toast("Partner toegevoegd");
+          adminRenderPartners(); renderAudit();
+        }, { ok: "Toevoegen" });
+      }, { ok: "Volgende" });
+    }, { ok: "Volgende" });
   });
   renderSettingsPanel();
   renderGroupsPanel();
@@ -1178,6 +1208,6 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/app.js?v=20260624-github-pages-2"></script>
+<script src="assets/js/app.js?v=20260624-github-pages-3"></script>
 </body>
 </html>

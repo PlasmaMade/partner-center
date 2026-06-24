@@ -1551,11 +1551,58 @@
       }
     });
   }
+  function promptDialog(message, value, onSubmit, opts) {
+    opts = opts || {};
+    closeDialog();
+    lastFocus = document.activeElement;
+    var isMultiline = !!opts.multiline;
+    var fieldTag = isMultiline ? "textarea" : "input";
+    var fieldAttrs = isMultiline ? ' rows="' + (opts.rows || 4) + '"' : ' type="text"';
+    var ov = document.createElement("div");
+    ov.className = "pm-dialog-ov"; ov.id = "pm-dialog";
+    ov.innerHTML =
+      '<div class="pm-dialog pm-dialog--prompt" role="dialog" aria-modal="true" aria-labelledby="pm-dialog-msg">' +
+        '<label class="pm-dialog__field" for="pm-dialog-input">' +
+          '<span id="pm-dialog-msg">' + esc(message) + '</span>' +
+          '<' + fieldTag + ' id="pm-dialog-input"' + fieldAttrs + '></' + fieldTag + '>' +
+        '</label>' +
+        '<div class="pm-dialog__btns">' +
+          '<button type="button" class="btn btn--ghost" data-act="cancel">' + esc(opts.cancel || t("common.cancel")) + '</button>' +
+          '<button type="button" class="btn btn--primary" data-act="ok">' + esc(opts.ok || t("common.save")) + '</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(ov);
+    var input = ov.querySelector("#pm-dialog-input");
+    input.value = value == null ? "" : String(value);
+    input.focus();
+    input.select();
+    function submitPrompt() {
+      var next = input.value;
+      closeDialog();
+      onSubmit(next);
+    }
+    ov.addEventListener("click", function (e) {
+      if (e.target === ov || e.target.closest('[data-act="cancel"]')) { closeDialog(); }
+      else if (e.target.closest('[data-act="ok"]')) { submitPrompt(); }
+    });
+    ov.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { e.stopPropagation(); closeDialog(); }
+      if (!isMultiline && e.key === "Enter") { e.preventDefault(); submitPrompt(); }
+      if (isMultiline && (e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); submitPrompt(); }
+      if (e.key === "Tab") {
+        var focusables = ov.querySelectorAll("input,textarea,button");
+        var first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
   function closeDialog() {
     var d = document.getElementById("pm-dialog");
     if (d) { d.remove(); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
   }
   window.PM_confirm = confirmDialog;
+  window.PM_prompt = promptDialog;
 
   /* ---------------- GLOBALE ADMIN-BEWERKMODUS ---------------- */
   const PAGE_EDIT_KEY = "pm_page_edits";
@@ -1725,16 +1772,21 @@
     if (!sel) { toast("Dit element kan niet betrouwbaar worden opgeslagen"); return; }
     if (kind === "image" || kind === "background") { editImage(el, sel, kind === "background"); return; }
     var current = el.textContent.trim();
-    var next = prompt(kind === "link" ? "Tekst van link/knop:" : "Tekst aanpassen:", current);
-    if (next === null) return;
-    el.textContent = next;
-    var edit = { text: next };
-    if (kind === "link") {
-      var href = prompt("Link URL:", el.getAttribute("href") || "");
-      if (href !== null) { el.setAttribute("href", href); edit.href = href; }
-    }
-    savePageEdit(sel, edit);
-    toast("Aanpassing opgeslagen");
+    promptDialog(kind === "link" ? "Tekst van link/knop:" : "Tekst aanpassen:", current, function (next) {
+      if (next == null) return;
+      var save = function (href) {
+        el.textContent = next;
+        var edit = { text: next };
+        if (kind === "link" && href != null) { el.setAttribute("href", href); edit.href = href; }
+        savePageEdit(sel, edit);
+        toast("Aanpassing opgeslagen");
+      };
+      if (kind === "link") {
+        promptDialog("Link URL:", el.getAttribute("href") || "", function (href) { save(href); }, { ok: "Opslaan" });
+      } else {
+        save(null);
+      }
+    }, { ok: "Opslaan", multiline: kind !== "link" && current.length > 70, rows: 4 });
   }
   function pageCollection() {
     var p = document.body && document.body.getAttribute("data-page");
@@ -1961,7 +2013,11 @@
     ov.querySelector("[data-cms-save]").addEventListener("click", function () {
       var next;
       try { next = JSON.parse(ov.querySelector(".pm-cms-advanced textarea").value); }
-      catch (e) { alert("De geavanceerde data is niet geldig."); return; }
+      catch (e) {
+        toast("De geavanceerde data is niet geldig.");
+        ov.querySelector(".pm-cms-advanced textarea").focus();
+        return;
+      }
       var ok = true;
       defs.forEach(function (def) {
         var field = form.querySelector('[data-cms-key="' + CSS.escape(def.key) + '"]');
@@ -1971,7 +2027,14 @@
         if (def.key === "id") value = slugifyContentId(value, next.id || contentTitle(next));
         next[def.key] = value;
       });
-      if (!ok) { alert("Vul de verplichte velden in."); return; }
+      if (!ok) {
+        toast("Vul de verplichte velden in.");
+        var missing = defs.map(function (def) {
+          return def.required ? form.querySelector('[data-cms-key="' + CSS.escape(def.key) + '"]') : null;
+        }).find(function (field) { return field && !String(field.value || "").trim(); });
+        if (missing) missing.focus();
+        return;
+      }
       if (!next.id) next.id = slugifyContentId(next.title || next.name, makeId(collection.slice(0, 4)));
       PM_CMS.upsert(collection, next);
       closeContentEditor();
@@ -2067,18 +2130,19 @@
     toast("Element verwijderd");
   }
   function addTextAfter(el) {
-    var text = prompt("Nieuwe tekst:", "Nieuwe tekst");
-    if (text === null) return;
-    savePageAddition(el, {
-      id: makeId("add"),
-      type: "text",
-      tag: "div",
-      text: text,
-      parentSel: selectorFor(el.parentElement),
-      afterSel: selectorFor(el),
-      className: "pm-added-text"
-    });
-    toast("Tekst toegevoegd");
+    promptDialog("Nieuwe tekst:", "Nieuwe tekst", function (text) {
+      if (!String(text || "").trim()) return;
+      savePageAddition(el, {
+        id: makeId("add"),
+        type: "text",
+        tag: "div",
+        text: text,
+        parentSel: selectorFor(el.parentElement),
+        afterSel: selectorFor(el),
+        className: "pm-added-text"
+      });
+      toast("Tekst toegevoegd");
+    }, { ok: "Toevoegen", multiline: true, rows: 3 });
   }
   function addImageAfter(el) {
     var file = document.createElement("input");

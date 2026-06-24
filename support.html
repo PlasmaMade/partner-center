@@ -7,7 +7,7 @@
 <meta name="description" content="Contact en support voor PlasmaMade-partners, dealers en installateurs.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-github-pages-2">
+<link rel="stylesheet" href="assets/css/style.css?v=20260624-github-pages-3">
 </head>
 <body data-page="support">
 <div class="layout">
@@ -106,8 +106,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-github-pages-2"></script>
-<script src="assets/js/data.js?v=20260624-github-pages-2"></script>
+<script src="assets/js/i18n.js?v=20260624-github-pages-3"></script>
+<script src="assets/js/data.js?v=20260624-github-pages-3"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -130,7 +130,7 @@ window.PM_PAGE_INIT = function () {
     { ic: "pin", h: t("support.visitAddress"), p: "Achthoevenweg 30, 7951 SK Staphorst" },
     { ic: "mail", h: t("support.postAddress"), p: "Postbus 162, 7950 AD Staphorst" },
     { ic: "phone", h: t("support.general"), p: "+31 (0) 522 468077" },
-    { ic: "fileText", h: t("support.kvkBtw"), p: "60745304 · NL854041515B01" }
+    { ic: "fileText", h: t("support.kvkBtw"), p: "60745304 Â· NL854041515B01" }
   ];
   document.getElementById("company-info").innerHTML = info.map(function (i) {
     return '<li><span class="li-ico">' + PM_ICON(i.ic) + '</span><div><h5>' + esc(i.h) + '</h5><p>' + esc(i.p) + '</p></div></li>';
@@ -162,7 +162,7 @@ window.PM_PAGE_INIT = function () {
     document.getElementById("ticket-count").textContent = PM_fmtNum(tickets.length);
     document.getElementById("ticket-list").innerHTML = tickets.length ? tickets.map(function (tk, i) {
       return '<div class="acct-row" style="' + (i ? "" : "padding-top:0;") + '">' +
-        '<div class="acct-row__txt"><h5>' + esc(tk.subject || tk.id) + '</h5><p>' + esc(tk.id) + ' · ' + esc(PM_fmtDate(tk.createdAt)) + '</p></div>' +
+        '<div class="acct-row__txt"><h5>' + esc(tk.subject || tk.id) + '</h5><p>' + esc(tk.id) + ' Â· ' + esc(PM_fmtDate(tk.createdAt)) + '</p></div>' +
         '<span class="badge ' + (tk.status === "closed" ? "badge--grey" : "badge--green-soft") + '">' + esc(tk.status === "closed" ? t("support.ticketClosed") : t("support.ticketOpen")) + '</span></div>';
     }).join("") : '<p class="muted" style="font-size:13px">' + esc(t("support.noTickets")) + '</p>';
   }
@@ -245,6 +245,6 @@ window.PM_PAGE_INIT = function () {
   });
 };
 </script>
-<script src="assets/js/app.js?v=20260624-github-pages-2"></script>
+<script src="assets/js/app.js?v=20260624-github-pages-3"></script>
 </body>
 </html>

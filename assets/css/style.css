@@ -206,9 +206,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .lang-menu .lang-note{font-size:11px;color:var(--muted);padding:9px 11px 6px;border-top:1px solid var(--line);margin-top:5px;line-height:1.45}
 
 /* ---------- Toegankelijke bevestigingsdialoog ---------- */
-.pm-dialog-ov{position:fixed;inset:0;background:rgba(13,17,23,.5);backdrop-filter:blur(2px);z-index:500;display:grid;place-items:center;padding:24px}
+.pm-dialog-ov{position:fixed;inset:0;background:rgba(13,17,23,.5);backdrop-filter:blur(2px);z-index:1200;display:grid;place-items:center;padding:24px}
 .pm-dialog{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);max-width:400px;width:100%;padding:26px 28px}
 .pm-dialog p{font-weight:600;color:var(--black);font-size:15.5px;margin-bottom:20px;line-height:1.45}
+.pm-dialog--prompt{max-width:520px}
+.pm-dialog__field{display:grid;gap:9px;margin-bottom:18px;font-weight:700;color:var(--black);font-size:15px}
+.pm-dialog__field input,.pm-dialog__field textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-weight:500;padding:11px 12px;outline:none}
+.pm-dialog__field textarea{resize:vertical;line-height:1.45}
+.pm-dialog__field input:focus,.pm-dialog__field textarea:focus{border-color:var(--green);box-shadow:var(--ring-green)}
 .pm-dialog__btns{display:flex;gap:10px;justify-content:flex-end}
 
 /* ---------- Formuliervalidatie ---------- */

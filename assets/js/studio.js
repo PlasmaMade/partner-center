@@ -511,6 +511,14 @@ var PMStudio = (function () {
     if (!p && window.PM_ICON) return PM_ICON(name, cls);
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' + (cls ? ' class="' + cls + '"' : '') + '>' + (p || "") + '</svg>';
   }
+  function stPrompt(message, value, onSubmit, opts) {
+    if (window.PM_prompt) {
+      PM_prompt(message, value, onSubmit, opts || {});
+      return;
+    }
+    var next = prompt(message, value == null ? "" : value);
+    if (next !== null) onSubmit(next);
+  }
 
   /* ================= Toolbar ================= */
   function buildFormatSelect() {
@@ -518,17 +526,29 @@ var PMStudio = (function () {
       return '<option value="' + k + '">' + DL("studioFormats", FORMATS[k].label) + '</option>';
     }).join("");
     $("st-format").value = state.format;
-    $("st-format").addEventListener("change", function () {
-      if (this.value === "custom") {
-        var w = parseInt(prompt(T("studio.customW"), state.customSize.w), 10);
-        if (!w || w < 100 || w > 4000) { this.value = state.format; return; }
-        var h = parseInt(prompt(T("studio.customH"), state.customSize.h), 10);
-        if (!h || h < 100 || h > 4000) { this.value = state.format; return; }
-        state.customSize = { w: w, h: h };
-      }
-      state.format = this.value;
+    function applyFormat(value) {
+      state.format = value;
       state.zoom = null;
       applyView(); renderCanvas(); commit();
+    }
+    $("st-format").addEventListener("change", function () {
+      var sel = this;
+      if (this.value === "custom") {
+        var prev = state.format;
+        stPrompt(T("studio.customW"), state.customSize.w, function (wVal) {
+          var w = parseInt(wVal, 10);
+          if (!w || w < 100 || w > 4000) { sel.value = prev; return; }
+          stPrompt(T("studio.customH"), state.customSize.h, function (hVal) {
+            var h = parseInt(hVal, 10);
+            if (!h || h < 100 || h > 4000) { sel.value = prev; return; }
+            state.customSize = { w: w, h: h };
+            sel.value = "custom";
+            applyFormat("custom");
+          }, { ok: "Opslaan" });
+        }, { ok: "Volgende" });
+        return;
+      }
+      applyFormat(this.value);
     });
   }
 
@@ -2280,8 +2300,9 @@ var PMStudio = (function () {
       b.addEventListener("click", function () {
         var l = getDesigns(), d = l.find(function (x) { return x.id === b.getAttribute("data-rename"); });
         if (!d) return;
-        var n = prompt(T("studio.renamePrompt"), d.name);
-        if (n) { d.name = n.trim() || d.name; setDesigns(l); if (state.id === d.id) { state.name = d.name; $("st-name").value = d.name; } openModal(); }
+        stPrompt(T("studio.renamePrompt"), d.name, function (n) {
+          if (n) { d.name = n.trim() || d.name; setDesigns(l); if (state.id === d.id) { state.name = d.name; $("st-name").value = d.name; } openModal(); }
+        }, { ok: "Opslaan" });
       });
     });
     $("st-open-body").querySelectorAll("[data-clone]").forEach(function (b) {
