@@ -2,27 +2,54 @@
   "use strict";
 
   var DEFAULT_ENDPOINT = "https://partner-center.onrender.com/api/sync";
-  var endpoint = DEFAULT_ENDPOINT;
+
+  function clean(value) {
+    return String(value || "").trim();
+  }
+
+  function sameOriginEndpoint() {
+    if (!/^https?:$/i.test(location.protocol || "")) return "";
+    return location.origin.replace(/\/$/, "") + "/api/sync";
+  }
+
+  function isLocalHost() {
+    return /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(location.hostname || "");
+  }
+
+  function isCentralApiHost() {
+    return /^partner-center\.onrender\.com$/i.test(location.hostname || "");
+  }
+
+  function autoEndpoint() {
+    if (isLocalHost() || isCentralApiHost()) return sameOriginEndpoint();
+    return DEFAULT_ENDPOINT;
+  }
+
+  var endpoint = autoEndpoint();
+  var source = endpoint === DEFAULT_ENDPOINT ? "shared-default" : "same-origin";
 
   try {
     var meta = document.querySelector('meta[name="pm-sync-endpoint"]');
-    if (meta && meta.content) endpoint = meta.content.trim();
+    if (meta && clean(meta.content)) {
+      endpoint = clean(meta.content);
+      source = "meta";
+    }
   } catch (e) {}
 
   try {
     var stored = localStorage.getItem("pm_remote_sync_endpoint");
-    if (stored) endpoint = stored.trim();
+    if (clean(stored)) {
+      endpoint = clean(stored);
+      source = "stored";
+    }
   } catch (e) {}
-
-  if (!endpoint && /^https?:$/i.test(location.protocol || "") && !/github\.io$/i.test(location.hostname || "")) {
-    endpoint = location.origin.replace(/\/$/, "") + "/api/sync";
-  }
 
   try {
     var params = new URLSearchParams(location.search || "");
     var fromUrl = params.get("syncEndpoint");
-    if (fromUrl) {
-      endpoint = fromUrl.trim();
+    if (clean(fromUrl)) {
+      endpoint = clean(fromUrl);
+      source = "query";
       localStorage.setItem("pm_remote_sync_endpoint", endpoint);
     }
   } catch (e) {}
@@ -31,6 +58,7 @@
   window.PM_SYNC_CONFIG = {
     endpoint: endpoint,
     configured: !!endpoint,
+    source: source,
     storageKey: "pm_remote_sync_endpoint"
   };
 })();

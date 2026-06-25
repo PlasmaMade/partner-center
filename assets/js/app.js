@@ -354,20 +354,23 @@
       }
       return false;
     },
-    push: async function (keys) {
+    push: async function (keys, opts) {
+      opts = opts || {};
       if (!this.online()) return false;
       var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
       if (!endpoint) return false;
       keys = (keys || []).filter(isCentralKey);
       if (!keys.length) return false;
-      var timeout = withTimeout(5500);
+      var timeout = withTimeout(opts.timeout || 5500);
       try {
-        var res = await fetch(endpoint, {
+        var request = {
           method: "POST",
           headers: syncAuthHeaders({ "content-type": "application/json", "x-pm-actor": syncActor() }),
           body: JSON.stringify({ action: "saveState", actor: syncActor(), baseUpdatedAt: this.remoteUpdatedAt || "", state: this.snapshot(keys) }),
           signal: timeout.signal
-        });
+        };
+        if (opts.keepalive) request.keepalive = true;
+        var res = await fetch(endpoint, request);
         if (!res.ok) {
           this.lastError = "push_http_" + res.status;
           return false;
@@ -386,11 +389,11 @@
         if (timeout.done) timeout.done();
       }
     },
-    flushDirty: function () {
+    flushDirty: function (opts) {
       var self = this;
       var keys = this.dirtyKeys().filter(function (key) { return self.shouldPush(key); });
       if (!keys.length) return false;
-      return this.push(keys);
+      return this.push(keys, opts || {});
     },
     schedule: function (key) {
       if (!isCentralKey(key)) return;
@@ -401,7 +404,13 @@
         var keys = Object.keys(self.pending);
         self.pending = {};
         self.push(keys);
-      }, 420);
+      }, syncIsAdmin() ? 140 : 420);
+    },
+    adminFlush: function (opts) {
+      if (!syncIsAdmin()) return Promise.resolve(false);
+      clearTimeout(this.timer);
+      this.pending = {};
+      return Promise.resolve(this.flushDirty(opts || {}));
     },
     submitRequest: async function (payload) {
       if (!this.online()) return null;
@@ -479,6 +488,12 @@
       }
     }
   };
+
+  try {
+    window.addEventListener("pagehide", function () {
+      if (window.PM_SYNC && PM_SYNC.adminFlush) PM_SYNC.adminFlush({ keepalive: true, timeout: 2200 });
+    });
+  } catch (e) {}
 
   function normEmail(email) { return String(email || "").trim().toLowerCase(); }
   const BOOTSTRAP_ADMIN_ROWS = [
@@ -2772,6 +2787,18 @@
       return a;
     }).filter(function (a) { return a && a.type; }).slice(0, 8);
   }
+  function aiFlushAdminChanges() {
+    if (window.PM_SYNC && PM_SYNC.adminFlush) return PM_SYNC.adminFlush({ timeout: 6500 });
+    if (window.PM_SYNC && PM_SYNC.flushDirty) return Promise.resolve(PM_SYNC.flushDirty({ timeout: 6500 }));
+    return Promise.resolve(false);
+  }
+  function aiNavigateAfterSync(href) {
+    aiFlushAdminChanges().then(function () {
+      location.href = href;
+    }).catch(function () {
+      location.href = href;
+    });
+  }
   function aiOpFromAction(action, uploadedData, prompt) {
     var type = String(action.type || "").replace(/[\s_-]+/g, "").toLowerCase();
     if (type === "replaceimage" || type === "image") {
@@ -2863,7 +2890,7 @@
         apply: function () {
           var page = PM_CUSTOM_PAGES.upsert(aiCustomPageFromAction(action, prompt, uploadedData));
           toast("Landingspagina aangemaakt");
-          setTimeout(function () { location.href = "page.html?id=" + encodeURIComponent(page.id); }, 250);
+          aiNavigateAfterSync("page.html?id=" + encodeURIComponent(page.id));
         }
       };
     }
@@ -2874,7 +2901,7 @@
         apply: function () {
           var page = PM_CUSTOM_PAGES.createDistributorPage();
           toast("Landingspagina aangemaakt");
-          setTimeout(function () { location.href = "page.html?id=" + encodeURIComponent(page.id); }, 250);
+          aiNavigateAfterSync("page.html?id=" + encodeURIComponent(page.id));
         }
       };
     }
@@ -2968,7 +2995,7 @@
       return {
         label: action.label || "Open " + (action.href || "pagina") + ".",
         structural: false,
-        apply: function () { if (action.href) location.href = action.href; }
+        apply: function () { if (action.href) aiNavigateAfterSync(action.href); }
       };
     }
     return null;
@@ -3284,7 +3311,10 @@
       var apply = function () {
         currentPlan.ops.forEach(function (o) { o.apply(); });
         toast("AI-bewerker heeft de wijziging toegepast");
-        addAndRender(aiMessage("assistant", "Toegepast. De wijziging staat nu in de portal en is opgenomen in de versiegeschiedenis.", { source: "local" }));
+        aiFlushAdminChanges().then(function (saved) {
+          if (saved) toast("Wijziging centraal opgeslagen");
+        });
+        addAndRender(aiMessage("assistant", "Toegepast. De wijziging staat nu in de portal, wordt centraal gesynchroniseerd en is opgenomen in de versiegeschiedenis.", { source: "local" }));
         setPlan(null);
       };
       if (currentPlan.structural && window.PM_confirm) PM_confirm("Deze wijziging past de structuur van de portal aan. Toepassen?", apply, { ok: "Toepassen", cancel: "Annuleren" });

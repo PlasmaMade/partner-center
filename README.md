@@ -33,9 +33,9 @@ OPENAI_MODEL=gpt-5.5
 OPENAI_REASONING_EFFORT=medium
 ```
 
-When the frontend is served by this Node server, it automatically uses same-origin `/api/sync`.
+By default, browser deployments use the shared Render sync endpoint so static mirrors read and write the same central state. Local development and the Render API host use same-origin `/api/sync`.
 
-When GitHub Pages remains the frontend host, configure the external API URL in `assets/js/sync-config.js`, or set it per browser once:
+When GitHub Pages remains the frontend host, or when a separate server should be forced, configure the external API URL in `assets/js/sync-config.js`, or set it per browser once:
 
 ```text
 https://plasmamade.github.io/partner-center/?syncEndpoint=https://your-api-domain.com/api/sync
