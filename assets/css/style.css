@@ -954,6 +954,9 @@ body.pm-edit-mode .pm-contentbar{display:flex}
 .pm-ai__preview{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface-2);padding:14px;font-size:13px}
 .pm-ai__preview ul{list-style:disc;margin:9px 0 0 18px;color:var(--ink)}
 .pm-ai__preview li{margin-bottom:5px}
+.pm-ai-notes{margin-top:10px;border-top:1px solid var(--line);padding-top:9px;color:var(--muted)}
+.pm-ai-notes b{color:var(--ink)}
+.pm-ai-notes ul{margin-top:7px}
 .pm-ai-warn{margin-top:10px;color:#8a5a12;background:#fff6e4;border:1px solid #f2d5a3;border-radius:var(--radius-sm);padding:9px 10px;font-weight:700}
 .pm-ai__foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;background:var(--surface-2);border-top:1px solid var(--line);flex-wrap:wrap}
 .pm-ai-provider{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
@@ -963,6 +966,11 @@ body.pm-edit-mode .pm-contentbar{display:flex}
 .pm-ai-provider__grid{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:end;padding:12px;border-top:1px solid var(--line);background:var(--surface-2)}
 .pm-ai-toggle{display:flex!important;align-items:center;gap:8px;min-height:42px}
 .pm-ai-toggle input{width:18px;height:18px;accent-color:var(--green)}
+.pm-ai-suggestions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pm-ai-suggestion{height:36px;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;color:var(--ink);padding:0 11px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;transition:background .15s var(--ease),border-color .15s var(--ease),color .15s var(--ease);max-width:100%}
+.pm-ai-suggestion:hover,.pm-ai-suggestion:focus-visible{background:var(--green-50);border-color:var(--green);color:var(--green-700);outline:none}
+.pm-ai-suggestion svg{width:15px;height:15px;flex-shrink:0}
+.pm-ai-suggestion span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pm-ai-thread{min-height:220px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:14px;display:flex;flex-direction:column;gap:10px}
 .pm-ai-msg{display:flex}
 .pm-ai-msg--user{justify-content:flex-end}
@@ -1014,6 +1022,7 @@ body[data-pm-spacing=wide] .card__body{padding:26px}
   .pm-ai__body{padding:14px}
   .pm-ai-provider__grid{grid-template-columns:1fr}
   .pm-ai-msg__bubble{max-width:92%}
+  .pm-ai-suggestion{flex:1;justify-content:center;min-width:136px}
   .pm-ai-composer__row .btn{flex:1;justify-content:center}
   .pm-ai__foot .btn{flex:1;justify-content:center}
   .pm-custom-hero{padding:24px 20px}

@@ -1,6 +1,6 @@
 # PlasmaMade Partner Center
 
-Production-ready Partner Center frontend with a shared sync API for account requests, admin state, partner data, support tickets, designs, CMS edits and portal settings.
+Production-ready Partner Center frontend with a shared sync API for account requests, admin state, partner data, support tickets, designs, CMS edits, portal settings and the admin AI editor.
 
 ## Run Locally
 
@@ -16,9 +16,11 @@ GitHub Pages can host the static frontend, but it cannot run a backend or databa
 
 - `GET /api/sync` pulls central state.
 - `POST /api/sync` handles `login`, `accountRequest` and authenticated `saveState`.
+- `POST /api/ai-coder` powers the admin AI editor with server-side OpenAI credentials.
 - Data is stored in Neon/Postgres when `DATABASE_URL` is set.
 - Without `DATABASE_URL`, local testing stores data in `server/data/state.json`.
 - Admin sessions use signed tokens; set `PM_SYNC_SECRET` before production.
+- The AI editor requires an admin session token and `OPENAI_API_KEY` on the server. Without a key, the frontend falls back to safe local proposals.
 
 Copy `.env.example` to `.env` on the server and set:
 
@@ -26,6 +28,9 @@ Copy `.env.example` to `.env` on the server and set:
 PM_SYNC_SECRET=replace-with-a-long-random-secret
 DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 PM_ALLOWED_ORIGINS=https://plasmamade.github.io,https://plasmamade.com,https://www.plasmamade.com
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-5.5
+OPENAI_REASONING_EFFORT=medium
 ```
 
 When the frontend is served by this Node server, it automatically uses same-origin `/api/sync`.
@@ -67,6 +72,9 @@ Plan: Free
 DATABASE_URL=postgresql://...from-neon...
 PM_SYNC_SECRET=make-this-a-long-random-secret
 PM_ALLOWED_ORIGINS=https://plasmamade.github.io,https://plasmamade.com,https://www.plasmamade.com
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-5.5
+OPENAI_REASONING_EFFORT=medium
 NODE_ENV=production
 ```
 

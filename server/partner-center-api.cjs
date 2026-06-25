@@ -6,6 +6,7 @@ const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const { URL } = require("url");
+const { createAiCoderHandler } = require("./ai-coder-handler.cjs");
 
 const ROOT_DIR = path.resolve(__dirname, "..");
 const PUBLIC_DIR = path.resolve(process.env.PM_PUBLIC_DIR || ROOT_DIR);
@@ -766,10 +767,32 @@ async function handleHealth(req, res) {
   }
 }
 
+const handleAiCoder = createAiCoderHandler({
+  requireAdmin: true,
+  setCors,
+  authorize: async function (req) {
+    let db;
+    try {
+      db = await loadDbAsync();
+      ensureBootstrapState(db);
+    } catch (e) {
+      return { ok: false, status: 503, error: "storage_unavailable" };
+    }
+    const auth = authFromRequest(req, db);
+    if (!auth) return { ok: false, status: 401, error: "invalid_or_missing_token" };
+    if (!auth.admin || !isAdminUser(db.state, auth.email)) return { ok: false, status: 403, error: "admin_required" };
+    return { ok: true, auth: auth };
+  }
+});
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, "http://127.0.0.1");
   if (url.pathname === "/api/health") {
     handleHealth(req, res);
+    return;
+  }
+  if (url.pathname === "/api/ai-coder") {
+    handleAiCoder(req, res);
     return;
   }
   if (url.pathname === "/api/sync") {

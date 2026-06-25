@@ -2542,16 +2542,45 @@
     if (!text) return fallback || "";
     return text.replace(/^./, function (c) { return c.toUpperCase(); });
   }
+  function aiDefaultEndpoint() {
+    var sync = "";
+    try { sync = window.PM_SYNC && PM_SYNC.getEndpoint ? PM_SYNC.getEndpoint() : ""; } catch (e) {}
+    if (sync) {
+      try {
+        var u = new URL(sync, location.href);
+        if (/\/api\/sync$/i.test(u.pathname)) {
+          u.pathname = u.pathname.replace(/\/api\/sync$/i, "/api/ai-coder");
+          u.search = "";
+          return u.toString();
+        }
+      } catch (e) {}
+    }
+    if (/^https?:$/i.test(location.protocol || "")) return location.origin.replace(/\/$/, "") + "/api/ai-coder";
+    return "/api/ai-coder";
+  }
   function aiProviderDefaults() {
-    return { enabled: true, endpoint: "/api/ai-coder", updatedAt: null };
+    return { enabled: true, endpoint: aiDefaultEndpoint(), updatedAt: null };
   }
   function aiProviderConfig() {
-    return Object.assign(aiProviderDefaults(), readStore(AI_PROVIDER_KEY, {}));
+    var defaults = aiProviderDefaults();
+    var saved = readStore(AI_PROVIDER_KEY, {});
+    var cfg = Object.assign(defaults, saved);
+    if (!saved.endpoint || (saved.endpoint === "/api/ai-coder" && defaults.endpoint !== "/api/ai-coder")) cfg.endpoint = defaults.endpoint;
+    return cfg;
   }
   function aiSaveProvider(patch) {
     var next = Object.assign(aiProviderConfig(), patch || {}, { updatedAt: new Date().toISOString() });
     writeStore(AI_PROVIDER_KEY, next);
     return next;
+  }
+  function aiAuthHeaders(extra) {
+    var headers = Object.assign({}, extra || {});
+    try {
+      var u = getUser ? getUser() : null;
+      if (u && u.syncToken) headers["x-pm-token"] = u.syncToken;
+      if (u && u.email) headers["x-pm-actor"] = u.email;
+    } catch (e) {}
+    return headers;
   }
   function aiHistory() {
     var rows = readStore(AI_HISTORY_KEY, []);
@@ -2574,8 +2603,41 @@
     var p = document.body && document.body.getAttribute("data-page");
     return p || (location.pathname.split("/").pop() || "portal");
   }
+  function aiVisiblePageSummary() {
+    var main = document.querySelector("main.content");
+    if (!main) return {};
+    function rows(sel, max, limit) {
+      return Array.prototype.slice.call(main.querySelectorAll(sel)).slice(0, max).map(function (el) {
+        return aiText(el.textContent || el.alt || "", limit || 180);
+      }).filter(Boolean);
+    }
+    return {
+      title: aiText((main.querySelector("h1,h2") || {}).textContent || document.title || "", 180),
+      headings: rows("h1,h2,h3", 14, 140),
+      paragraphs: rows("p,.lead,.muted,.tile p,.card p", 18, 220),
+      actions: rows("a.btn,button.btn,.tile__link", 14, 80),
+      images: Array.prototype.slice.call(main.querySelectorAll("img")).slice(0, 12).map(function (img) {
+        return { src: img.getAttribute("src") || "", alt: aiText(img.getAttribute("alt") || "", 120) };
+      })
+    };
+  }
+  function aiActionCatalog() {
+    return [
+      { type: "addSection", use: "Voeg een compleet portalblok toe met titel, body, CTA en optioneel beeld." },
+      { type: "addBanner", use: "Voeg een brede campagne- of aankondigingsbanner toe." },
+      { type: "addCard", use: "Voeg een compacte kaart/link toe op de huidige pagina." },
+      { type: "replaceImage", use: "Vervang een bestaand beeld of voeg een beeld toe als er geen match is." },
+      { type: "rewriteSelectedText", use: "Herschrijf de geselecteerde tekst in PlasmaMade-stijl." },
+      { type: "createCustomPage", use: "Maak een nieuwe landingspagina met intro, CTA en blokken." },
+      { type: "createCmsItem", use: "Maak een CMS-concept voor nieuws, artikel, download, video of campagne." },
+      { type: "addPhrase", use: "Voeg copy toe aan de standaardzinnen van de Design Studio." },
+      { type: "addMedia", use: "Voeg een item toe aan de mediabibliotheek." },
+      { type: "navigate", use: "Open een relevante bestaande portalpagina." }
+    ];
+  }
   function aiContext() {
     var data = window.PM_DATA || {};
+    var user = getUser ? getUser() : null;
     var selected = lastEditableTarget ? {
       kind: editableKind(lastEditableTarget),
       selector: selectorFor(lastEditableTarget),
@@ -2591,12 +2653,29 @@
       language: window.PM_lang ? PM_lang() : "nl",
       page: aiHumanPage(),
       path: location.pathname + location.search,
+      visiblePage: aiVisiblePageSummary(),
       selected: selected,
+      user: user ? { role: user.role || "", company: user.company || "", isAdmin: !!(window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(user)) } : null,
       settings: window.PM_PORTAL_SETTINGS ? PM_PORTAL_SETTINGS.get() : {},
+      capabilities: aiActionCatalog(),
       brand: {
         name: "PlasmaMade",
         colors: ["#13A538", "#000000", "#ffffff", "#ececec"],
-        tone: "professioneel, technisch betrouwbaar, helder, B2B, geen overdreven claims",
+        tone: "fris, direct, premium, technisch betrouwbaar, warm en niet schreeuwerig",
+        copyRules: [
+          "Gebruik geen Beste, Nr. 1, marktleider, super, geweldig of fantastische claims.",
+          "Headlines kort houden; primaire URL is plasmamade.com.",
+          "B2B-copy gebruikt bewijs, 'uw' en concrete vervolgstappen.",
+          "Consumentencopy mag directer zijn maar blijft premium."
+        ],
+        verifiedClaims: [
+          "Min. 10 jaar / 9.000 uur levensduur.",
+          "97% recyclebaar materiaal.",
+          "Tot 98% reductie van virussen en bacterien wanneer de context dit ondersteunt.",
+          "Geen afvoer naar buiten nodig door recirculatie.",
+          "GUC1223 en GUC1323: CE, UKCA, ROHS, RED.",
+          "AirClean UltraFine: Interflow-test, vergelijkbare deeltjesreductie met HEPA en ISO 6/7-context."
+        ],
         rules: [
           "Gebruik echte portal-assets of geuploade bestanden.",
           "Maak geen medische garanties.",
@@ -2607,7 +2686,8 @@
       products: (data.products || []).slice(0, 12).map(productRow),
       media: window.PM_MEDIA_LIBRARY ? PM_MEDIA_LIBRARY.list().slice(0, 35).map(mediaRow) : [],
       customPages: window.PM_CUSTOM_PAGES ? PM_CUSTOM_PAGES.list().map(function (p) { return { id: p.id, title: p.title, audience: p.audience, status: p.status, groups: p.groups || [] }; }) : [],
-      cms: window.PM_CMS ? PM_CMS.collections.map(function (c) { return { id: c.id, label: c.label, count: PM_CMS.list(c.id).length }; }) : []
+      cms: window.PM_CMS ? PM_CMS.collections.map(function (c) { return { id: c.id, label: c.label, count: PM_CMS.list(c.id).length }; }) : [],
+      sync: window.PM_SYNC ? { online: !!(PM_SYNC.online && PM_SYNC.online()), remoteUpdatedAt: PM_SYNC.remoteUpdatedAt || "", lastError: PM_SYNC.lastError || "" } : null
     };
   }
   function aiDraft(command, kind) {
@@ -2904,13 +2984,27 @@
   function aiLocalActions(command, uploadedData) {
     var q = String(command || "").toLowerCase();
     var actions = [];
+    if (/wat kun|wat kan|help|mogelijkheden|hoe werkt|uitleg/i.test(q)) return actions;
+    var wantsCopy = /linkedin|copy|caption|social|post|tekst|schrijf/i.test(q);
+    if (wantsCopy && (q.indexOf("linkedin") > -1 || q.indexOf("caption") > -1 || q.indexOf("copy") > -1 || q.indexOf("post") > -1 || q.indexOf("social") > -1)) {
+      actions.push({
+        type: "addPhrase",
+        label: "Voeg een copyconcept toe aan standaardzinnen voor de Design Studio.",
+        text: aiDraft(command, "phrase").body,
+        category: q.indexOf("linkedin") > -1 ? "LinkedIn" : "Social",
+        product: (aiFindProduct(command) && aiFindProduct(command).name) || "Merk algemeen"
+      });
+    }
     if ((q.indexOf("headerfoto") > -1 || q.indexOf("afbeelding") > -1 || q.indexOf("foto") > -1) && uploadedData) {
       actions.push({ type: "replaceImage", label: "Vervang het eerstvolgende beeld op deze pagina door de geuploade afbeelding.", src: uploadedData });
+    }
+    if ((q.indexOf("controleer") > -1 || q.indexOf("check") > -1 || q.indexOf("claim") > -1 || q.indexOf("factcheck") > -1) && lastEditableTarget) {
+      actions.push({ type: "rewriteSelectedText", label: "Controleer en herschrijf de geselecteerde tekst volgens PlasmaMade-claims en tone of voice." });
     }
     if (q.indexOf("knoppen") > -1 && (q.indexOf("groen") > -1 || q.indexOf("ronder") > -1 || q.indexOf("rond") > -1)) {
       actions.push({ type: "updateSettings", label: "Pas de portalstijl aan: PlasmaMade groen en rondere actieknoppen.", patch: { green: "#13A538", radius: 14, buttonStyle: "soft-technical" } });
     }
-    if (q.indexOf("ultrafine") > -1 || q.indexOf("productsectie") > -1) {
+    if (!wantsCopy && (q.indexOf("ultrafine") > -1 || q.indexOf("productsectie") > -1)) {
       actions.push({ type: "addSection", label: "Voeg een AirClean UltraFine productsectie toe op deze pagina.", title: "Cleanroomkwaliteit. Zonder de cleanroom.", kicker: "AirClean UltraFine", body: "De AirClean UltraFine combineert ESP- en ESD-technologie voor professionele ruimtes van 20 tot 150 m2. Onafhankelijk getest door Interflow en geschikt voor kantoor, zorg, horeca, retail en sport.", image: "assets/img/ultrafine/ultrafine.jpg", ctaLabel: "Bekijk product", ctaHref: "product.html?id=airclean-ultrafine" });
     }
     if (q.indexOf("banner") > -1) {
@@ -2933,8 +3027,20 @@
     } else if (q.indexOf("landingspagina") > -1 || q.indexOf("pagina") > -1) {
       actions.push(Object.assign({ type: "createCustomPage", label: "Maak een nieuwe landingspagina op basis van je opdracht." }, aiCustomPageFromAction({}, command, uploadedData)));
     }
-    if (q.indexOf("linkedin") > -1 && (q.indexOf("template") > -1 || q.indexOf("tekst") > -1 || q.indexOf("caption") > -1)) {
+    if (q.indexOf("linkedin") > -1 && (q.indexOf("template") > -1 || q.indexOf("tekst") > -1 || q.indexOf("caption") > -1 || q.indexOf("copy") > -1) && !actions.some(function (a) { return a.type === "addPhrase"; })) {
       actions.push({ type: "addPhrase", label: "Voeg een LinkedIn-tekstblok toe aan standaardzinnen voor de Design Studio.", text: aiDraft(command, "phrase").body, category: "LinkedIn", product: (aiFindProduct(command) && aiFindProduct(command).name) || "AirClean UltraFine" });
+    }
+    if ((q.indexOf("social") > -1 || q.indexOf("post") > -1 || q.indexOf("caption") > -1) && !actions.some(function (a) { return a.type === "addPhrase"; })) {
+      actions.push({ type: "addPhrase", label: "Voeg een social-copy concept toe aan standaardzinnen voor de Design Studio.", text: aiDraft(command, "phrase").body, category: q.indexOf("linkedin") > -1 ? "LinkedIn" : "Social", product: (aiFindProduct(command) && aiFindProduct(command).name) || "Merk algemeen" });
+    }
+    if (q.indexOf("nieuws") > -1 || q.indexOf("artikel") > -1) {
+      actions.push({ type: "createCmsItem", label: "Maak een CMS-concept voor dit onderwerp.", collection: q.indexOf("artikel") > -1 ? "articles" : "news", title: aiDraft(command, "cms").title, body: aiDraft(command, "cms").body });
+    }
+    if (q.indexOf("downloads") > -1 && q.indexOf("open") > -1) {
+      actions.push({ type: "navigate", label: "Open de downloadpagina.", href: "downloads.html" });
+    }
+    if (q.indexOf("support") > -1 && (q.indexOf("open") > -1 || q.indexOf("vraag") > -1)) {
+      actions.push({ type: "navigate", label: "Open support.", href: "support.html" });
     }
     if (q.indexOf("witruimte") > -1 || q.indexOf("smaller") > -1 || q.indexOf("rustiger") > -1) {
       actions.push({ type: "whitespace", label: "Maak de geselecteerde sectie rustiger met meer witruimte." });
@@ -2956,6 +3062,14 @@
     return aiBuildPlan(actions, uploadedData, command, notes);
   }
   function aiLocalAnswer(command, uploadedData) {
+    if (/wat kun|wat kan|help|mogelijkheden|hoe werkt|uitleg/i.test(command)) {
+      return {
+        reply: "Ik kan in dit platform met je meedenken over pagina's, CMS-content, partnercopy, beelden, landingspagina's, standaardzinnen en navigatie. Vraag bijvoorbeeld om een dealerpagina, LinkedIn-copy, een nieuwsitem, een beeldwissel of een claimcheck op geselecteerde tekst.",
+        actions: [],
+        notes: [],
+        source: "local"
+      };
+    }
     var actions = aiLocalActions(command, uploadedData);
     var draft = aiDraft(command, actions.some(function (a) { return /page/i.test(a.type); }) ? "page" : "section");
     var reply = actions.length
@@ -2991,7 +3105,7 @@
     };
     return fetch(cfg.endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: aiAuthHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify(payload)
     }).then(function (res) {
       return res.text().then(function (txt) {
@@ -3019,9 +3133,25 @@
       panel.innerHTML = '<b>Geen voorstel actief</b><p class="muted">Stuur een bericht om een nieuw voorstel te maken.</p>';
       return;
     }
+    var notesHtml = plan.notes && plan.notes.length
+      ? '<div class="pm-ai-notes"><b>Let op</b><ul>' + plan.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ul></div>'
+      : "";
     panel.innerHTML = plan.ops.length
-      ? '<b>Voorstel</b><ul>' + plan.ops.map(function (o) { return '<li>' + esc(o.label) + '</li>'; }).join("") + '</ul>' + (plan.structural ? '<p class="pm-ai-warn">Structurele wijziging: controleer dit voorstel voordat je publiceert.</p>' : '')
+      ? '<b>Voorstel</b><ul>' + plan.ops.map(function (o) { return '<li>' + esc(o.label) + '</li>'; }).join("") + '</ul>' + notesHtml + (plan.structural ? '<p class="pm-ai-warn">Structurele wijziging: controleer dit voorstel voordat je publiceert.</p>' : '')
       : '<b>Geen wijziging gemaakt</b><p class="muted">' + esc(plan.notes.join(" ")) + '</p>';
+  }
+  function aiSuggestionPrompts() {
+    var page = aiHumanPage();
+    var selected = lastEditableTarget && aiText(lastEditableTarget.textContent || lastEditableTarget.alt || "", 80);
+    var base = [
+      { icon: "fileText", label: "Bouw dealerpagina", prompt: "Maak een compacte dealerpagina voor GUC1223 met bewijs, assets, CTA en drie blokken." },
+      { icon: "type", label: "Schrijf LinkedIn-copy", prompt: "Schrijf LinkedIn-copy voor partners over AirClean UltraFine, bewijs-gestuurd en zonder overdreven claims." },
+      { icon: "newspaper", label: "Maak nieuwsitem", prompt: "Maak een CMS-nieuwsitem over nieuwe partnercontent in het PlasmaMade Partner Center." },
+      { icon: "shieldCheck", label: "Check claims", prompt: selected ? "Controleer de geselecteerde tekst op PlasmaMade-claims en herschrijf hem waar nodig." : "Controleer de huidige pagina op PlasmaMade-claims en stel verbeteringen voor." }
+    ];
+    if (page === "downloads") base.unshift({ icon: "download", label: "Orden downloads", prompt: "Verbeter deze downloadpagina voor partners: maak het overzicht duidelijker en stel een veilige actie voor." });
+    if (page === "studio") base.unshift({ icon: "palette", label: "Verbeter studio", prompt: "Denk mee over deze Design Studio-pagina en stel een concrete verbetering voor." });
+    return base.slice(0, 5);
   }
   function closeAiCoder() {
     var old = document.querySelector(".pm-ai-ov");
@@ -3031,13 +3161,15 @@
     if (!(window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(getUser()))) return;
     closeAiCoder();
     var provider = aiProviderConfig();
+    var suggestions = aiSuggestionPrompts();
     var ov = document.createElement("div");
     ov.className = "pm-ai-ov";
     ov.innerHTML =
       '<div class="pm-ai pm-ai--chat" role="dialog" aria-modal="true" aria-labelledby="pm-ai-title">' +
         '<div class="pm-ai__head"><div><span class="badge badge--green-soft">Admin</span><h3 id="pm-ai-title">AI-bewerker</h3><p>Chat met de portal en zet wijzigingen klaar als toepasbare acties.</p></div><button type="button" class="icon-btn" data-ai-close aria-label="Sluiten">' + icon("x") + '</button></div>' +
         '<div class="pm-ai__body">' +
-          '<details class="pm-ai-provider"><summary>' + icon("settings") + '<span>AI-verbinding</span><b id="pm-ai-provider-state">' + esc(provider.enabled ? "aan" : "uit") + '</b></summary><div class="pm-ai-provider__grid"><label>Endpoint<input id="pm-ai-endpoint" type="text" value="' + esc(provider.endpoint || "/api/ai-coder") + '"></label><label class="pm-ai-toggle"><input id="pm-ai-provider-enabled" type="checkbox"' + (provider.enabled ? " checked" : "") + '><span>Server-bridge gebruiken</span></label><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-save-provider">' + icon("save") + 'Opslaan</button></div></details>' +
+          '<details class="pm-ai-provider"><summary>' + icon("settings") + '<span>AI-verbinding</span><b id="pm-ai-provider-state">' + esc(provider.enabled ? "aan" : "uit") + '</b></summary><div class="pm-ai-provider__grid"><label>Endpoint<input id="pm-ai-endpoint" type="text" value="' + esc(provider.endpoint || aiDefaultEndpoint()) + '"></label><label class="pm-ai-toggle"><input id="pm-ai-provider-enabled" type="checkbox"' + (provider.enabled ? " checked" : "") + '><span>Server-bridge gebruiken</span></label><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-save-provider">' + icon("save") + 'Opslaan</button></div></details>' +
+          '<div class="pm-ai-suggestions">' + suggestions.map(function (s, i) { return '<button type="button" class="pm-ai-suggestion" data-ai-suggestion="' + i + '">' + icon(s.icon || "sparkles") + '<span>' + esc(s.label) + '</span></button>'; }).join("") + '</div>' +
           '<div class="pm-ai-thread" id="pm-ai-thread" aria-live="polite"></div>' +
           '<div class="pm-ai-attachment" id="pm-ai-attachment" hidden></div>' +
           '<div class="pm-ai__preview" id="pm-ai-preview"><b>Geen voorstel actief</b><p class="muted">Stuur een bericht om een nieuw voorstel te maken.</p></div>' +
@@ -3103,9 +3235,17 @@
         setBusy(false);
       });
     }
+    ov.querySelectorAll("[data-ai-suggestion]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var item = suggestions[Number(btn.getAttribute("data-ai-suggestion"))] || null;
+        if (!item) return;
+        cmd.value = item.prompt;
+        submitPrompt();
+      });
+    });
     ov.querySelector("#pm-ai-save-provider").addEventListener("click", function () {
       var cfg = aiSaveProvider({
-        endpoint: ov.querySelector("#pm-ai-endpoint").value.trim() || "/api/ai-coder",
+        endpoint: ov.querySelector("#pm-ai-endpoint").value.trim() || aiDefaultEndpoint(),
         enabled: ov.querySelector("#pm-ai-provider-enabled").checked
       });
       ov.querySelector("#pm-ai-provider-state").textContent = cfg.enabled ? "aan" : "uit";
