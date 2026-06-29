@@ -121,15 +121,75 @@
   function readStore(key, fallback) {
     try { var v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; }
   }
-  function writeStore(key, val) {
+  function isQuotaError(e) {
+    return !!(e && (e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED" || e.code === 22 || e.code === 1014));
+  }
+  function compactStoredHistoryForRetry() {
+    var changed = false;
     try {
-      localStorage.setItem(key, JSON.stringify(val));
+      var rows = JSON.parse(localStorage.getItem("pm_version_history") || "[]");
+      if (Array.isArray(rows) && rows.length) {
+        var compact = rows.slice(0, 25).map(function (row) {
+          return {
+            id: row.id,
+            type: row.type,
+            subject: row.subject,
+            meta: Object.assign({}, row.meta || {}, { compacted: true }),
+            actor: row.actor,
+            createdAt: row.createdAt,
+            before: null,
+            after: null
+          };
+        });
+        localStorage.setItem("pm_version_history", JSON.stringify(compact));
+        changed = true;
+      }
+    } catch (e) {}
+    try {
+      var archives = JSON.parse(localStorage.getItem("pm_portal_archives") || "[]");
+      if (Array.isArray(archives) && archives.length) {
+        localStorage.setItem("pm_portal_archives", JSON.stringify(archives.slice(0, 1).map(function (row) {
+          return Object.assign({}, row, { values: {}, compacted: true });
+        })));
+        changed = true;
+      }
+    } catch (e) {}
+    return changed;
+  }
+  function writeStore(key, val) {
+    var raw;
+    try {
+      raw = JSON.stringify(val);
+      localStorage.setItem(key, raw);
       if (window.PM_SYNC && PM_SYNC.noteLocalChange) PM_SYNC.noteLocalChange(key);
       if (window.PM_SYNC && PM_SYNC.shouldPush && PM_SYNC.shouldPush(key)) PM_SYNC.schedule(key);
+      window.PM_STORE_LAST_ERROR = null;
       return true;
-    } catch (e) { return false; }
+    } catch (e) {
+      if (raw && isQuotaError(e) && compactStoredHistoryForRetry()) {
+        try {
+          localStorage.setItem(key, raw);
+          if (window.PM_SYNC && PM_SYNC.noteLocalChange) PM_SYNC.noteLocalChange(key);
+          if (window.PM_SYNC && PM_SYNC.shouldPush && PM_SYNC.shouldPush(key)) PM_SYNC.schedule(key);
+          window.PM_STORE_LAST_ERROR = null;
+          return true;
+        } catch (retryErr) { e = retryErr; }
+      }
+      window.PM_STORE_LAST_ERROR = { key: key, quota: isQuotaError(e), message: String((e && e.message) || e || "storage_failed") };
+      if (window.console) console.warn("PlasmaMade opslag mislukt", key, e);
+      return false;
+    }
   }
-  window.PM_STORE = { read: readStore, write: writeStore };
+  function storageFailedMessage(key) {
+    var err = window.PM_STORE_LAST_ERROR || {};
+    return err.quota
+      ? "Opslaan lukt niet: browseropslag is vol. Ik heb oude versies opgeschoond; probeer nogmaals op te slaan."
+      : "Opslaan lukt niet. De wijziging is niet permanent opgeslagen.";
+  }
+  function toastStorageFailure(key) {
+    if (window.PM_toast) PM_toast(storageFailedMessage(key));
+  }
+  window.PM_STORE = { read: readStore, write: writeStore, lastError: function () { return window.PM_STORE_LAST_ERROR || null; } };
 
   const CENTRAL_STATE_KEYS = [
     "pm_admin_grants",
@@ -150,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260624-admin-wim-1";
+  const PORTAL_BUILD_VERSION = "20260629-remove-filter-hero-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -214,8 +274,16 @@
     try {
       var previous = localStorage.getItem(PORTAL_BUILD_KEY) || "";
       if (previous === PORTAL_BUILD_VERSION) return;
-      if (isGitHubPagesHost() && !isLocalDevHost()) portalResetPresentation("github_pages_build_migration");
-      else localStorage.setItem(PORTAL_BUILD_KEY, PORTAL_BUILD_VERSION);
+      if (previous) {
+        localStorage.setItem(PORTAL_LAST_RESET_KEY, JSON.stringify({
+          from: previous,
+          to: PORTAL_BUILD_VERSION,
+          at: new Date().toISOString(),
+          resetKeys: [],
+          note: "build_migration_preserved_local_content"
+        }));
+      }
+      localStorage.setItem(PORTAL_BUILD_KEY, PORTAL_BUILD_VERSION);
     } catch (e) {}
   }
   migratePortalBuild();
@@ -246,6 +314,37 @@
       var u = (typeof getUser === "function") ? getUser() : null;
       return !!(u && window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(u));
     } catch (e) { return false; }
+  }
+  const LOCAL_MERGE_STATE_KEYS = ["pm_page_edits", "pm_cms_overrides"];
+  function isPlainObject(value) {
+    return !!(value && typeof value === "object" && !Array.isArray(value));
+  }
+  function isEmptyObject(value) {
+    return isPlainObject(value) && Object.keys(value).length === 0;
+  }
+  function mergePlainState(remote, local) {
+    var out = Object.assign({}, isPlainObject(remote) ? remote : {});
+    if (!isPlainObject(local)) return out;
+    Object.keys(local).forEach(function (key) {
+      if (isPlainObject(out[key]) && isPlainObject(local[key])) out[key] = mergePlainState(out[key], local[key]);
+      else out[key] = local[key];
+    });
+    return out;
+  }
+  function mergedIncomingStateValue(key, incoming, dirtyKeys, source) {
+    if (LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1) return incoming;
+    var localRaw = null;
+    try { localRaw = localStorage.getItem(key); } catch (e) {}
+    if (localRaw == null) return incoming;
+    var local = readStore(key, null);
+    var localHasContent = isPlainObject(local) && Object.keys(local).length > 0;
+    var incomingIsObject = isPlainObject(incoming);
+    var incomingHasContent = incomingIsObject && Object.keys(incoming).length > 0;
+    if (!localHasContent) return incoming;
+    if ((dirtyKeys || []).indexOf(key) > -1 && incomingIsObject) return mergePlainState(incoming, local);
+    if (source === "pull" && (!incomingHasContent || isEmptyObject(incoming))) return local;
+    if (source === "pull" && key === "pm_page_edits" && incomingIsObject) return mergePlainState(incoming, local);
+    return incoming;
   }
   function withTimeout(ms) {
     if (!window.AbortController) return {};
@@ -306,13 +405,16 @@
       try {
         CENTRAL_STATE_KEYS.forEach(function (key) {
           if (!Object.prototype.hasOwnProperty.call(state, key)) return;
-          if (dirty.indexOf(key) > -1 && localStorage.getItem(key) != null) return;
-          localStorage.setItem(key, JSON.stringify(state[key]));
+          var hasLocal = localStorage.getItem(key) != null;
+          if (dirty.indexOf(key) > -1 && hasLocal && LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1) return;
+          var incoming = mergedIncomingStateValue(key, state[key], dirty, opts.source || "remote");
+          localStorage.setItem(key, JSON.stringify(incoming));
         });
       } catch (e) {}
       this.muted = false;
       if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
       if (window.PM_CMS) PM_CMS.apply();
+      if (window.PM_PAGE_EDITS && PM_PAGE_EDITS.apply) PM_PAGE_EDITS.apply();
       if (!opts.quiet && window.PM_rebuildShell) PM_rebuildShell();
       try { document.dispatchEvent(new CustomEvent("pm:state-sync", { detail: { source: opts.source || "remote", changed: !!opts.changed } })); } catch (e) {}
       return true;
@@ -470,6 +572,37 @@
         if (timeout.done) timeout.done();
       }
       return null;
+    },
+    approveRequest: async function (requestId, email) {
+      if (!this.online()) return { ok: false, error: "sync_offline" };
+      var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
+      if (!endpoint) return { ok: false, error: "sync_not_configured" };
+      var timeout = withTimeout(6500);
+      try {
+        var res = await fetch(endpoint, {
+          method: "POST",
+          headers: syncAuthHeaders({ "content-type": "application/json", "x-pm-actor": syncActor() }),
+          body: JSON.stringify({ action: "approveAccountRequest", requestId: requestId || "", email: email || "", approvalMailAt: new Date().toISOString() }),
+          signal: timeout.signal
+        });
+        var data = null;
+        try { data = await res.json(); } catch (jsonErr) {}
+        if (!res.ok) {
+          this.lastError = "approve_http_" + res.status;
+          return Object.assign({ ok: false, error: "approve_http_" + res.status }, data || {});
+        }
+        if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
+        if (data && data.state) this.applyState(data.state, { quiet: true, source: "push" });
+        this.clearDirty(["pm_account_requests", "pm_partners", "pm_audit_log"]);
+        this.lastPushAt = new Date().toISOString();
+        this.lastError = "";
+        return Object.assign({ ok: true }, data || {});
+      } catch (e) {
+        this.lastError = "approve_failed";
+        return { ok: false, error: "approve_failed" };
+      } finally {
+        if (timeout.done) timeout.done();
+      }
     },
     startAutoRefresh: function () {
       if (this.interval || !this.online()) return;
@@ -702,11 +835,36 @@
   function requestName(r) {
     return ((r.firstName || "") + " " + (r.lastName || "")).trim() || r.name || r.email || "Partner";
   }
+  function requestStatusRank(status) {
+    var map = { approved: 4, pending: 3, suspended: 2, rejected: 1 };
+    return map[status || ""] || 0;
+  }
+  function requestStamp(row) {
+    return String((row && (row.updatedAt || row.approvedAt || row.submittedAt || row.createdAt)) || "");
+  }
+  function normalizeRequestRows(rows) {
+    var byEmail = {};
+    var noEmail = [];
+    (Array.isArray(rows) ? rows : []).forEach(function (row) {
+      if (!row) return;
+      var email = normEmail(row.email);
+      if (!email) { noEmail.push(row); return; }
+      var current = byEmail[email];
+      if (!current ||
+        requestStatusRank(row.status) > requestStatusRank(current.status) ||
+        (requestStatusRank(row.status) === requestStatusRank(current.status) && requestStamp(row) > requestStamp(current))) {
+        byEmail[email] = Object.assign({}, current || {}, row);
+      }
+    });
+    return Object.keys(byEmail).map(function (email) { return byEmail[email]; }).concat(noEmail)
+      .sort(function (a, b) { return requestStamp(b).localeCompare(requestStamp(a)); });
+  }
   window.PM_REQUESTS = {
-    list: function () { return readStore(REQUEST_KEY, []); },
+    list: function () { return normalizeRequestRows(readStore(REQUEST_KEY, [])); },
     findByEmail: function (email) {
       var e = normEmail(email);
-      return this.list().find(function (r) { return normEmail(r.email) === e; }) || null;
+      var matches = this.list().filter(function (r) { return normEmail(r.email) === e; });
+      return matches.find(function (r) { return r.status === "approved"; }) || matches[0] || null;
     },
     create: function (payload) {
       payload = payload || {};
@@ -715,14 +873,14 @@
       var nextRole = internal ? "internal" : normalizeRole(payload.partnerType || payload.role || "dealer", payload.email);
       var existing = this.findByEmail(payload.email);
       var list = this.list();
-      if (existing && existing.status !== "approved") {
+      if (existing) {
         Object.assign(existing, payload, {
-          status: internal ? "approved" : "pending",
+          status: existing.status === "approved" ? "approved" : (internal ? "approved" : "pending"),
           role: nextRole,
           partnerType: nextRole,
           updatedAt: now,
-          submittedAt: now,
-          approvedAt: internal ? now : existing.approvedAt
+          submittedAt: existing.submittedAt || now,
+          approvedAt: existing.status === "approved" ? (existing.approvedAt || now) : (internal ? now : existing.approvedAt)
         });
       } else {
         existing = Object.assign({
@@ -770,6 +928,20 @@
     },
     approve: function (id) {
       var req = this.update(id, { status: "approved", approvedAt: new Date().toISOString(), rejectedAt: null, suspendedAt: null });
+      if (req && req.email) {
+        var rows = this.list();
+        var email = normEmail(req.email);
+        rows.forEach(function (row) {
+          if (normEmail(row.email) === email) {
+            row.status = "approved";
+            row.approvedAt = row.approvedAt || req.approvedAt || new Date().toISOString();
+            row.rejectedAt = null;
+            row.suspendedAt = null;
+            row.updatedAt = new Date().toISOString();
+          }
+        });
+        writeStore(REQUEST_KEY, rows);
+      }
       if (req && window.PM_PARTNERS) {
         PM_PARTNERS.upsert({
           name: requestName(req),
@@ -811,6 +983,7 @@
   };
 
   const MAIL_KEY = "pm_admin_mail_log";
+  const MARKETING_EMAIL = "marketing@plasmamade.com";
   function portalUrl() {
     try {
       var u = new URL("dashboard.html", location.href);
@@ -872,7 +1045,7 @@
     list: function () { return readStore(MAIL_KEY, []); },
     requestBody: requestMailText,
     requestHref: function (req) {
-      return "mailto:" + encodeURIComponent("bjonkeren@plasmamade.com") +
+      return "mailto:" + encodeURIComponent(MARKETING_EMAIL) +
         "?subject=" + encodeURIComponent(requestMailSubject(req)) +
         "&body=" + encodeURIComponent(requestMailText(req));
     },
@@ -881,7 +1054,7 @@
       var row = {
         id: makeId("mail"),
         type: "account_request_notification",
-        to: "bjonkeren@plasmamade.com",
+        to: MARKETING_EMAIL,
         subject: requestMailSubject(req),
         body: requestMailText(req),
         requestId: req.id || "",
@@ -1283,9 +1456,13 @@
     get: function (id) { return this.list().find(function (p) { return p.id === id; }) || null; },
     save: function (rows) {
       var before = this.list();
-      writeStore(CUSTOM_PAGE_KEY, (rows || []).slice(0, 200));
+      if (!writeStore(CUSTOM_PAGE_KEY, (rows || []).slice(0, 200))) {
+        toastStorageFailure(CUSTOM_PAGE_KEY);
+        return null;
+      }
       if (window.PM_VERSIONS) PM_VERSIONS.add("pages", "Landingspagina's", before, rows || [], { label: "Paginabeheer" });
       if (window.PM_AUDIT) PM_AUDIT.add("pages_saved", "Landingspagina's", { count: (rows || []).length });
+      return rows || [];
     },
     upsert: function (page) {
       var rows = this.list();
@@ -1305,7 +1482,7 @@
       var idx = rows.findIndex(function (p) { return p.id === page.id; });
       if (idx > -1) rows[idx] = page;
       else rows.unshift(page);
-      this.save(rows);
+      if (!this.save(rows)) return null;
       return page;
     },
     createDistributorPage: function () {
@@ -1315,7 +1492,7 @@
         audience: "Distributeurs",
         status: "published",
         groups: ["distributor", "international", "internal"],
-        image: "assets/img/lifestyle/hero-filters.png",
+        image: "assets/img/lifestyle/butterflies-kitchen.jpg",
         intro: "Alle productlijnen, verkoopargumenten en documentatie voor internationale distributie in een overzicht.",
         cta: "Bekijk downloads",
         ctaHref: "downloads.html",
@@ -1357,19 +1534,40 @@
   window.PM_VERSIONS = {
     list: function () { return readStore(VERSION_KEY, []); },
     add: function (type, subject, before, after, meta) {
+      function compactValue(value, depth) {
+        if (value == null) return value;
+        if (typeof value === "string") {
+          if (/^data:/i.test(value) || value.length > 1200) return value.slice(0, 160) + "...";
+          return value;
+        }
+        if (typeof value !== "object") return value;
+        if (depth > 4) return "[ingekort]";
+        if (Array.isArray(value)) return value.slice(0, 40).map(function (item) { return compactValue(item, depth + 1); });
+        var out = {};
+        Object.keys(value).slice(0, 80).forEach(function (key) { out[key] = compactValue(value[key], depth + 1); });
+        return out;
+      }
+      function snapshot(value) {
+        if (value == null) return null;
+        var clone = JSON.parse(JSON.stringify(value));
+        try {
+          if (JSON.stringify(clone).length > 180000) clone = compactValue(clone, 0);
+        } catch (e) { clone = compactValue(clone, 0); }
+        return clone;
+      }
       var row = {
         id: makeId("ver"),
         type: type || "change",
         subject: subject || "",
-        before: before == null ? null : JSON.parse(JSON.stringify(before)),
-        after: after == null ? null : JSON.parse(JSON.stringify(after)),
+        before: snapshot(before),
+        after: snapshot(after),
         meta: meta || {},
         actor: (getUser() && (getUser().email || getUser().name)) || "system",
         createdAt: new Date().toISOString()
       };
       var rows = this.list();
       rows.unshift(row);
-      writeStore(VERSION_KEY, rows.slice(0, 200));
+      writeStore(VERSION_KEY, rows.slice(0, 80));
       return row;
     },
     restore: function (id) {
@@ -1474,7 +1672,10 @@
       var store = cmsStore();
       var before = JSON.parse(JSON.stringify(store));
       store[collection] = (rows || []).slice(0, 1000);
-      writeStore(CMS_KEY, store);
+      if (!writeStore(CMS_KEY, store)) {
+        toastStorageFailure(CMS_KEY);
+        return null;
+      }
       this.apply();
       if (window.PM_VERSIONS) PM_VERSIONS.add("cms", this.labels[collection] || collection, before, store, { collection: collection, label: "Contentpublicatie" });
       if (window.PM_AUDIT) PM_AUDIT.add("cms_saved", this.labels[collection] || collection, { count: store[collection].length });
@@ -1488,7 +1689,7 @@
       var idx = rows.findIndex(function (r) { return String(r.id) === String(row.id); });
       if (idx > -1) rows[idx] = row;
       else rows.unshift(row);
-      this.save(collection, rows);
+      if (!this.save(collection, rows)) return null;
       return row;
     },
     duplicate: function (collection, id) {
@@ -1503,7 +1704,7 @@
     },
     remove: function (collection, id) {
       var rows = this.list(collection).filter(function (r) { return String(r.id) !== String(id); });
-      this.save(collection, rows);
+      if (!this.save(collection, rows)) return null;
       if (window.PM_AUDIT) PM_AUDIT.add("cms_deleted", id, { collection: collection });
       return rows;
     },
@@ -1511,7 +1712,10 @@
       var store = cmsStore();
       var before = JSON.parse(JSON.stringify(store));
       delete store[collection];
-      writeStore(CMS_KEY, store);
+      if (!writeStore(CMS_KEY, store)) {
+        toastStorageFailure(CMS_KEY);
+        return;
+      }
       this.apply();
       if (window.PM_VERSIONS) PM_VERSIONS.add("cms", this.labels[collection] || collection, before, store, { collection: collection, label: "Originele content hersteld" });
       if (window.PM_AUDIT) PM_AUDIT.add("cms_reset", this.labels[collection] || collection, {});
@@ -1654,15 +1858,20 @@
   }
   function approvalStatus(user) {
     if (!user) return "";
-    var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(user.email);
-    if (req) return req.status || "pending";
     var partner = activePartner(user.email);
     if (partner) return "approved";
+    var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(user.email);
+    if (req) return req.status || "pending";
     if (isBootstrapAdminEmail(user.email) && user.admin === true) return "approved";
     if (user.approvalStatus && user.approvalStatus !== "approved") return user.approvalStatus;
     return "none";
   }
   function canLogin(email) {
+    var partner = activePartner(email);
+    if (partner) {
+      var partnerAdmin = isAdminUser({ email: email });
+      return { ok: true, status: "approved", request: partner, admin: partnerAdmin, internal: partnerAdmin };
+    }
     var req = window.PM_REQUESTS && PM_REQUESTS.findByEmail(email);
     if (req) {
       if (req.status === "approved") {
@@ -1670,11 +1879,6 @@
         return { ok: true, status: "approved", request: req, admin: reqAdmin, internal: reqAdmin };
       }
       return { ok: false, status: req.status || "pending", request: req };
-    }
-    var partner = activePartner(email);
-    if (partner) {
-      var partnerAdmin = isAdminUser({ email: email });
-      return { ok: true, status: "approved", request: partner, admin: partnerAdmin, internal: partnerAdmin };
     }
     return { ok: false, status: "none" };
   }
@@ -1845,6 +2049,66 @@
   const PAGE_EDIT_KEY = "pm_page_edits";
   function pageEditStore() { return readStore(PAGE_EDIT_KEY, {}); }
   function pageKey() { return (location.pathname.split("/").pop() || "dashboard.html").toLowerCase(); }
+  function isDashboardPage(key) {
+    return String(key || pageKey()).toLowerCase() === "dashboard.html";
+  }
+  function legacyDashboardHeroMatch(value) {
+    return /portal-hero|hero-filters\.png|dash\.hero|hero-greet|portal-hero__media|portal-hero__copy/i.test(String(value || ""));
+  }
+  function scrubLegacyDashboardHeroEdits(all, key) {
+    key = key || pageKey();
+    if (!isDashboardPage(key) || !all || !all[key]) return false;
+    var edits = all[key];
+    var changed = false;
+    if (Array.isArray(edits._adds)) {
+      var nextAdds = edits._adds.filter(function (add) {
+        var haystack = [
+          add && add.className,
+          add && add.html,
+          add && add.src,
+          add && add.alt,
+          add && add.parentSel,
+          add && add.afterSel
+        ].join(" ");
+        var remove = legacyDashboardHeroMatch(haystack);
+        if (remove) changed = true;
+        return !remove;
+      });
+      edits._adds = nextAdds;
+    }
+    Object.keys(edits).forEach(function (sel) {
+      if (sel.charAt(0) === "_") return;
+      var edit = edits[sel] || {};
+      var haystack = [sel, edit.html, edit.src, edit.bg, edit.style, edit.text].join(" ");
+      if (legacyDashboardHeroMatch(haystack)) {
+        delete edits[sel];
+        changed = true;
+      }
+    });
+    return changed;
+  }
+  function removeLegacyDashboardHeroDom() {
+    if (!isDashboardPage()) return;
+    var nodes = [];
+    try {
+      nodes = Array.prototype.slice.call(document.querySelectorAll("main.content .portal-hero, main.content .hero"));
+    } catch (e) { nodes = []; }
+    nodes.forEach(function (node) {
+      var haystack = [
+        node.className,
+        node.id,
+        node.innerHTML,
+        node.getAttribute && node.getAttribute("style")
+      ].join(" ");
+      if (legacyDashboardHeroMatch(haystack)) node.remove();
+    });
+    try {
+      Array.prototype.slice.call(document.querySelectorAll('main.content img[src*="hero-filters.png"]')).forEach(function (img) {
+        var box = img.closest(".portal-hero,.hero,.pm-ai-banner,.pm-ai-section,.pm-added-image") || img;
+        if (box && box.remove) box.remove();
+      });
+    } catch (e) {}
+  }
   function selectorFor(el) {
     if (!el || el === document.body) return "";
     if (el.getAttribute && el.getAttribute("data-pm-add")) return '[data-pm-add="' + CSS.escape(el.getAttribute("data-pm-add")) + '"]';
@@ -1913,7 +2177,12 @@
   }
   function applyPageEdits() {
     var all = pageEditStore();
-    var edits = all[pageKey()] || {};
+    var key = pageKey();
+    if (scrubLegacyDashboardHeroEdits(all, key)) {
+      try { localStorage.setItem(PAGE_EDIT_KEY, JSON.stringify(all)); } catch (e) {}
+    }
+    var edits = all[key] || {};
+    removeLegacyDashboardHeroDom();
     applyPageAdditions(edits);
     Object.keys(edits).forEach(function (sel) {
       if (sel.charAt(0) === "_") return;
@@ -1940,6 +2209,7 @@
       if (edit.alt != null && el.matches("img")) el.alt = edit.alt;
       if (edit.style != null) el.setAttribute("style", edit.style);
     });
+    removeLegacyDashboardHeroDom();
   }
   function savePageEdit(sel, edit) {
     var all = pageEditStore();
@@ -1947,9 +2217,13 @@
     var key = pageKey();
     all[key] = all[key] || {};
     all[key][sel] = Object.assign(all[key][sel] || {}, edit || {});
-    writeStore(PAGE_EDIT_KEY, all);
+    if (!writeStore(PAGE_EDIT_KEY, all)) {
+      toastStorageFailure(PAGE_EDIT_KEY);
+      return false;
+    }
     if (window.PM_VERSIONS) PM_VERSIONS.add("page", key, before, all, { selector: sel, label: "Pagina bewerkt" });
     if (window.PM_AUDIT) PM_AUDIT.add("page_edit", key, { selector: sel });
+    return true;
   }
   function savePageAddition(afterEl, add) {
     var all = pageEditStore();
@@ -1958,7 +2232,10 @@
     all[key] = all[key] || {};
     all[key]._adds = all[key]._adds || [];
     all[key]._adds.push(add);
-    writeStore(PAGE_EDIT_KEY, all);
+    if (!writeStore(PAGE_EDIT_KEY, all)) {
+      toastStorageFailure(PAGE_EDIT_KEY);
+      return null;
+    }
     var node = buildAddedNode(add);
     if (afterEl && afterEl.insertAdjacentElement) afterEl.insertAdjacentElement("afterend", node);
     else {
@@ -1988,11 +2265,11 @@
           cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
           var data = cv.toDataURL("image/jpeg", 0.86);
           if (isBg) {
+            if (!savePageEdit(sel, { bg: data })) return;
             el.style.backgroundImage = 'url("' + data + '")';
-            savePageEdit(sel, { bg: data });
           } else {
+            if (!savePageEdit(sel, { src: data, alt: el.alt || "" })) return;
             el.src = data;
-            savePageEdit(sel, { src: data, alt: el.alt || "" });
           }
           toast("Afbeelding opgeslagen");
         };
@@ -2012,10 +2289,11 @@
     promptDialog(kind === "link" ? "Tekst van link/knop:" : "Tekst aanpassen:", current, function (next) {
       if (next == null) return;
       var save = function (href) {
-        el.textContent = next;
         var edit = { text: next };
-        if (kind === "link" && href != null) { el.setAttribute("href", href); edit.href = href; }
-        savePageEdit(sel, edit);
+        if (kind === "link" && href != null) edit.href = href;
+        if (!savePageEdit(sel, edit)) return;
+        el.textContent = next;
+        if (kind === "link" && href != null) el.setAttribute("href", href);
         toast("Aanpassing opgeslagen");
       };
       if (kind === "link") {
@@ -2273,7 +2551,7 @@
         return;
       }
       if (!next.id) next.id = slugifyContentId(next.title || next.name, makeId(collection.slice(0, 4)));
-      PM_CMS.upsert(collection, next);
+      if (!PM_CMS.upsert(collection, next)) return;
       closeContentEditor();
       toast(titleLabel + " opgeslagen");
       location.reload();
@@ -2301,7 +2579,7 @@
     var tmp = rows[idx];
     rows[idx] = rows[next];
     rows[next] = tmp;
-    PM_CMS.save(info.collection, rows);
+    if (!PM_CMS.save(info.collection, rows)) return;
     toast("Volgorde opgeslagen");
     location.reload();
   }
@@ -2309,7 +2587,7 @@
     if (!info || !window.PM_CMS) return;
     var label = collectionSingleLabel(info.collection);
     var done = function () {
-      PM_CMS.remove(info.collection, info.id);
+      if (!PM_CMS.remove(info.collection, info.id)) return;
       toast(capFirst(label) + " verwijderd");
       var detailPages = { products: "products.html", articles: "knowledge.html", news: "news.html", campaigns: "campaigns.html" };
       if (window.PM_param && PM_param("id") === info.id && detailPages[info.collection]) location.href = detailPages[info.collection];
@@ -2350,26 +2628,27 @@
     var target = dir < 0 ? el.previousElementSibling : el.nextElementSibling;
     while (target && !editableKind(target)) target = dir < 0 ? target.previousElementSibling : target.nextElementSibling;
     if (!target) { toast("Geen element om mee te wisselen"); return; }
+    var saved;
     if (dir < 0) {
       el.parentElement.insertBefore(el, target);
-      savePageEdit(sel, { moveBefore: selectorFor(target), moveAfter: null });
+      saved = savePageEdit(sel, { moveBefore: selectorFor(target), moveAfter: null });
     } else {
       target.insertAdjacentElement("afterend", el);
-      savePageEdit(sel, { moveAfter: selectorFor(target), moveBefore: null });
+      saved = savePageEdit(sel, { moveAfter: selectorFor(target), moveBefore: null });
     }
-    toast("Element verplaatst");
+    if (saved) toast("Element verplaatst");
   }
   function deletePageElement(el) {
     var sel = selectorFor(el);
     if (!sel) return;
-    savePageEdit(sel, { deleted: true });
+    if (!savePageEdit(sel, { deleted: true })) return;
     el.remove();
     toast("Element verwijderd");
   }
   function addTextAfter(el) {
     promptDialog("Nieuwe tekst:", "Nieuwe tekst", function (text) {
       if (!String(text || "").trim()) return;
-      savePageAddition(el, {
+      var node = savePageAddition(el, {
         id: makeId("add"),
         type: "text",
         tag: "div",
@@ -2378,7 +2657,7 @@
         afterSel: selectorFor(el),
         className: "pm-added-text"
       });
-      toast("Tekst toegevoegd");
+      if (node) toast("Tekst toegevoegd");
     }, { ok: "Toevoegen", multiline: true, rows: 3 });
   }
   function addImageAfter(el) {
@@ -2398,7 +2677,7 @@
           cv.width = Math.max(1, Math.round(img.width * scale));
           cv.height = Math.max(1, Math.round(img.height * scale));
           cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
-          savePageAddition(el, {
+          var node = savePageAddition(el, {
             id: makeId("add"),
             type: "image",
             tag: "img",
@@ -2407,7 +2686,7 @@
             afterSel: selectorFor(el),
             className: "pm-added-image"
           });
-          toast("Afbeelding toegevoegd");
+          if (node) toast("Afbeelding toegevoegd");
         };
         img.src = reader.result;
       };
@@ -2735,7 +3014,7 @@
       body: body,
       ctaLabel: product ? "Bekijk product" : (/download/i.test(q) ? "Open downloads" : "Meer informatie"),
       ctaHref: product ? "product.html?id=" + encodeURIComponent(product.id) : (/download/i.test(q) ? "downloads.html" : "support.html"),
-      image: product ? product.image : "assets/img/lifestyle/hero-filters.png",
+      image: product ? product.image : "assets/img/lifestyle/butterflies-kitchen.jpg",
       product: product
     };
   }
@@ -3035,7 +3314,7 @@
       actions.push({ type: "addSection", label: "Voeg een AirClean UltraFine productsectie toe op deze pagina.", title: "Cleanroomkwaliteit. Zonder de cleanroom.", kicker: "AirClean UltraFine", body: "De AirClean UltraFine combineert ESP- en ESD-technologie voor professionele ruimtes van 20 tot 150 m2. Onafhankelijk getest door Interflow en geschikt voor kantoor, zorg, horeca, retail en sport.", image: "assets/img/ultrafine/ultrafine.jpg", ctaLabel: "Bekijk product", ctaHref: "product.html?id=airclean-ultrafine" });
     }
     if (q.indexOf("banner") > -1) {
-      actions.push({ type: "addBanner", label: "Voeg een nieuwe banner toe met afbeelding, titel, tekst en CTA.", title: "Schone lucht. Sterk advies.", kicker: "Partnercampagne", body: "Gebruik actuele PlasmaMade-materialen om klanten helder te adviseren over recirculatie, luchtkwaliteit en lange levensduur.", image: uploadedData || "assets/img/lifestyle/hero-filters.png", ctaLabel: "Bekijk campagnes", ctaHref: "campaigns.html" });
+      actions.push({ type: "addBanner", label: "Voeg een nieuwe banner toe met afbeelding, titel, tekst en CTA.", title: "Schone lucht. Sterk advies.", kicker: "Partnercampagne", body: "Gebruik actuele PlasmaMade-materialen om klanten helder te adviseren over recirculatie, luchtkwaliteit en lange levensduur.", image: uploadedData || "assets/img/lifestyle/butterflies-kitchen.jpg", ctaLabel: "Bekijk campagnes", ctaHref: "campaigns.html" });
     }
     if (q.indexOf("technische handleidingen") > -1 || q.indexOf("extra kaart") > -1) {
       actions.push({ type: "addCard", label: "Voeg een kaart toe voor technische handleidingen.", title: "Technische handleidingen", body: "Montage-informatie, productsheets en testdocumenten voor installateurs en technische partners.", href: "downloads.html", ctaLabel: "Open downloads" });
@@ -3453,7 +3732,7 @@
       ft.innerHTML =
         '<div style="border-top:1px solid var(--line);background:var(--surface);padding:22px 34px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;color:var(--muted);font-size:12.5px">' +
           '<div style="display:flex;align-items:center;gap:12px"><img src="assets/img/logo/logo-green.png" alt="PlasmaMade" style="height:22px" width="103" height="22"><span>© ' + (new Date().getFullYear()) + ' PlasmaMade B.V. — Partner Center</span></div>' +
-          '<div style="display:flex;gap:18px;flex-wrap:wrap"><span><i>breathe better, live better.</i></span><a href="mailto:sales@plasmamade.com" class="green">sales@plasmamade.com</a><a href="https://plasmamade.com" target="_blank" rel="noopener noreferrer" class="green">plasmamade.com</a></div>' +
+          '<div style="display:flex;gap:18px;flex-wrap:wrap"><span><i>breathe better, live better.</i></span><a href="mailto:marketing@plasmamade.com" class="green">marketing@plasmamade.com</a><a href="https://plasmamade.com" target="_blank" rel="noopener noreferrer" class="green">plasmamade.com</a></div>' +
         '</div>';
     }
 
@@ -3741,6 +4020,7 @@
         if (window.PM_PAGE_INIT) {
           try { window.PM_PAGE_INIT(); } catch (e) { console.error("Page refresh error:", e); }
         }
+        if (window.PM_PAGE_EDITS && PM_PAGE_EDITS.apply) PM_PAGE_EDITS.apply();
       });
     }
     if (window.PM_SYNC && page !== "login") PM_SYNC.startAutoRefresh();

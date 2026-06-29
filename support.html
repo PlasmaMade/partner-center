@@ -7,7 +7,7 @@
 <meta name="description" content="Contact en support voor PlasmaMade-partners, dealers en installateurs.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-admin-wim-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-remove-filter-hero-1">
 </head>
 <body data-page="support">
 <div class="layout">
@@ -27,7 +27,7 @@
         <div class="card"><div class="card__body" style="padding:26px 28px">
           <h3 style="margin-bottom:4px" data-i18n="support.formTitle">Stel je vraag</h3>
           <p class="muted" style="font-size:14px;margin-bottom:14px" data-i18n="support.formSub">Vul het formulier in.</p>
-          <div class="callout" style="font-size:12.5px;margin-bottom:18px" data-i18n="support.portalNotice">Je supportverzoek wordt opgeslagen in het Partner Center en klaargezet als e-mail aan PlasmaMade Sales.</div>
+          <div class="callout" style="font-size:12.5px;margin-bottom:18px" data-i18n="support.portalNotice">Je supportverzoek wordt opgeslagen in het Partner Center en klaargezet als e-mail aan PlasmaMade Marketing.</div>
           <form id="support-form" novalidate>
             <div class="grid grid--2" style="gap:14px">
               <div class="field"><label for="sf-name" data-i18n="support.name">Naam</label><input id="sf-name" required data-i18n-ph="support.namePh" placeholder="Je naam" autocomplete="name" aria-describedby="sf-name-err"><p class="field-err" id="sf-name-err" hidden></p></div>
@@ -106,8 +106,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-admin-wim-1"></script>
-<script src="assets/js/data.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/i18n.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/data.js?v=20260629-remove-filter-hero-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -115,7 +115,7 @@ window.PM_PAGE_INIT = function () {
 
   // Contactkaarten
   var cards = [
-    { ic: "mail", tt: t("support.mailT"), v: "sales@plasmamade.com", href: "mailto:sales@plasmamade.com", s: t("support.mailS") },
+    { ic: "mail", tt: t("support.mailT"), v: "marketing@plasmamade.com", href: "mailto:marketing@plasmamade.com", s: t("support.mailS") },
     { ic: "phone", tt: t("support.phoneT"), v: "+31 522 468 071", href: "tel:+31522468071", s: t("support.phoneS") },
     { ic: "globe", tt: t("support.webT"), v: "plasmamade.com", href: "https://plasmamade.com", s: t("support.webS") }
   ];
@@ -236,7 +236,7 @@ window.PM_PAGE_INIT = function () {
       PM_t("support.category") + ": " + cat + "\n" +
       PM_t("support.product") + ": " + prodName + "\n" +
       PM_t("support.attachment") + ": " + (files.length ? files.map(function (f) { return f.name; }).join(", ") : "-") + "\n\n" + msg;
-    location.href = "mailto:sales@plasmamade.com?subject=" + encodeURIComponent("[Partner Center] " + subject) + "&body=" + encodeURIComponent(body);
+    location.href = "mailto:marketing@plasmamade.com?subject=" + encodeURIComponent("[Partner Center] " + subject) + "&body=" + encodeURIComponent(body);
     document.getElementById("sf-ticket-id").textContent = ticket.id;
     document.getElementById("sf-success").style.display = "block";
     document.getElementById("sf-success").scrollIntoView({ behavior: "smooth", block: "center" });
@@ -245,7 +245,7 @@ window.PM_PAGE_INIT = function () {
   });
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260624-admin-wim-1"></script>
-<script src="assets/js/app.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/app.js?v=20260629-remove-filter-hero-1"></script>
 </body>
 </html>

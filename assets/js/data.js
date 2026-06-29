@@ -255,7 +255,7 @@ window.PM_DATA = (function () {
         "Toepassing": "Werkplek, balie, behandelkamer, kleine ruimte",
         "Technologie": "Plasma + elektrostatische zuivering",
         "Onderhoud": "Herbruikbare filtermodule",
-        "Specificaties": "Volledige specs op aanvraag via sales@plasmamade.com"
+        "Specificaties": "Volledige specs op aanvraag via marketing@plasmamade.com"
       },
       applications: ["Werkplek / bureau", "Balie & receptie", "Behandelkamer", "Thuiskantoor", "Kleine ruimtes"],
       audiences: ["Zakelijk / professioneel", "Zorg", "Consument"],
@@ -603,7 +603,7 @@ window.PM_DATA = (function () {
     {
       id: "eventmateriaal", status: "Doorlopend", title: "Beurs- en eventmateriaal",
       period: "Doorlopend", audience: "Retailers / pers / internationaal",
-      owner: "PlasmaMade Sales & Marketing", goal: "Partners voorzien van premium materiaal voor beurzen, events en showroomdagen.",
+      owner: "PlasmaMade Marketing", goal: "Partners voorzien van premium materiaal voor beurzen, events en showroomdagen.",
       image: "assets/img/social/li-algemeen.jpg",
       core: "PlasmaMade professioneel presenteren met productbeelden, korte bewijsvoering en consistente merkuitstraling.",
       description: "Materiaal voor dealerbijeenkomsten, showroomdagen en internationale events. Gebruik het als basis voor uitnodigingen, LinkedIn-posts en presentaties.",
@@ -612,7 +612,7 @@ window.PM_DATA = (function () {
         "Ontdek PlasmaMade live: Clean Air Technology voor keukens en professionele ruimtes.\n\nMeer weten? → plasmamade.com\n\n#PlasmaMade #GetFresh #CleanAirTechnology"
       ],
       assets: ["li-algemeen", "li-get-fresh"],
-      planning: ["Voorbereiding per event", "Gebruik actuele productcontent", "Leads en vragen opvolgen via sales"]
+      planning: ["Voorbereiding per event", "Gebruik actuele productcontent", "Leads en vragen opvolgen via marketing"]
     },
     {
       id: "geen-wegwerpfilter", status: "Thema — Duurzaamheid", title: "Geen wegwerpfilter. Nooit meer.",
@@ -666,7 +666,7 @@ window.PM_DATA = (function () {
       id: "caple-partnership", date: "2025-12-05", category: "Partner",
       title: "Internationale samenwerking met Caple (UK)",
       excerpt: "Co-branded materiaal en video's voor de Britse markt zijn toegevoegd aan de assetbibliotheek.",
-      body: "PlasmaMade breidt internationaal uit met co-branded materiaal voor partner Caple in het Verenigd Koninkrijk. Er is een Caple-totaalbrochure (EU-EN) beschikbaar en installatievideo's voor de GUC1214 en GUC1314. Neem voor co-branded uitingen contact op met sales@plasmamade.com."
+      body: "PlasmaMade breidt internationaal uit met co-branded materiaal voor partner Caple in het Verenigd Koninkrijk. Er is een Caple-totaalbrochure (EU-EN) beschikbaar en installatievideo's voor de GUC1214 en GUC1314. Neem voor co-branded uitingen contact op met marketing@plasmamade.com."
     }
   ];
 
@@ -711,7 +711,7 @@ window.PM_DATA = (function () {
     { id: "award", title: "Plus X Award 2025 — visual", category: "Persmateriaal", type: "persmateriaal", product: "Merk algemeen", lang: "—", img: "assets/img/lifestyle/award.png", file: null, desc: "Gewonnen in 5 categorieën. Visual voor social, e-mail en showroom." },
 
     { id: "logo-pakket", title: "Logopakket (alle varianten)", category: "Huisstijl", type: "logo", product: "Merk algemeen", lang: "—", img: "assets/img/logo/logo-green.png", file: "logo-pakket", desc: "Alle logovarianten (groen, wit, zwart) in EPS/PNG/JPG." },
-    { id: "huisstijlhandboek-nl", title: "Huisstijlhandboek NL", category: "Huisstijl", type: "brochure", product: "Merk algemeen", lang: "NL", img: "assets/img/lifestyle/hero-filters.png", file: "huisstijlhandboek-nl", desc: "Volledig huisstijlhandboek: kleuren, typografie, beeldtaal." },
+    { id: "huisstijlhandboek-nl", title: "Huisstijlhandboek NL", category: "Huisstijl", type: "brochure", product: "Merk algemeen", lang: "NL", img: "assets/img/lifestyle/butterflies-kitchen.jpg", file: "huisstijlhandboek-nl", desc: "Volledig huisstijlhandboek: kleuren, typografie, beeldtaal." },
 
     { id: "social-award", title: "Social post — Plus X Award 2025", category: "Social media", type: "social", product: "Merk algemeen", lang: "NL", img: "assets/img/lifestyle/award.png", file: null, desc: "Award-post: gewonnen in 5 categorieën." }
   ];
@@ -862,8 +862,8 @@ window.PM_DATA = (function () {
 
   /* ---------------- SUPPORT FAQ ---------------- */
   const faq = [
-    { id: "faq-filter-fit", q: "Hoe weet ik welk filter op welke afzuigkap past?", a: "Gebruik de ingebouwde Filter Finder in dit Partner Center: beantwoord een paar korte vragen en je krijgt direct het juiste filter met onderbouwing. De GUC1223 past op de meeste design- en wandkappen (Ø122/126 en Ø147/151 mm), de GUC1212 op Ø100 mm en de GUC1323 op kookplaten met geïntegreerde afzuiging. Twijfel je? Neem gerust contact op met sales." },
-    { id: "faq-bronbestand", q: "Hoe vraag ik nieuw marketingmateriaal of een bronbestand aan?", a: "Bronbestanden (zoals video's of open InDesign-bestanden) zijn op aanvraag beschikbaar. Mail je verzoek naar sales@plasmamade.com met vermelding van het gewenste materiaal en formaat." },
+    { id: "faq-filter-fit", q: "Hoe weet ik welk filter op welke afzuigkap past?", a: "Gebruik de ingebouwde Filter Finder in dit Partner Center: beantwoord een paar korte vragen en je krijgt direct het juiste filter met onderbouwing. De GUC1223 past op de meeste design- en wandkappen (Ø122/126 en Ø147/151 mm), de GUC1212 op Ø100 mm en de GUC1323 op kookplaten met geïntegreerde afzuiging. Twijfel je? Neem gerust contact op met marketing." },
+    { id: "faq-bronbestand", q: "Hoe vraag ik nieuw marketingmateriaal of een bronbestand aan?", a: "Bronbestanden (zoals video's of open InDesign-bestanden) zijn op aanvraag beschikbaar. Mail je verzoek naar marketing@plasmamade.com met vermelding van het gewenste materiaal en formaat." },
     { id: "faq-logo", q: "Mag ik zelf materiaal maken met het PlasmaMade-logo?", a: "Ja — gebruik daarvoor de ingebouwde ontwerpomgeving. De huisstijl (kleuren, logo, typografie) is daar beschermd, zodat je uitingen altijd on-brand zijn. Het logopakket en huisstijlhandboek staan in Downloads." },
     { id: "faq-studio", q: "Werkt de ontwerpomgeving ook zonder designervaring?", a: "Zeker. Kies een template, pas de teksten aan, wissel de afbeelding en exporteer als PNG of PDF. Drag-and-drop, geen designkennis nodig." },
     { id: "faq-garantie", q: "Hoe registreer ik een product voor 5 jaar garantie?", a: "Klanten registreren het product op plasmamade.com. Standaard geldt 2 jaar garantie, na registratie 5 jaar." }

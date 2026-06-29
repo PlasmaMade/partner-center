@@ -7,7 +7,7 @@
 <meta name="description" content="Marketingmateriaal van PlasmaMade: beeld, social posts en campagnebeelden.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-admin-wim-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-remove-filter-hero-1">
 </head>
 <body data-page="marketing">
 <div class="layout">
@@ -37,8 +37,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-admin-wim-1"></script>
-<script src="assets/js/data.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/i18n.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/data.js?v=20260629-remove-filter-hero-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, M = D.marketing, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -111,7 +111,7 @@ window.PM_PAGE_INIT = function () {
           '<div class="asset__meta"><span>' + PM_ICON("box") + esc(PM_dict("audiences", m.product)) + '</span></div></div>' +
         '<div class="asset__foot">' +
           (m.type === "video"
-            ? '<a class="btn btn--ghost btn--sm btn--block" href="mailto:sales@plasmamade.com?subject=' + encodeURIComponent(t("mkt.requestSubject") + " " + m.title) + '">' + PM_ICON("play") + esc(t("mkt.request")) + '</a>'
+            ? '<a class="btn btn--ghost btn--sm btn--block" href="mailto:marketing@plasmamade.com?subject=' + encodeURIComponent(t("mkt.requestSubject") + " " + m.title) + '">' + PM_ICON("play") + esc(t("mkt.request")) + '</a>'
             : '<a class="btn btn--primary btn--sm" href="' + esc(dlHref(m)) + '" download>' + PM_ICON("download") + esc(t("common.download")) + '</a>' +
               (canStudio ? '<a class="btn btn--ghost btn--sm" href="' + esc(studioLink(m)) + '" title="' + esc(t("mkt.studioTitle")) + '">' + PM_ICON("palette") + esc(t("mkt.studio")) + '</a>' : '')) +
         '</div></div>';
@@ -134,7 +134,7 @@ window.PM_PAGE_INIT = function () {
   render();
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260624-admin-wim-1"></script>
-<script src="assets/js/app.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/app.js?v=20260629-remove-filter-hero-1"></script>
 </body>
 </html>

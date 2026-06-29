@@ -172,6 +172,7 @@
     if (typeof window.PM_PAGE_INIT === "function") {
       try { window.PM_PAGE_INIT(); } catch (e) { if (window.console) console.error("Pagina-herrender na taalwissel mislukt:", e); }
     }
+    if (window.PM_PAGE_EDITS && typeof window.PM_PAGE_EDITS.apply === "function") window.PM_PAGE_EDITS.apply();
     try { document.dispatchEvent(new CustomEvent("pm:langchange", { detail: { lang: active } })); } catch (e) {}
   }
 

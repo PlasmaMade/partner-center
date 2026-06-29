@@ -96,7 +96,7 @@ window.PM_LOCALES.en = {
     "common.language": "Language",
     "common.docLang": "Document language",
     "common.multilingual": "Multilingual",
-    "common.fileMissing": "This file is currently unavailable. Please contact sales@plasmamade.com.",
+    "common.fileMissing": "This file is currently unavailable. Please contact marketing@plasmamade.com.",
     "common.demoData": "Portal data",
     "common.loading": "Loading…",
 
@@ -208,7 +208,7 @@ window.PM_LOCALES.en = {
     "products.cmpFull": "Full comparison",
     "products.cmpFeature": "Feature",
     "products.ctaTitle": "Which filter fits which hood?",
-    "products.ctaText": "Use the Filter Finder for instant advice, or contact sales for a tailored recommendation.",
+    "products.ctaText": "Use the Filter Finder for instant advice, or contact marketing for a tailored recommendation.",
     "products.ctaBtn": "Open the Filter Finder",
     "products.ctaBtn2": "Ask for advice",
 
@@ -241,7 +241,7 @@ window.PM_LOCALES.en = {
     "finder.opt.medium.d": "Open-plan office, classroom, hospitality venue or retail space.",
     "finder.opt.large.t": "Large space (> 150 m²)",
     "finder.opt.large.d": "Sports hall, large retail or open office — multiple units.",
-    "finder.unitsNote": "For spaces larger than 150 m² we recommend multiple units. Sales will gladly calculate the right configuration for you.",
+    "finder.unitsNote": "For spaces larger than 150 m² we recommend multiple units. PlasmaMade will gladly calculate the right configuration for you.",
     "finder.result.match": "Best match",
     "finder.result.advice": "Our advice",
     "finder.result.cta": "View this product",
@@ -553,14 +553,14 @@ window.PM_LOCALES.en = {
     "news.emptyTitle": "No articles",
     "news.emptyText": "Adjust your filter.",
     "news.back": "Back to news",
-    "news.questions": "Questions about this update? Contact us via <a href=\"mailto:sales@plasmamade.com\" class=\"green\">sales@plasmamade.com</a> or see <a href=\"downloads.html\" class=\"green\">Downloads</a>.",
+    "news.questions": "Questions about this update? Contact us via <a href=\"mailto:marketing@plasmamade.com\" class=\"green\">marketing@plasmamade.com</a> or see <a href=\"downloads.html\" class=\"green\">Downloads</a>.",
 
     /* ---- Support ---- */
     "support.intro": "Questions about products, marketing materials or the design studio? We're happy to help you quickly.",
     "support.mailT": "Email us",
-    "support.mailS": "For sales, materials and partner questions",
+    "support.mailS": "For marketing materials and partner questions",
     "support.phoneT": "Call us",
-    "support.phoneS": "Sales · Mon–Fri during office hours",
+    "support.phoneS": "Partner support · Mon–Fri during office hours",
     "support.webT": "Website",
     "support.webS": "Product information & registration",
     "support.formTitle": "Ask your question",
@@ -591,10 +591,10 @@ window.PM_LOCALES.en = {
     "support.attachmentChosen": "{n} file(s) selected",
     "support.privacy": "I agree that PlasmaMade may use my details to answer this question.",
     "support.submit": "Send message",
-    "support.portalNotice": "Your support request is stored in the Partner Center and prepared as an email to PlasmaMade Sales. Attachments remain visible locally; add them to the email manually when needed.",
+    "support.portalNotice": "Your support request is stored in the Partner Center and prepared as an email to PlasmaMade Marketing. Attachments remain visible locally; add them to the email manually when needed.",
     "support.openMail": "Open as email",
     "support.successTitle": "Support request registered",
-    "support.successText": "Your request is listed in the Partner Center. Your email client has opened with the completed message so Sales can follow up.",
+    "support.successText": "Your request is listed in the Partner Center. Your email client has opened with the completed message so marketing can follow up.",
     "support.myTickets": "My support requests",
     "support.noTickets": "No support requests yet.",
     "support.ticketOpen": "Open",
@@ -686,7 +686,7 @@ window.PM_LOCALES.en = {
     "admin.govContent": "Content source",
     "admin.govContentV": "data.js (lightweight CMS) · source: Total brochure EU-NL 2026",
     "admin.govOwner": "Content owner",
-    "admin.govOwnerV": "PlasmaMade Marketing — sales@plasmamade.com",
+    "admin.govOwnerV": "PlasmaMade Marketing — marketing@plasmamade.com",
     "admin.govUpdate": "Latest content update",
     "admin.govI18n": "Translation system",
     "admin.govI18nV": "15 languages · central keys in assets/i18n/",
@@ -1047,7 +1047,7 @@ window.PM_LOCALES.en = {
       "Werkplek, balie, behandelkamer, kleine ruimte": "Workplace, reception desk, treatment room, small space",
       "Plasma + elektrostatische zuivering": "Plasma + electrostatic purification",
       "Herbruikbare filtermodule": "Reusable filter module",
-      "Volledige specs op aanvraag via sales@plasmamade.com": "Full specifications on request via sales@plasmamade.com",
+      "Volledige specs op aanvraag via marketing@plasmamade.com": "Full specifications on request via marketing@plasmamade.com",
       "CE · UKCA · ROHS · RED": "CE · UKCA · ROHS · RED",
       "240V / 12VDC 1,5A adapter": "240V / 12VDC 1.5A adapter",
       "0,45W": "0.45W"
@@ -1325,7 +1325,7 @@ window.PM_LOCALES.en = {
         captions: [
           "Discover PlasmaMade live: Clean Air Technology for kitchens and professional spaces.\n\nWant to know more? → plasmamade.com\n\n#PlasmaMade #GetFresh #CleanAirTechnology"
         ],
-        planning: ["Prepare per event", "Use current product content", "Follow up leads and questions via sales"]
+        planning: ["Prepare per event", "Use current product content", "Follow up leads and questions via marketing"]
       },
       "geen-wegwerpfilter": {
         title: "No disposable filter. Ever again.",
@@ -1369,7 +1369,7 @@ window.PM_LOCALES.en = {
       "caple-partnership": {
         title: "International partnership with Caple (UK)",
         excerpt: "Co-branded materials and videos for the British market have been added to the asset library.",
-        body: "PlasmaMade is expanding internationally with co-branded materials for partner Caple in the United Kingdom. A Caple total brochure (EU-EN) is available, plus installation videos for the GUC1214 and GUC1314. For co-branded communications, contact sales@plasmamade.com."
+        body: "PlasmaMade is expanding internationally with co-branded materials for partner Caple in the United Kingdom. A Caple total brochure (EU-EN) is available, plus installation videos for the GUC1214 and GUC1314. For co-branded communications, contact marketing@plasmamade.com."
       }
     },
 
@@ -1550,8 +1550,8 @@ window.PM_LOCALES.en = {
 
     /* ---- Support FAQ ---- */
     faq: {
-      "faq-filter-fit": { q: "How do I know which filter fits which cooker hood?", a: "Use the Filter Finder at plasmamade.com or contact sales. The GUC1223 fits most designer and wall-mounted hoods (Ø122/126 and Ø147/151 mm), the GUC1212 fits Ø100 mm and the GUC1323 fits hobs with integrated extraction." },
-      "faq-bronbestand": { q: "How do I request new marketing materials or a source file?", a: "Source files (such as videos or open InDesign files) are available on request. Email your request to sales@plasmamade.com stating the desired material and format." },
+      "faq-filter-fit": { q: "How do I know which filter fits which cooker hood?", a: "Use the Filter Finder at plasmamade.com or contact marketing. The GUC1223 fits most designer and wall-mounted hoods (Ø122/126 and Ø147/151 mm), the GUC1212 fits Ø100 mm and the GUC1323 fits hobs with integrated extraction." },
+      "faq-bronbestand": { q: "How do I request new marketing materials or a source file?", a: "Source files (such as videos or open InDesign files) are available on request. Email your request to marketing@plasmamade.com stating the desired material and format." },
       "faq-logo": { q: "May I create my own materials with the PlasmaMade logo?", a: "Yes — use the built-in design studio for that. The brand identity (colours, logo, typography) is protected there, so your communications are always on-brand. The logo pack and brand manual are in Downloads." },
       "faq-studio": { q: "Does the design studio work without design experience?", a: "Absolutely. Choose a template, adjust the texts, swap the image and export as PNG or PDF. Drag-and-drop, no design knowledge needed." },
       "faq-garantie": { q: "How do I register a product for a 5-year warranty?", a: "Customers register the product at plasmamade.com. The standard warranty is 2 years, 5 years after registration." }

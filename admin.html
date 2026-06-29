@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260624-admin-wim-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-remove-filter-hero-1">
 <style>
 .adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
 .adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
@@ -363,10 +363,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260624-admin-wim-1"></script>
-<script src="assets/js/data.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/i18n.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/data.js?v=20260629-remove-filter-hero-1"></script>
 <!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
-<script src="assets/js/studio.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/studio.js?v=20260629-remove-filter-hero-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
@@ -649,7 +649,49 @@ window.PM_PAGE_INIT = function () {
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen accountaanvragen.</p>';
     document.getElementById("account-requests").innerHTML = staticNote + requestRows;
     document.querySelectorAll("[data-req-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("request", b.getAttribute("data-req-view")); }); });
-    document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.approve(b.getAttribute("data-req-approve")); if (req && window.PM_MAIL) { PM_MAIL.logApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); } PM_toast("Account goedgekeurd. De bevestigingsmail staat klaar bij Mail opnieuw openen."); renderRequests(); adminRenderPartners(); renderAudit(); }); });
+    document.querySelectorAll("[data-req-approve]").forEach(function (b) { b.addEventListener("click", async function () {
+      var requestId = b.getAttribute("data-req-approve");
+      var existing = PM_REQUESTS.list().find(function (r) { return r.id === requestId; }) || null;
+      var label = b.textContent;
+      b.disabled = true;
+      b.textContent = "Centraal opslaan...";
+      var req = null;
+      var remoteRequired = !!(window.PM_SYNC && PM_SYNC.requiresRemote && PM_SYNC.requiresRemote());
+      var remoteOnline = !!(window.PM_SYNC && PM_SYNC.online && PM_SYNC.online());
+      if (remoteOnline && window.PM_SYNC && PM_SYNC.approveRequest) {
+        var remote = await PM_SYNC.approveRequest(requestId, existing && existing.email);
+        if (!remote || !remote.ok) {
+          b.disabled = false;
+          b.textContent = label;
+          if (remote && (remote.error === "invalid_or_missing_token" || remote.error === "approve_http_401")) {
+            PM_toast("Centrale goedkeuring is niet opgeslagen. Log opnieuw in als beheerder en keur daarna opnieuw goed.");
+          } else {
+            PM_toast("Centrale goedkeuring is niet opgeslagen. Edge ziet deze wijziging pas na een geslaagde centrale sync.");
+          }
+          if (window.PM_SYNC && PM_SYNC.pull) await PM_SYNC.pull({ quiet: true, timeout: 4500 });
+          renderRequests();
+          adminRenderPartners();
+          renderAudit();
+          return;
+        }
+        req = remote.request || null;
+      } else if (remoteRequired) {
+        b.disabled = false;
+        b.textContent = label;
+        PM_toast("Centrale sync is niet bereikbaar. Goedkeuren is geblokkeerd zodat Edge geen oude status blijft zien.");
+        return;
+      }
+      if (!req) req = PM_REQUESTS.approve(requestId);
+      if (req && window.PM_MAIL) {
+        PM_MAIL.logApproval(req);
+        PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() });
+      }
+      if (window.PM_SYNC && PM_SYNC.adminFlush) await PM_SYNC.adminFlush({ timeout: 6500 });
+      PM_toast("Account centraal goedgekeurd. Inloggen in Edge werkt nu met dezelfde status.");
+      renderRequests();
+      adminRenderPartners();
+      renderAudit();
+    }); });
     document.querySelectorAll("[data-req-mail]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-mail"); }); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); PM_toast("Bevestigingsmail geopend"); renderRequests(); renderAudit(); } }); });
     document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid.", function (reason) { PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
     document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor blokkade:", "Tijdelijk geblokkeerd.", function (reason) { PM_REQUESTS.suspend(b.getAttribute("data-req-suspend"), reason || ""); PM_toast("Account geblokkeerd"); renderRequests(); renderAudit(); }, { ok: "Blokkeren", multiline: true, rows: 3 }); }); });
@@ -1223,7 +1265,7 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260624-admin-wim-1"></script>
-<script src="assets/js/app.js?v=20260624-admin-wim-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/app.js?v=20260629-remove-filter-hero-1"></script>
 </body>
 </html>

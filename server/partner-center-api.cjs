@@ -54,6 +54,11 @@ const ARRAY_STATE_KEYS = new Set([
   "pm_version_history",
   "pm_partners"
 ]);
+const OBJECT_STATE_KEYS = new Set([
+  "pm_cms_overrides",
+  "pm_page_edits",
+  "pm_portal_settings"
+]);
 
 const BOOTSTRAP_ADMINS = [
   {
@@ -382,7 +387,8 @@ function addAudit(state, action, subject, meta, actor) {
 
 function findRequest(state, email) {
   const e = normEmail(email);
-  return (state.pm_account_requests || []).find((req) => normEmail(req && req.email) === e) || null;
+  const matches = (state.pm_account_requests || []).filter((req) => normEmail(req && req.email) === e);
+  return matches.find((req) => req && req.status === "approved") || matches[0] || null;
 }
 
 function normalizeRequestPayload(payload, timestamp) {
@@ -407,14 +413,14 @@ function createAccountRequest(db, payload) {
   const nextRole = internal ? "internal" : normalizeRole(payload.partnerType || payload.role || "dealer", payload.email, state);
   const requests = Array.isArray(state.pm_account_requests) ? state.pm_account_requests.slice() : [];
   let existing = requests.find((req) => normEmail(req && req.email) === payload.email);
-  if (existing && existing.status !== "approved") {
+  if (existing) {
     Object.assign(existing, payload, {
-      status: internal ? "approved" : "pending",
+      status: existing.status === "approved" ? "approved" : (internal ? "approved" : "pending"),
       role: nextRole,
       partnerType: nextRole,
       updatedAt: submittedAt,
-      submittedAt,
-      approvedAt: internal ? submittedAt : existing.approvedAt
+      submittedAt: existing.submittedAt || submittedAt,
+      approvedAt: existing.status === "approved" ? (existing.approvedAt || submittedAt) : (internal ? submittedAt : existing.approvedAt)
     });
   } else {
     existing = Object.assign({
@@ -461,6 +467,58 @@ function createAccountRequest(db, payload) {
   return existing;
 }
 
+function approveAccountRequest(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const approvedAt = nowIso();
+  const requestId = String((body && (body.requestId || body.id)) || "");
+  const email = normEmail(body && body.email);
+  const requests = Array.isArray(state.pm_account_requests) ? state.pm_account_requests.slice() : [];
+  const found = requests.find((row) => (requestId && String(row && row.id) === requestId) || (email && normEmail(row && row.email) === email));
+  if (!found || !normEmail(found.email)) return null;
+  const targetEmail = normEmail(found.email);
+  let approvedRequest = null;
+  state.pm_account_requests = requests.map((row) => {
+    if (!row || normEmail(row.email) !== targetEmail) return row;
+    const next = Object.assign({}, row, {
+      email: targetEmail,
+      status: "approved",
+      approvedAt: row.approvedAt || approvedAt,
+      rejectedAt: null,
+      suspendedAt: null,
+      updatedAt: approvedAt
+    });
+    if (body && body.approvalMailAt) next.approvalMailAt = body.approvalMailAt;
+    if (!approvedRequest || (requestId && String(row.id) === requestId)) approvedRequest = next;
+    return next;
+  }).slice(0, 300);
+  approvedRequest = approvedRequest || Object.assign({}, found, {
+    email: targetEmail,
+    status: "approved",
+    approvedAt,
+    updatedAt: approvedAt
+  });
+  const role = normalizeRole(approvedRequest.partnerType || approvedRequest.role || "dealer", targetEmail, state);
+  state.pm_partners = upsertByEmail(state.pm_partners, {
+    id: approvedRequest.partnerId || "pt_" + targetEmail.replace(/[^a-z0-9]+/g, "_"),
+    name: requestName(approvedRequest),
+    email: targetEmail,
+    company: approvedRequest.company || companyFromEmail(targetEmail),
+    phone: approvedRequest.phone || "",
+    country: approvedRequest.country || "",
+    role,
+    roleLocked: true,
+    status: "active",
+    source: "account_request",
+    createdAt: approvedRequest.createdAt || approvedRequest.submittedAt || approvedAt,
+    updatedAt: approvedAt,
+    lastActiveAt: approvedAt
+  }).slice(0, 300);
+  addAudit(state, "account_approved", targetEmail, { company: approvedRequest.company || "" }, auth && auth.email || "server");
+  db.updatedAt = approvedAt;
+  return approvedRequest;
+}
+
 function mergeRowsByOwner(existingRows, incomingRows, ownerEmail, fieldName) {
   const owner = normEmail(ownerEmail);
   const base = Array.isArray(existingRows) ? existingRows.slice() : [];
@@ -481,7 +539,7 @@ function mergeRowsByOwner(existingRows, incomingRows, ownerEmail, fieldName) {
 function rowIdentity(key, row) {
   if (!row || typeof row !== "object") return "";
   if (key === "pm_partners" || key === "pm_admin_grants") return normEmail(row.email);
-  if (key === "pm_account_requests") return row.id ? String(row.id) : normEmail(row.email);
+  if (key === "pm_account_requests") return row.email ? normEmail(row.email) : (row.id ? String(row.id) : "");
   return row.id ? String(row.id) : (row.email ? normEmail(row.email) : "");
 }
 
@@ -497,6 +555,21 @@ function mergeAdminRows(key, existingRows, incomingRows) {
   return Array.from(byId.values()).sort((a, b) => String(b.updatedAt || b.createdAt || b.updated || b.submittedAt || "").localeCompare(String(a.updatedAt || a.createdAt || a.updated || a.submittedAt || "")));
 }
 
+function isPlainObject(value) {
+  return !!(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function mergeAdminObject(existing, incoming) {
+  if (!isPlainObject(existing)) return isPlainObject(incoming) ? Object.assign({}, incoming) : incoming;
+  if (!isPlainObject(incoming)) return incoming;
+  const out = Object.assign({}, existing);
+  Object.keys(incoming).forEach((key) => {
+    if (isPlainObject(out[key]) && isPlainObject(incoming[key])) out[key] = mergeAdminObject(out[key], incoming[key]);
+    else out[key] = incoming[key];
+  });
+  return out;
+}
+
 function applyStatePatch(db, patch, auth, baseUpdatedAt) {
   ensureBootstrapState(db);
   const state = db.state;
@@ -507,6 +580,7 @@ function applyStatePatch(db, patch, auth, baseUpdatedAt) {
     CENTRAL_STATE_KEYS.forEach((key) => {
       if (!Object.prototype.hasOwnProperty.call(incoming, key)) return;
       if (staleAdminSave && ARRAY_STATE_KEYS.has(key)) state[key] = mergeAdminRows(key, state[key], incoming[key]);
+      else if (staleAdminSave && OBJECT_STATE_KEYS.has(key)) state[key] = mergeAdminObject(state[key], incoming[key]);
       else state[key] = incoming[key];
     });
   } else {
@@ -531,16 +605,22 @@ function login(db, email, password) {
     if (!ok) return { ok: false, status: "approved", request: bootstrapRequest(bootstrapAdmin), reason: "bad_password" };
     return withToken({ ok: true, status: "approved", request: bootstrapRequest(bootstrapAdmin), admin: true, internal: true }, state, e);
   }
+  const partner = activePartner(state, e);
   const req = findRequest(state, e);
   if (req) {
-    if (req.status !== "approved") return { ok: false, status: req.status || "pending", request: req };
+    const approved = req.status === "approved" || !!partner;
+    if (!approved) return { ok: false, status: req.status || "pending", request: req };
+    if (partner && req.status !== "approved") {
+      req.status = "approved";
+      req.approvedAt = req.approvedAt || nowIso();
+      req.updatedAt = nowIso();
+    }
     if (!req.passwordSalt || !req.passwordHash) return { ok: false, status: "approved", request: req, reason: "missing_password" };
     const ok = timingSafeEqualText(hashPassword(password, req.passwordSalt), req.passwordHash);
     if (!ok) return { ok: false, status: "approved", request: req, reason: "bad_password" };
     const admin = isAdminUser(state, e) || isInternalEmail(e);
     return withToken({ ok: true, status: "approved", request: req, admin, internal: admin }, state, e);
   }
-  const partner = activePartner(state, e);
   if (partner) {
     return { ok: false, status: "approved", request: partner, reason: "missing_password" };
   }
@@ -695,6 +775,25 @@ async function handleApi(req, res) {
       const result = login(db, body.email, body.password);
       await saveDbAsync(db);
       sendJson(req, res, 200, Object.assign({ updatedAt: db.updatedAt, state: db.state }, result));
+      return;
+    }
+    if (body.action === "approveAccountRequest") {
+      const auth = authFromRequest(req, db);
+      if (!auth) {
+        sendJson(req, res, 401, { ok: false, error: "invalid_or_missing_token" });
+        return;
+      }
+      if (!auth.admin || !isAdminUser(db.state, auth.email)) {
+        sendJson(req, res, 403, { ok: false, error: "admin_required" });
+        return;
+      }
+      const approved = approveAccountRequest(db, body, auth);
+      if (!approved) {
+        sendJson(req, res, 404, { ok: false, error: "request_not_found" });
+        return;
+      }
+      await saveDbAsync(db);
+      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, request: approved, state: db.state });
       return;
     }
     if (body.action === "saveState") {
