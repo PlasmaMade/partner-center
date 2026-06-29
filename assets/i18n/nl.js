@@ -19,6 +19,7 @@ window.PM_LOCALES.nl = {
     "nav.marketing": "Marketingmateriaal",
     "nav.campaigns": "Campagnes",
     "nav.sales": "Verkooptools",
+    "nav.designs": "Mijn ontwerpen",
     "nav.studio": "Design Studio",
     "nav.brand": "Brand guidelines",
     "nav.downloads": "Downloads",

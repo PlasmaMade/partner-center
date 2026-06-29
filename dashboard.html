@@ -7,7 +7,7 @@
 <meta name="description" content="Jouw startpunt in het PlasmaMade Partner Center: producten, marketing, kennis en tools.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-ui-5">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
 </head>
 <body data-page="dashboard">
 <div class="layout">
@@ -41,7 +41,7 @@
           <div class="section-title"><h3 data-i18n="dash.quickDownloads">Meest gebruikt</h3><div class="line"></div></div>
           <div class="portal-list" id="quick-dl"></div>
 
-          <div class="section-title"><h3>Mijn ontwerpen</h3><div class="line"></div><a class="more" href="studio.html">Studio</a></div>
+          <div class="section-title"><h3>Mijn ontwerpen</h3><div class="line"></div><a class="more" href="designs.html">Alle ontwerpen</a></div>
           <div class="portal-list" id="design-status-list"></div>
 
           <div class="section-title"><h3 data-i18n="dash.latestNews">Partnerupdates</h3><div class="line"></div><a class="more" href="news.html" data-i18n="dash.allNews">Alles</a></div>
@@ -65,8 +65,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-ui-5"></script>
-<script src="assets/js/data.js?v=20260629-design-review-ui-5"></script>
+<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -175,8 +175,9 @@ window.PM_PAGE_INIT = function () {
       '<span class="portal-list__go">' + PM_ICON("download") + '</span></a>';
   }).join("");
 
+  function normEmail(value) { return String(value || "").trim().toLowerCase(); }
   var myDesigns = window.PM_DESIGNS ? PM_DESIGNS.list().filter(function (d) {
-    return !d.ownerEmail || !user.email || d.ownerEmail === user.email;
+    return !d.ownerEmail || !user.email || normEmail(d.ownerEmail) === normEmail(user.email);
   }).sort(function (a, b) { return (a.updated || "") < (b.updated || "") ? 1 : -1; }).slice(0, 4) : [];
   var designLabels = window.PM_DESIGNS ? PM_DESIGNS.labels : {};
   document.getElementById("design-status-list").innerHTML = myDesigns.length ? myDesigns.map(function (d) {
@@ -186,14 +187,14 @@ window.PM_PAGE_INIT = function () {
     if (status === "changes_requested") meta += d.feedback ? " - Feedback: " + d.feedback : " - feedback ontvangen";
     if (status === "rejected") meta += d.feedback ? " - Reden: " + d.feedback : " - niet goedgekeurd";
     if (status === "submitted" || status === "in_review") meta += " - wacht op beoordeling";
-    return '<a href="studio.html?design=' + encodeURIComponent(d.id) + '" class="portal-list__row">' +
+    return '<a href="designs.html?design=' + encodeURIComponent(d.id) + '" class="portal-list__row">' +
       '<span class="portal-list__icon">' + PM_ICON(status === "approved" || status === "downloaded" ? "shieldCheck" : "palette") + '</span>' +
       '<span class="portal-list__txt"><b>' + esc(d.name || "Ontwerp") + '</b><span>' + esc(meta) + '</span></span>' +
       '<span class="portal-list__go">' + PM_ICON("arrowRight") + '</span></a>';
   }).join("") : '<div class="portal-list__empty">Nog geen ontwerpen. Open de Design Studio om materiaal te maken en ter goedkeuring in te dienen.</div>';
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-ui-5"></script>
-<script src="assets/js/app.js?v=20260629-design-review-ui-5"></script>
+<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
 </body>
 </html>

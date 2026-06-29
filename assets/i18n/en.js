@@ -16,6 +16,7 @@ window.PM_LOCALES.en = {
     "nav.marketing": "Marketing materials",
     "nav.campaigns": "Campaigns",
     "nav.sales": "Sales tools",
+    "nav.designs": "My designs",
     "nav.studio": "Design Studio",
     "nav.brand": "Brand guidelines",
     "nav.downloads": "Downloads",

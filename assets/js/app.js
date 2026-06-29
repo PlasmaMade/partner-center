@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260629-design-review-ui-5";
+  const PORTAL_BUILD_VERSION = "20260629-design-review-overview-6";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -1447,7 +1447,7 @@
   };
 
   const GROUP_KEY = "pm_partner_groups";
-  const ALL_PARTNER_PAGES = ["dashboard", "products", "finder", "knowledge", "videos", "marketing", "campaigns", "sales", "studio", "brand", "downloads", "testdocs", "news", "support", "account", "custom-page"];
+  const ALL_PARTNER_PAGES = ["dashboard", "products", "finder", "knowledge", "videos", "marketing", "campaigns", "sales", "designs", "studio", "brand", "downloads", "testdocs", "news", "support", "account", "custom-page"];
   const DEFAULT_GROUPS = [
     { id: "dealer", label: "Dealer", pages: ALL_PARTNER_PAGES.slice(), note: "Verkoop, downloads en marketingmateriaal." },
     { id: "distributor", label: "Distributeur", pages: ALL_PARTNER_PAGES.slice(), note: "Volledige productlijn, campagnes en internationale materialen." },
@@ -1496,7 +1496,8 @@
       var rows = groupRows();
       var group = rows.find(function (g) { return g.id === role; }) || rows.find(function (g) { return g.id === "dealer"; });
       if (!group || !Array.isArray(group.pages) || !group.pages.length) return true;
-      return group.pages.indexOf("*") > -1 || group.pages.indexOf(page) > -1;
+      if (group.pages.indexOf("*") > -1 || group.pages.indexOf(page) > -1) return true;
+      return page === "designs" && group.pages.indexOf("studio") > -1;
     }
   };
 
@@ -1877,7 +1878,8 @@
       { id: "marketing", href: "marketing.html", icon: "image" },
       { id: "campaigns", href: "campaigns.html", icon: "megaphone" },
       { id: "sales", href: "sales-tools.html", icon: "target" },
-      { id: "studio", href: "studio.html", icon: "palette", badge: "Studio" }
+      { id: "designs", href: "designs.html", icon: "palette" },
+      { id: "studio", href: "studio.html", icon: "edit", badge: "Studio" }
     ]},
     { key: "grp.fb", items: [
       { id: "brand", href: "brand-guidelines.html", icon: "shieldCheck" },
@@ -1897,14 +1899,14 @@
     dashboard: "nav.dashboard", products: "nav.products", product: "nav.products",
     finder: "nav.finder", knowledge: "nav.knowledge", article: "nav.knowledge", videos: "nav.videos",
     marketing: "nav.marketing", campaigns: "nav.campaigns", campaign: "nav.campaigns",
-    sales: "nav.sales", studio: "nav.studio", downloads: "nav.downloads",
+    sales: "nav.sales", designs: "nav.designs", studio: "nav.studio", downloads: "nav.downloads",
     testdocs: "nav.testdocs", news: "nav.news", support: "nav.support", admin: "nav.admin",
     account: "nav.account", brand: "nav.brand", "custom-page": "Partnerpagina"
   };
   const PAGE_GROUP_KEY = {
     dashboard: "grp.overview", products: "grp.kp", product: "grp.kp", finder: "grp.kp", knowledge: "grp.kp",
     article: "grp.kp", videos: "grp.kp", marketing: "grp.ms", campaigns: "grp.ms",
-    campaign: "grp.ms", sales: "grp.ms", studio: "grp.ms", downloads: "grp.fb",
+    campaign: "grp.ms", sales: "grp.ms", designs: "grp.ms", studio: "grp.ms", downloads: "grp.fb",
     testdocs: "grp.fb", brand: "grp.fb", news: "grp.uh", support: "grp.uh", admin: "grp.admin",
     account: "grp.account", "custom-page": "grp.ms"
   };
@@ -4013,6 +4015,7 @@
         idx.push({ t: p.text, s: (p.category || "Standaardzin") + " - " + (p.product || "Merk algemeen"), g: t("nav.studio"), href: "studio.html", ic: "type", kw: fold(p.text + " " + p.category + " " + p.product + " standaardzin tekstblok") });
       });
     }
+    idx.push({ t: t("nav.designs"), s: "Opgeslagen ontwerpen, status, feedback en goedkeuring", g: t("grp.ms"), href: "designs.html", ic: "palette", kw: fold("mijn opgeslagen ontwerpen design status feedback goedkeuring afgewezen aanpassing nodig") });
     searchIndex = idx; searchIndexLang = lang;
     return idx;
   }

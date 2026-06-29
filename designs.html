@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mijn ontwerpen - PlasmaMade Partner Center</title>
+<meta name="description" content="Overzicht van opgeslagen PlasmaMade ontwerpen met status, feedback en goedkeuring.">
+<link rel="icon" href="assets/img/logo/logo-green.png">
+<link rel="stylesheet" href="ds-bundle/styles.css">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
+</head>
+<body data-page="designs">
+<div class="layout">
+  <aside id="pm-sidebar"></aside>
+  <div class="main">
+    <div id="pm-topbar"></div>
+    <main class="content">
+      <section class="page-head">
+        <h2>Mijn ontwerpen</h2>
+        <p>Status, feedback en goedkeuring per opgeslagen ontwerp.</p>
+      </section>
+
+      <section class="designs-layout" aria-label="Mijn ontwerpen overzicht">
+        <div>
+          <div class="designs-toolbar">
+            <label class="search-box" for="design-search">
+              <span id="design-search-icon" aria-hidden="true"></span>
+              <input id="design-search" type="search" placeholder="Zoek ontwerp">
+            </label>
+            <select class="select" id="design-status-filter" aria-label="Status">
+              <option value="">Alle statussen</option>
+              <option value="changes_requested">Aanpassing nodig</option>
+              <option value="rejected">Afgewezen</option>
+              <option value="submitted">Aangevraagd</option>
+              <option value="in_review">In beoordeling</option>
+              <option value="approved">Goedgekeurd</option>
+              <option value="downloaded">Gedownload</option>
+              <option value="draft">Concept</option>
+            </select>
+            <span class="design-count" id="design-count"></span>
+          </div>
+          <div class="design-list" id="design-list"></div>
+        </div>
+
+        <aside class="design-detail" id="design-detail" aria-live="polite"></aside>
+      </section>
+    </main>
+    <div id="pm-footer"></div>
+  </div>
+</div>
+
+<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
+<script>
+window.PM_PAGE_INIT = function () {
+  var esc = window.PM_escape || function (s) { return String(s == null ? "" : s); };
+  var icon = window.PM_ICON || function () { return ""; };
+  var user = window.PM_AUTH && PM_AUTH.getUser ? PM_AUTH.getUser() || {} : {};
+  var selectedId = window.PM_param ? PM_param("design") : "";
+  var formats = {
+    "ig-square": { label: "Social vierkant", w: 1080, h: 1080 },
+    "ig-story": { label: "Story / Reel", w: 1080, h: 1920 },
+    "li-post": { label: "LinkedIn post", w: 1200, h: 628 },
+    "fb-post": { label: "Facebook", w: 1200, h: 630 },
+    "flyer-a4": { label: "Flyer A4", w: 794, h: 1123 },
+    "poster": { label: "Poster", w: 1080, h: 1350 },
+    "product-card": { label: "Productkaart", w: 1080, h: 1080 },
+    "dealer": { label: "Dealer advertentie", w: 1080, h: 1080 },
+    "banner": { label: "Banner", w: 1200, h: 300 },
+    "newsletter": { label: "Nieuwsbrief header", w: 1200, h: 500 },
+    "presentation": { label: "Presentatie 16:9", w: 1280, h: 720 }
+  };
+
+  var searchIcon = document.getElementById("design-search-icon");
+  if (searchIcon) searchIcon.innerHTML = icon("search");
+
+  function norm(value) { return String(value || "").trim().toLowerCase(); }
+  function isAdmin() { return !!(window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(user)); }
+  function sameOwner(d) {
+    if (isAdmin()) return true;
+    if (!d.ownerEmail || !user.email) return true;
+    return norm(d.ownerEmail) === norm(user.email);
+  }
+  function time(value) {
+    var n = Date.parse(value || "");
+    return Number.isFinite(n) ? n : 0;
+  }
+  function allDesigns() {
+    if (!window.PM_DESIGNS) return [];
+    return PM_DESIGNS.list().filter(sameOwner).sort(function (a, b) {
+      return time(reviewDate(b)) - time(reviewDate(a));
+    });
+  }
+  function statusText(status) {
+    var labels = window.PM_DESIGNS && PM_DESIGNS.labels ? PM_DESIGNS.labels : {};
+    return labels[status || "draft"] || status || "Concept";
+  }
+  function statusTone(status) {
+    if (status === "approved" || status === "downloaded") return "ok";
+    if (status === "rejected") return "bad";
+    if (status && status !== "draft") return "warn";
+    return "";
+  }
+  function reviewDate(d) {
+    return d && (d.feedbackAt || d.rejectedAt || d.approvedAt || d.reviewedAt || d.submittedAt || d.updated || d.updatedAt || d.createdAt) || "";
+  }
+  function fmtDateTime(value) {
+    if (!value) return "";
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return "";
+    try { return date.toLocaleString(window.PM_I18N ? PM_I18N.intl() : "nl-NL"); }
+    catch (e) { return value; }
+  }
+  function formatOf(d) {
+    if (d && d.format === "custom") {
+      var c = d.customSize || { w: 1080, h: 1080 };
+      return { label: "Aangepast", w: c.w || 1080, h: c.h || 1080 };
+    }
+    return formats[d && d.format] || { label: "Ontwerp", w: 1080, h: 1080 };
+  }
+  function pageCount(d) { return d && Array.isArray(d.pages) && d.pages.length ? d.pages.length : 1; }
+  function reviewMessage(d) {
+    d = d || {};
+    var status = d.status || "draft";
+    var feedback = String(d.feedback || "").trim();
+    if (status === "changes_requested") return feedback ? "Feedback: " + feedback : "Aanpassing nodig. Er is nog geen toelichting ingevuld.";
+    if (status === "rejected") return feedback ? "Reden: " + feedback : "Niet goedgekeurd. Er is geen reden ingevuld.";
+    if (status === "approved") return "Goedgekeurd voor gebruik. Exporteren is beschikbaar in de Studio.";
+    if (status === "downloaded") return "Goedgekeurd en gedownload. Je kunt opnieuw exporteren in de Studio.";
+    if (status === "submitted") return "Ingediend. Wacht op beoordeling door PlasmaMade.";
+    if (status === "in_review") return "In beoordeling. Feedback of goedkeuring verschijnt hier.";
+    return "Concept. Nog niet ingediend ter goedkeuring.";
+  }
+  function statusBadge(status) {
+    var tone = statusTone(status);
+    return '<span class="design-status' + (tone ? " design-status--" + tone : "") + '"><i></i>' + esc(statusText(status)) + '</span>';
+  }
+  function thumbHtml(d, cls) {
+    var f = formatOf(d);
+    var label = esc(d.name || "Ontwerp");
+    return '<span class="' + cls + '" style="aspect-ratio:' + f.w + '/' + f.h + '">' +
+      (d.thumb ? '<img src="' + esc(d.thumb) + '" alt="">' : '<span>' + label + '</span>') +
+      '</span>';
+  }
+  function countText(n) { return n === 1 ? "1 ontwerp" : n + " ontwerpen"; }
+  function setParam(id) {
+    try {
+      var url = new URL(location.href);
+      if (id) url.searchParams.set("design", id);
+      else url.searchParams.delete("design");
+      history.replaceState({}, "", url.pathname + url.search + url.hash);
+    } catch (e) {}
+  }
+  function findSelected() {
+    var rows = allDesigns();
+    return rows.find(function (d) { return String(d.id) === String(selectedId); }) || null;
+  }
+  function filteredDesigns() {
+    var q = norm((document.getElementById("design-search") || {}).value);
+    var status = (document.getElementById("design-status-filter") || {}).value || "";
+    return allDesigns().filter(function (d) {
+      var haystack = norm([d.name, d.ownerEmail, d.ownerName, d.company, d.feedback, statusText(d.status || "draft")].join(" "));
+      return (!q || haystack.indexOf(q) > -1) && (!status || (d.status || "draft") === status);
+    });
+  }
+  function renderDetail() {
+    var box = document.getElementById("design-detail");
+    if (!box) return;
+    var d = findSelected();
+    if (!d) {
+      box.innerHTML = '<div class="design-detail__empty">Selecteer een ontwerp om status, feedback en goedkeuring te bekijken.</div>';
+      return;
+    }
+    var status = d.status || "draft";
+    var tone = statusTone(status);
+    var date = fmtDateTime(reviewDate(d));
+    var fmt = formatOf(d);
+    box.innerHTML =
+      thumbHtml(d, "design-detail__thumb") +
+      '<div class="design-detail__body">' +
+        '<div class="design-detail__head">' +
+          statusBadge(status) +
+          '<h3>' + esc(d.name || "Ontwerp") + '</h3>' +
+        '</div>' +
+        '<div class="design-detail__message' + (tone ? " " + tone : "") + '">' + esc(reviewMessage(d)) + '</div>' +
+        '<div class="design-detail__meta">' +
+          '<div><span>Status</span><b>' + esc(statusText(status)) + '</b></div>' +
+          (date ? '<div><span>Laatste update</span><b>' + esc(date) + '</b></div>' : '') +
+          '<div><span>Formaat</span><b>' + esc(fmt.label) + '</b></div>' +
+          '<div><span>Pagina&apos;s</span><b>' + pageCount(d) + '</b></div>' +
+          (d.ownerEmail ? '<div><span>Account</span><b>' + esc(d.ownerEmail) + '</b></div>' : '') +
+        '</div>' +
+        '<div class="design-detail__actions">' +
+          '<a class="btn btn--primary" href="studio.html?design=' + encodeURIComponent(d.id) + '">' + icon("edit") + 'Bewerk in Studio</a>' +
+          '<a class="btn btn--ghost" href="studio.html">' + icon("plus") + 'Nieuw ontwerp</a>' +
+        '</div>' +
+      '</div>';
+  }
+  function renderList() {
+    var list = document.getElementById("design-list");
+    var count = document.getElementById("design-count");
+    if (!list) return;
+    var rows = filteredDesigns();
+    if (count) count.textContent = countText(rows.length);
+    if (!rows.length) {
+      list.innerHTML = '<div class="design-empty">Geen opgeslagen ontwerpen gevonden.</div>';
+      renderDetail();
+      return;
+    }
+    list.innerHTML = rows.map(function (d) {
+      var status = d.status || "draft";
+      var date = fmtDateTime(reviewDate(d));
+      var active = String(d.id) === String(selectedId);
+      return '<button type="button" class="design-card' + (active ? " active" : "") + '" data-design="' + esc(d.id) + '">' +
+        thumbHtml(d, "design-card__thumb") +
+        '<span class="design-card__body">' +
+          '<span class="design-card__top">' + statusBadge(status) + (date ? '<span class="design-card__meta">' + esc(date) + '</span>' : '') + '</span>' +
+          '<span class="design-card__title">' + esc(d.name || "Ontwerp") + '</span>' +
+          '<span class="design-card__message">' + esc(reviewMessage(d)) + '</span>' +
+        '</span>' +
+        '<span class="design-card__go">' + icon("chevronRight") + '</span>' +
+      '</button>';
+    }).join("");
+    list.querySelectorAll("[data-design]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        selectedId = btn.getAttribute("data-design");
+        setParam(selectedId);
+        renderList();
+        renderDetail();
+      });
+    });
+    renderDetail();
+  }
+
+  var search = document.getElementById("design-search");
+  var filter = document.getElementById("design-status-filter");
+  if (search) search.oninput = renderList;
+  if (filter) filter.onchange = renderList;
+  renderList();
+};
+</script>
+<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
+</body>
+</html>
