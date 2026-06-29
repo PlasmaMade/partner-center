@@ -374,6 +374,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   border-radius:var(--radius-lg);
   box-shadow:var(--shadow-sm);
 }
+.portal-hero--text{
+  grid-template-columns:1fr;
+  align-items:start;
+  min-height:0;
+}
 .portal-hero__copy{padding:38px 42px 40px;position:relative;z-index:2}
 .portal-eyebrow{
   display:inline-flex;

@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260629-remove-filter-hero-1";
+  const PORTAL_BUILD_VERSION = "20260629-dashboard-hero-no-filter-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -2053,7 +2053,7 @@
     return String(key || pageKey()).toLowerCase() === "dashboard.html";
   }
   function legacyDashboardHeroMatch(value) {
-    return /portal-hero|hero-filters\.png|dash\.hero|hero-greet|portal-hero__media|portal-hero__copy/i.test(String(value || ""));
+    return /hero-filters\.png|portal-hero__media|portal-hero__product|portal-hero__butterflies/i.test(String(value || ""));
   }
   function scrubLegacyDashboardHeroEdits(all, key) {
     key = key || pageKey();
@@ -2089,22 +2089,15 @@
   }
   function removeLegacyDashboardHeroDom() {
     if (!isDashboardPage()) return;
-    var nodes = [];
     try {
-      nodes = Array.prototype.slice.call(document.querySelectorAll("main.content .portal-hero, main.content .hero"));
-    } catch (e) { nodes = []; }
-    nodes.forEach(function (node) {
-      var haystack = [
-        node.className,
-        node.id,
-        node.innerHTML,
-        node.getAttribute && node.getAttribute("style")
-      ].join(" ");
-      if (legacyDashboardHeroMatch(haystack)) node.remove();
-    });
+      Array.prototype.slice.call(document.querySelectorAll("main.content .portal-hero__media")).forEach(function (media) {
+        var haystack = [media.className, media.innerHTML, media.getAttribute && media.getAttribute("style")].join(" ");
+        if (legacyDashboardHeroMatch(haystack)) media.remove();
+      });
+    } catch (e) {}
     try {
       Array.prototype.slice.call(document.querySelectorAll('main.content img[src*="hero-filters.png"]')).forEach(function (img) {
-        var box = img.closest(".portal-hero,.hero,.pm-ai-banner,.pm-ai-section,.pm-added-image") || img;
+        var box = img.closest(".portal-hero__media,.hero__media,.pm-ai-banner,.pm-ai-section,.pm-added-image") || img;
         if (box && box.remove) box.remove();
       });
     } catch (e) {}

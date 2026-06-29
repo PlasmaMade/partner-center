@@ -7,7 +7,7 @@
 <meta name="description" content="Jouw startpunt in het PlasmaMade Partner Center: producten, marketing, kennis en tools.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-remove-filter-hero-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-dashboard-hero-no-filter-1">
 </head>
 <body data-page="dashboard">
 <div class="layout">
@@ -15,6 +15,18 @@
   <div class="main">
     <div id="pm-topbar"></div>
     <main class="content">
+
+      <section class="portal-hero portal-hero--text">
+        <div class="portal-hero__copy">
+          <div class="portal-eyebrow">PlasmaMade Partner Center</div>
+          <h2 id="hero-greet">Welkom terug</h2>
+          <p data-i18n="dash.heroIntro">Alles voor productadvies, verkoop, marketing en support. Rustig, actueel en volledig in PlasmaMade-stijl.</p>
+          <div class="hero__actions">
+            <a href="filter-finder.html" class="btn btn--primary" data-i18n="dash.heroCtaFinder">Vind het juiste filter</a>
+            <a href="marketing.html" class="btn btn--ghost" data-i18n="dash.heroCtaMarketing">Marketingmateriaal</a>
+          </div>
+        </div>
+      </section>
 
       <div class="section-title"><h3 data-i18n="dash.forYou">Aanbevolen voor jou</h3><div class="line"></div></div>
       <p class="muted" id="role-intro" style="margin:-8px 0 14px;font-size:13.5px"></p>
@@ -53,8 +65,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-remove-filter-hero-1"></script>
-<script src="assets/js/data.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/i18n.js?v=20260629-dashboard-hero-no-filter-1"></script>
+<script src="assets/js/data.js?v=20260629-dashboard-hero-no-filter-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -178,7 +190,7 @@ window.PM_PAGE_INIT = function () {
   }).join("") : '<div class="portal-list__empty">Nog geen ontwerpen. Open de Design Studio om materiaal te maken en ter goedkeuring in te dienen.</div>';
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-remove-filter-hero-1"></script>
-<script src="assets/js/app.js?v=20260629-remove-filter-hero-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-dashboard-hero-no-filter-1"></script>
+<script src="assets/js/app.js?v=20260629-dashboard-hero-no-filter-1"></script>
 </body>
 </html>
