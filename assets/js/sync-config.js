@@ -20,6 +20,23 @@
     return /^partner-center\.onrender\.com$/i.test(location.hostname || "");
   }
 
+  function isProductionHost() {
+    return /^https?:$/i.test(location.protocol || "") && !isLocalHost() && !isCentralApiHost();
+  }
+
+  function isUnsafeStoredEndpoint(value) {
+    var endpoint = clean(value);
+    if (!endpoint) return true;
+    try {
+      var url = new URL(endpoint, location.href);
+      if (isProductionHost() && /^https?:$/i.test(url.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(url.hostname || "")) return true;
+      if (isProductionHost() && url.protocol !== "https:") return true;
+      return !/\/api\/sync\/?$/i.test(url.pathname || "");
+    } catch (e) {
+      return true;
+    }
+  }
+
   function autoEndpoint() {
     if (isLocalHost() || isCentralApiHost()) return sameOriginEndpoint();
     return DEFAULT_ENDPOINT;
@@ -38,9 +55,11 @@
 
   try {
     var stored = localStorage.getItem("pm_remote_sync_endpoint");
-    if (clean(stored)) {
+    if (clean(stored) && !isUnsafeStoredEndpoint(stored)) {
       endpoint = clean(stored);
       source = "stored";
+    } else if (clean(stored) && isProductionHost()) {
+      localStorage.removeItem("pm_remote_sync_endpoint");
     }
   } catch (e) {}
 

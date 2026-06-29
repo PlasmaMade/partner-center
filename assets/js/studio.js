@@ -2217,6 +2217,7 @@ var PMStudio = (function () {
   var STORE = "pm_designs";
   function getDesigns() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch (e) { return []; } }
   function setDesigns(d) {
+    if (window.PM_STORE && PM_STORE.write) return PM_STORE.write(STORE, d);
     try { localStorage.setItem(STORE, JSON.stringify(d)); return true; }
     catch (e) { PM_toast(T("studio.saveFailed")); return false; }
   }

@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260629-dashboard-hero-no-filter-1";
+  const PORTAL_BUILD_VERSION = "20260629-central-auth-sync-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -573,36 +573,61 @@
       }
       return null;
     },
-    approveRequest: async function (requestId, email) {
+    adminMutation: async function (action, payload, opts) {
+      opts = opts || {};
       if (!this.online()) return { ok: false, error: "sync_offline" };
       var endpoint = this.getEndpoint ? this.getEndpoint() : this.endpoint;
       if (!endpoint) return { ok: false, error: "sync_not_configured" };
-      var timeout = withTimeout(6500);
+      var timeout = withTimeout(opts.timeout || 6500);
       try {
         var res = await fetch(endpoint, {
           method: "POST",
           headers: syncAuthHeaders({ "content-type": "application/json", "x-pm-actor": syncActor() }),
-          body: JSON.stringify({ action: "approveAccountRequest", requestId: requestId || "", email: email || "", approvalMailAt: new Date().toISOString() }),
+          body: JSON.stringify(Object.assign({ action: action }, payload || {})),
           signal: timeout.signal
         });
         var data = null;
         try { data = await res.json(); } catch (jsonErr) {}
         if (!res.ok) {
-          this.lastError = "approve_http_" + res.status;
-          return Object.assign({ ok: false, error: "approve_http_" + res.status }, data || {});
+          this.lastError = String(action || "mutation") + "_http_" + res.status;
+          return Object.assign({ ok: false, error: this.lastError }, data || {});
         }
         if (data && data.updatedAt) this.remoteUpdatedAt = data.updatedAt;
         if (data && data.state) this.applyState(data.state, { quiet: true, source: "push" });
-        this.clearDirty(["pm_account_requests", "pm_partners", "pm_audit_log"]);
+        this.clearDirty(CENTRAL_STATE_KEYS);
         this.lastPushAt = new Date().toISOString();
         this.lastError = "";
         return Object.assign({ ok: true }, data || {});
       } catch (e) {
-        this.lastError = "approve_failed";
-        return { ok: false, error: "approve_failed" };
+        this.lastError = String(action || "mutation") + "_failed";
+        return { ok: false, error: this.lastError };
       } finally {
         if (timeout.done) timeout.done();
       }
+    },
+    approveRequest: async function (requestId, email) {
+      return this.adminMutation("approveAccountRequest", { requestId: requestId || "", email: email || "", approvalMailAt: new Date().toISOString() });
+    },
+    rejectRequest: async function (requestId, email, reason) {
+      return this.adminMutation("rejectAccountRequest", { requestId: requestId || "", email: email || "", reason: reason || "" });
+    },
+    suspendRequest: async function (requestId, email, reason) {
+      return this.adminMutation("suspendAccountRequest", { requestId: requestId || "", email: email || "", reason: reason || "" });
+    },
+    deleteRequest: async function (requestId, email) {
+      return this.adminMutation("deleteAccountRequest", { requestId: requestId || "", email: email || "" });
+    },
+    upsertPartner: async function (partner) {
+      return this.adminMutation("upsertPartner", { partner: partner || {} });
+    },
+    deletePartner: async function (email) {
+      return this.adminMutation("deletePartner", { email: email || "" });
+    },
+    grantAdmin: async function (email, meta) {
+      return this.adminMutation("grantAdmin", Object.assign({ email: email || "" }, meta || {}));
+    },
+    revokeAdmin: async function (email) {
+      return this.adminMutation("revokeAdmin", { email: email || "" });
     },
     startAutoRefresh: function () {
       if (this.interval || !this.online()) return;
@@ -755,7 +780,7 @@
   };
   function normalizeRole(role, email) {
     var r = String(role || "dealer").trim().toLowerCase();
-    var allowed = ["dealer", "distributor", "installer", "studio", "retailpartner", "international", "support"];
+    var allowed = ["dealer", "distributor", "installer", "studio", "retailpartner", "international", "support", "marketing", "agent", "partner"];
     if (r === "internal") return ((window.PM_ADMINS && PM_ADMINS.has(email)) || isBootstrapAdminEmailValue(email)) ? "internal" : "dealer";
     if (r === "admin") return ((window.PM_ADMINS && PM_ADMINS.has(email)) || isBootstrapAdminEmailValue(email)) ? "internal" : "dealer";
     return allowed.indexOf(r) > -1 ? r : "dealer";
@@ -961,6 +986,7 @@
     },
     reject: function (id, reason) {
       var req = this.update(id, { status: "rejected", rejectedAt: new Date().toISOString(), rejectionReason: reason || "" });
+      if (req && window.PM_PARTNERS) PM_PARTNERS.upsert({ email: req.email, status: "inactive" });
       if (req && window.PM_AUDIT) PM_AUDIT.add("account_rejected", req.email, { reason: reason || "" });
       return req;
     },
@@ -1326,6 +1352,9 @@
     { id: "studio", label: "Retailpartner", pages: ALL_PARTNER_PAGES.slice(), note: "Showroommateriaal, designstudio en productadvies." },
     { id: "retailpartner", label: "Retailpartner", pages: ALL_PARTNER_PAGES.slice(), note: "Showroommateriaal, designstudio en productadvies." },
     { id: "international", label: "Internationale partner", pages: ALL_PARTNER_PAGES.slice(), note: "Campagnes, downloads en meertalige verkoopmaterialen." },
+    { id: "marketing", label: "Marketingpartner", pages: ALL_PARTNER_PAGES.slice(), note: "Marketingmateriaal, campagnes, downloads en merkcontent." },
+    { id: "agent", label: "Agent", pages: ALL_PARTNER_PAGES.slice(), note: "Verkooptools, productinformatie en partnercampagnes." },
+    { id: "partner", label: "Partner", pages: ALL_PARTNER_PAGES.slice(), note: "Algemene partnercontent en support." },
     { id: "internal", label: "Interne gebruiker", pages: ALL_PARTNER_PAGES.concat(["admin"]), note: "Interne PlasmaMade-weergave." }
   ];
   function groupRows() {

@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-dashboard-hero-no-filter-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-central-auth-sync-1">
 <style>
 .adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
 .adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
@@ -363,10 +363,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-dashboard-hero-no-filter-1"></script>
-<script src="assets/js/data.js?v=20260629-dashboard-hero-no-filter-1"></script>
+<script src="assets/js/i18n.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/data.js?v=20260629-central-auth-sync-1"></script>
 <!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
-<script src="assets/js/studio.js?v=20260629-dashboard-hero-no-filter-1"></script>
+<script src="assets/js/studio.js?v=20260629-central-auth-sync-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
@@ -693,9 +693,24 @@ window.PM_PAGE_INIT = function () {
       renderAudit();
     }); });
     document.querySelectorAll("[data-req-mail]").forEach(function (b) { b.addEventListener("click", function () { var req = PM_REQUESTS.list().find(function (r) { return r.id === b.getAttribute("data-req-mail"); }); if (req && window.PM_MAIL) { PM_MAIL.openApproval(req); PM_REQUESTS.update(req.id, { approvalMailAt: new Date().toISOString() }); PM_toast("Bevestigingsmail geopend"); renderRequests(); renderAudit(); } }); });
-    document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid.", function (reason) { PM_REQUESTS.reject(b.getAttribute("data-req-reject"), reason || ""); PM_toast("Aanvraag afgewezen"); renderRequests(); renderAudit(); }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
-    document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor blokkade:", "Tijdelijk geblokkeerd.", function (reason) { PM_REQUESTS.suspend(b.getAttribute("data-req-suspend"), reason || ""); PM_toast("Account geblokkeerd"); renderRequests(); renderAudit(); }, { ok: "Blokkeren", multiline: true, rows: 3 }); }); });
-    document.querySelectorAll("[data-req-delete]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Deze accountaanvraag verwijderen?", function () { PM_REQUESTS.remove(b.getAttribute("data-req-delete")); PM_toast("Aanvraag verwijderd"); renderRequests(); renderAudit(); }, { ok: "Verwijderen" }); }); });
+    document.querySelectorAll("[data-req-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet passend binnen partnerbeleid.", async function (reason) {
+      var ok = await mutateRequestStatus("reject", b.getAttribute("data-req-reject"), reason || "");
+      if (!ok) return;
+      PM_toast("Aanvraag centraal afgewezen");
+      renderRequests(); adminRenderPartners(); renderAudit();
+    }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-req-suspend]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor blokkade:", "Tijdelijk geblokkeerd.", async function (reason) {
+      var ok = await mutateRequestStatus("suspend", b.getAttribute("data-req-suspend"), reason || "");
+      if (!ok) return;
+      PM_toast("Account centraal geblokkeerd");
+      renderRequests(); adminRenderPartners(); renderAudit();
+    }, { ok: "Blokkeren", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-req-delete]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Deze accountaanvraag verwijderen?", async function () {
+      var ok = await mutateRequestStatus("delete", b.getAttribute("data-req-delete"), "");
+      if (!ok) return;
+      PM_toast("Aanvraag centraal verwijderd");
+      renderRequests(); adminRenderPartners(); renderAudit();
+    }, { ok: "Verwijderen" }); }); });
   }
   function renderDesignApprovals() {
     var rows = window.PM_DESIGNS ? PM_DESIGNS.list().sort(function (a, b) { return (a.updated || "") < (b.updated || "") ? 1 : -1; }) : [];
@@ -1016,7 +1031,8 @@ window.PM_PAGE_INIT = function () {
     }).join("") + '</tbody>';
   function adminRoleLabel(role) {
     var roleKey = PM_roleKey(role || "");
-    return roleKey ? t(roleKey) : (role === "support" ? t("nav.support") : (role || "Partner"));
+    var fallback = { support: t("nav.support"), marketing: "Marketingpartner", agent: "Agent", partner: "Partner", international: "Internationale partner" };
+    return roleKey ? t(roleKey) : (fallback[role] || role || "Partner");
   }
   function adminPartnerStatus(status) {
     return (status || "active") === "active" ? t("admin.active") : ((status || "") === "suspended" ? "Geblokkeerd" : t("admin.inactive"));
@@ -1105,35 +1121,90 @@ window.PM_PAGE_INIT = function () {
   }
   function adminSafePartnerRole(role, email) {
     var r = String(role || "dealer").trim().toLowerCase();
-    if (r === "internal") {
-      if (window.PM_ADMINS) PM_ADMINS.grant(email, { source: "partnerbeheer" });
-      return "internal";
-    }
-    return r;
+    if (r === "admin") return "internal";
+    return r === "internal" ? "internal" : r;
   }
   var FIXED_ADMIN_EMAILS = ["bjonkeren@plasmamade.com", "wmarckelbach@plasmamade.com"];
   function isBootstrapAdminEmail(email) {
     return FIXED_ADMIN_EMAILS.indexOf(String(email || "").trim().toLowerCase()) > -1;
   }
-  function grantAdmin(email) {
+  function adminRemoteRequired() {
+    return !!(window.PM_SYNC && PM_SYNC.requiresRemote && PM_SYNC.requiresRemote());
+  }
+  function adminRemoteOnline() {
+    return !!(window.PM_SYNC && PM_SYNC.online && PM_SYNC.online());
+  }
+  function adminMutationError(action, result) {
+    if (result && (result.error === "invalid_or_missing_token" || /_http_401$/.test(result.error || ""))) return "Log opnieuw in als beheerder. De wijziging is niet centraal opgeslagen.";
+    if (result && (result.error === "admin_required" || /_http_403$/.test(result.error || ""))) return "Je hebt geen beheerrechten voor deze centrale wijziging.";
+    if (result && (result.error === "target_not_found_or_protected" || /_http_404$/.test(result.error || ""))) return "Deze actie kon niet worden uitgevoerd omdat het account niet bestaat of beschermd is.";
+    return action + " is niet centraal opgeslagen. Probeer opnieuw zodra de Partner Center API bereikbaar is.";
+  }
+  async function adminRunMutation(actionLabel, remoteFn, localFn, afterFn) {
+    var result = null;
+    if (adminRemoteOnline() && remoteFn) {
+      result = await remoteFn();
+      if (!result || !result.ok) {
+        PM_toast(adminMutationError(actionLabel, result));
+        if (window.PM_SYNC && PM_SYNC.pull) await PM_SYNC.pull({ quiet: true, timeout: 4500 });
+        if (afterFn) afterFn(false, result || null);
+        return null;
+      }
+      if (afterFn) afterFn(true, result);
+      return result;
+    }
+    if (adminRemoteRequired()) {
+      PM_toast(actionLabel + " is geblokkeerd omdat centrale sync niet bereikbaar is. Zo voorkomen we verschillen tussen Chrome en Edge.");
+      if (afterFn) afterFn(false, null);
+      return null;
+    }
+    result = localFn ? localFn() : {};
+    if (window.PM_SYNC && PM_SYNC.adminFlush) await PM_SYNC.adminFlush({ timeout: 6500 });
+    if (afterFn) afterFn(true, result);
+    return result || {};
+  }
+  async function mutateRequestStatus(action, requestId, reason) {
+    var existing = (window.PM_REQUESTS ? PM_REQUESTS.list() : []).find(function (r) { return r.id === requestId; }) || null;
+    var email = existing && existing.email;
+    if (action === "reject") {
+      return adminRunMutation("Afwijzen", function () { return PM_SYNC.rejectRequest(requestId, email, reason || ""); }, function () { return PM_REQUESTS.reject(requestId, reason || ""); });
+    }
+    if (action === "suspend") {
+      return adminRunMutation("Blokkeren", function () { return PM_SYNC.suspendRequest(requestId, email, reason || ""); }, function () { return PM_REQUESTS.suspend(requestId, reason || ""); });
+    }
+    if (action === "delete") {
+      return adminRunMutation("Verwijderen", function () { return PM_SYNC.deleteRequest(requestId, email); }, function () { return PM_REQUESTS.remove(requestId); });
+    }
+    return null;
+  }
+  async function savePartnerCentral(partner, localFn) {
+    return adminRunMutation("Partner opslaan", function () { return PM_SYNC.upsertPartner(partner); }, localFn || function () { return PM_PARTNERS.upsert(partner); });
+  }
+  async function deletePartnerCentral(email) {
+    return adminRunMutation("Partner verwijderen", function () { return PM_SYNC.deletePartner(email); }, function () { return PM_PARTNERS.remove(email); });
+  }
+  async function grantAdmin(email) {
     email = String(email || "").trim().toLowerCase();
     if (!email) return;
-    if (window.PM_ADMINS) PM_ADMINS.grant(email, { source: "admin_panel" });
-    if (window.PM_PARTNERS) {
-      PM_PARTNERS.upsert({
-        email: email,
-        company: PM_companyFromEmail(email),
-        name: PM_companyFromEmail(email),
-        role: "internal",
-        status: "active",
-        source: "admin_grant",
-        lastActiveAt: new Date().toISOString()
-      });
-    }
-    PM_toast("Adminrechten toegewezen");
+    var partner = {
+      email: email,
+      company: PM_companyFromEmail(email),
+      name: PM_companyFromEmail(email),
+      role: "internal",
+      status: "active",
+      source: "admin_grant",
+      lastActiveAt: new Date().toISOString()
+    };
+    var ok = await adminRunMutation("Adminrechten toewijzen", function () { return PM_SYNC.grantAdmin(email, { source: "admin_panel", name: partner.name, company: partner.company }); }, function () {
+      if (window.PM_ADMINS) PM_ADMINS.grant(email, { source: "admin_panel" });
+      if (window.PM_PARTNERS) PM_PARTNERS.upsert(partner);
+      return { email: email };
+    });
+    if (!ok) return;
+    PM_toast("Adminrechten centraal toegewezen");
     renderAdminGrants(); adminRenderPartners(); renderAudit();
   }
-  function revokeAdmin(email) {
+  async function revokeAdmin(email) {
     email = String(email || "").trim().toLowerCase();
     if (!email) return;
     if (isBootstrapAdminEmail(email)) {
@@ -1141,9 +1212,13 @@ window.PM_PAGE_INIT = function () {
       renderAdminGrants(); adminRenderPartners();
       return;
     }
-    if (window.PM_ADMINS) PM_ADMINS.revoke(email);
-    if (window.PM_PARTNERS) PM_PARTNERS.update(email, { role: "dealer" });
-    PM_toast("Adminrechten ingetrokken");
+    var ok = await adminRunMutation("Adminrechten intrekken", function () { return PM_SYNC.revokeAdmin(email); }, function () {
+      if (window.PM_ADMINS) PM_ADMINS.revoke(email);
+      if (window.PM_PARTNERS) PM_PARTNERS.update(email, { role: "dealer" });
+      return { email: email };
+    });
+    if (!ok) return;
+    PM_toast("Adminrechten centraal ingetrokken");
     renderAdminGrants(); adminRenderPartners(); renderAudit();
   }
   function renderAdminGrants() {
@@ -1160,16 +1235,22 @@ window.PM_PAGE_INIT = function () {
     var row = PM_PARTNERS.list().find(function (p) { return String(p.email || "").toLowerCase() === String(email || "").toLowerCase(); });
     if (!row) return;
     adminPrompt("Bedrijfsnaam / weergavenaam:", row.company || row.name || "", function (company) {
-      adminPrompt("Rol (dealer, distributor, installer, studio, support):", row.role || "dealer", function (role) {
-        adminPrompt("Status (active, inactive, suspended):", row.status || "active", function (status) {
-          PM_PARTNERS.update(row.email, {
+      adminPrompt("Rol (dealer, distributor, installer, studio, retailpartner, international, marketing, agent, partner, support):", row.role || "dealer", function (role) {
+        adminPrompt("Status (active, inactive, suspended):", row.status || "active", async function (status) {
+          var partnerPatch = {
+            email: row.email,
             name: row.name || company.trim(),
             company: company.trim(),
             role: adminSafePartnerRole(role, row.email),
             status: status.trim() || "active"
+          };
+          var saved = await savePartnerCentral(partnerPatch, function () {
+            if (partnerPatch.role === "internal" && window.PM_ADMINS) PM_ADMINS.grant(row.email, { source: "partnerbeheer" });
+            return PM_PARTNERS.update(row.email, partnerPatch);
           });
-          PM_toast("Partner bijgewerkt");
-          adminRenderPartners(); renderAudit();
+          if (!saved) return;
+          PM_toast("Partner centraal bijgewerkt");
+          renderAdminGrants(); adminRenderPartners(); renderAudit();
         }, { ok: "Opslaan" });
       }, { ok: "Volgende" });
     }, { ok: "Volgende" });
@@ -1207,7 +1288,12 @@ window.PM_PAGE_INIT = function () {
       }).join("") + '</tbody>';
     document.querySelectorAll("[data-partner-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("partner", b.getAttribute("data-partner-view")); }); });
     document.querySelectorAll("[data-partner-edit]").forEach(function (b) { b.addEventListener("click", function () { adminEditPartner(b.getAttribute("data-partner-edit")); }); });
-    document.querySelectorAll("[data-partner-delete]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-partner-delete"); if (!email) return; adminConfirm("Deze partner verwijderen?", function () { PM_PARTNERS.remove(email); PM_toast("Partner verwijderd"); adminRenderPartners(); renderAudit(); }, { ok: "Verwijderen" }); }); });
+    document.querySelectorAll("[data-partner-delete]").forEach(function (b) { b.addEventListener("click", function () { var email = b.getAttribute("data-partner-delete"); if (!email) return; adminConfirm("Deze partner verwijderen?", async function () {
+      var ok = await deletePartnerCentral(email);
+      if (!ok) return;
+      PM_toast("Partner centraal verwijderd");
+      adminRenderPartners(); renderAdminGrants(); renderAudit();
+    }, { ok: "Verwijderen" }); }); });
     document.querySelectorAll("#partners [data-admin-grant]").forEach(function (b) { b.addEventListener("click", function () { grantAdmin(b.getAttribute("data-admin-grant")); }); });
     document.querySelectorAll("#partners [data-admin-revoke]").forEach(function (b) { b.addEventListener("click", function () { revokeAdmin(b.getAttribute("data-admin-revoke")); }); });
   }
@@ -1221,8 +1307,8 @@ window.PM_PAGE_INIT = function () {
     adminPrompt("E-mailadres van partner:", "", function (email) {
       if (!email) return;
       adminPrompt("Bedrijfsnaam:", PM_companyFromEmail(email), function (company) {
-        adminPrompt("Rol (dealer, distributor, installer, studio, support):", "dealer", function (role) {
-          PM_PARTNERS.upsert({
+        adminPrompt("Rol (dealer, distributor, installer, studio, retailpartner, international, marketing, agent, partner, support):", "dealer", async function (role) {
+          var partner = {
             email: email.trim(),
             company: company.trim(),
             name: company.trim(),
@@ -1230,9 +1316,14 @@ window.PM_PAGE_INIT = function () {
             status: "active",
             source: "admin",
             lastActiveAt: new Date().toISOString()
+          };
+          var saved = await savePartnerCentral(partner, function () {
+            if (partner.role === "internal" && window.PM_ADMINS) PM_ADMINS.grant(partner.email, { source: "partnerbeheer" });
+            return PM_PARTNERS.upsert(partner);
           });
-          PM_toast("Partner toegevoegd");
-          adminRenderPartners(); renderAudit();
+          if (!saved) return;
+          PM_toast("Partner centraal toegevoegd");
+          renderAdminGrants(); adminRenderPartners(); renderAudit();
         }, { ok: "Toevoegen" });
       }, { ok: "Volgende" });
     }, { ok: "Volgende" });
@@ -1265,7 +1356,7 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-dashboard-hero-no-filter-1"></script>
-<script src="assets/js/app.js?v=20260629-dashboard-hero-no-filter-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/app.js?v=20260629-central-auth-sync-1"></script>
 </body>
 </html>

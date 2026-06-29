@@ -366,7 +366,7 @@ function isAdminUser(state, email) {
 
 function normalizeRole(role, email, state) {
   const r = String(role || "dealer").trim().toLowerCase();
-  const allowed = ["dealer", "distributor", "installer", "studio", "retailpartner", "international", "support"];
+  const allowed = ["dealer", "distributor", "installer", "studio", "retailpartner", "international", "support", "marketing", "agent", "partner"];
   if (r === "internal" || r === "admin") return isAdminUser(state, email) || isBootstrapAdmin(email) ? "internal" : "dealer";
   return allowed.includes(r) ? r : "dealer";
 }
@@ -517,6 +517,185 @@ function approveAccountRequest(db, body, auth) {
   addAudit(state, "account_approved", targetEmail, { company: approvedRequest.company || "" }, auth && auth.email || "server");
   db.updatedAt = approvedAt;
   return approvedRequest;
+}
+
+function findRequestForMutation(state, body) {
+  const requestId = String((body && (body.requestId || body.id)) || "");
+  const email = normEmail(body && body.email);
+  const requests = Array.isArray(state.pm_account_requests) ? state.pm_account_requests : [];
+  return requests.find((row) => (requestId && String(row && row.id) === requestId) || (email && normEmail(row && row.email) === email)) || null;
+}
+
+function setAccountRequestStatus(db, body, auth, status) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const now = nowIso();
+  const found = findRequestForMutation(state, body);
+  if (!found || !normEmail(found.email)) return null;
+  const targetEmail = normEmail(found.email);
+  let changed = null;
+  state.pm_account_requests = (Array.isArray(state.pm_account_requests) ? state.pm_account_requests : []).map((row) => {
+    if (!row || normEmail(row.email) !== targetEmail) return row;
+    const next = Object.assign({}, row, {
+      email: targetEmail,
+      status,
+      updatedAt: now
+    });
+    if (status === "rejected") {
+      next.rejectedAt = now;
+      next.rejectionReason = (body && body.reason) || row.rejectionReason || "";
+      next.approvedAt = null;
+      next.suspendedAt = null;
+    }
+    if (status === "suspended") {
+      next.suspendedAt = now;
+      next.suspensionReason = (body && body.reason) || row.suspensionReason || "";
+    }
+    if (!changed || String(row.id) === String(found.id)) changed = next;
+    return next;
+  }).slice(0, 300);
+  if (status === "rejected" || status === "suspended") {
+    const partnerStatus = status === "suspended" ? "suspended" : "inactive";
+    state.pm_partners = (Array.isArray(state.pm_partners) ? state.pm_partners : []).map((partner) => {
+      if (!partner || normEmail(partner.email) !== targetEmail) return partner;
+      return Object.assign({}, partner, { status: partnerStatus, updatedAt: now });
+    }).slice(0, 300);
+  }
+  addAudit(
+    state,
+    status === "rejected" ? "account_rejected" : "account_suspended",
+    targetEmail,
+    { reason: (body && body.reason) || "" },
+    auth && auth.email || "server"
+  );
+  db.updatedAt = now;
+  return changed;
+}
+
+function deleteAccountRequest(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const found = findRequestForMutation(state, body);
+  if (!found) return null;
+  const requestId = String(found.id || "");
+  const email = normEmail(found.email);
+  state.pm_account_requests = (Array.isArray(state.pm_account_requests) ? state.pm_account_requests : []).filter((row) => {
+    if (!row) return false;
+    if (requestId && String(row.id || "") === requestId) return false;
+    return !(email && !requestId && normEmail(row.email) === email);
+  }).slice(0, 300);
+  addAudit(state, "account_request_deleted", email || requestId, {}, auth && auth.email || "server");
+  db.updatedAt = nowIso();
+  return found;
+}
+
+function sanitizePartner(partner, state) {
+  const input = partner && typeof partner === "object" ? partner : {};
+  const email = normEmail(input.email);
+  if (!email) return null;
+  const now = nowIso();
+  const rawRole = String(input.role || input.partnerType || "dealer").trim().toLowerCase();
+  if (rawRole === "internal" || rawRole === "admin") {
+    state.pm_admin_grants = upsertByEmail(state.pm_admin_grants, {
+      id: "adm_" + email.replace(/[^a-z0-9]+/g, "_"),
+      email,
+      name: input.name || input.company || companyFromEmail(email),
+      source: input.source || "partner_admin_edit",
+      grantedBy: input.grantedBy || "admin",
+      grantedAt: now
+    }).slice(0, 100);
+  }
+  const role = normalizeRole(rawRole, email, state);
+  const allowedStatus = ["active", "inactive", "suspended"];
+  const status = allowedStatus.includes(String(input.status || "active").toLowerCase()) ? String(input.status || "active").toLowerCase() : "active";
+  return {
+    id: input.id || "pt_" + email.replace(/[^a-z0-9]+/g, "_"),
+    name: input.name || input.company || companyFromEmail(email),
+    email,
+    company: input.company || input.name || companyFromEmail(email),
+    phone: input.phone || "",
+    country: input.country || "",
+    role,
+    roleLocked: role === "internal" || !!input.roleLocked,
+    status,
+    source: input.source || "admin",
+    createdAt: input.createdAt || now,
+    updatedAt: now,
+    lastActiveAt: input.lastActiveAt || now
+  };
+}
+
+function upsertPartnerAdmin(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const partner = sanitizePartner(body && body.partner, state);
+  if (!partner) return null;
+  state.pm_partners = upsertByEmail(state.pm_partners, partner).slice(0, 300);
+  addAudit(state, "partner_saved", partner.email, { role: partner.role, status: partner.status }, auth && auth.email || "server");
+  db.updatedAt = nowIso();
+  return partner;
+}
+
+function deletePartnerAdmin(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const email = normEmail(body && body.email);
+  if (!email || isBootstrapAdmin(email)) return null;
+  const existing = activePartner(state, email) || (state.pm_partners || []).find((p) => normEmail(p && p.email) === email) || null;
+  state.pm_partners = (Array.isArray(state.pm_partners) ? state.pm_partners : []).filter((p) => normEmail(p && p.email) !== email).slice(0, 300);
+  state.pm_admin_grants = (Array.isArray(state.pm_admin_grants) ? state.pm_admin_grants : []).filter((g) => normEmail(g && g.email) !== email).slice(0, 100);
+  addAudit(state, "partner_deleted", email, {}, auth && auth.email || "server");
+  db.updatedAt = nowIso();
+  return existing || { email };
+}
+
+function grantAdmin(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const email = normEmail(body && body.email);
+  if (!email) return null;
+  const now = nowIso();
+  state.pm_admin_grants = upsertByEmail(state.pm_admin_grants, {
+    id: "adm_" + email.replace(/[^a-z0-9]+/g, "_"),
+    email,
+    name: (body && body.name) || companyFromEmail(email),
+    source: (body && body.source) || "admin_panel",
+    grantedBy: auth && auth.email || "server",
+    grantedAt: now,
+    updatedAt: now
+  }).slice(0, 100);
+  state.pm_partners = upsertByEmail(state.pm_partners, {
+    id: "pt_" + email.replace(/[^a-z0-9]+/g, "_"),
+    email,
+    name: (body && body.name) || companyFromEmail(email),
+    company: (body && body.company) || companyFromEmail(email),
+    role: "internal",
+    roleLocked: true,
+    status: "active",
+    source: "admin_grant",
+    createdAt: now,
+    updatedAt: now,
+    lastActiveAt: now
+  }).slice(0, 300);
+  addAudit(state, "admin_granted", email, {}, auth && auth.email || "server");
+  db.updatedAt = now;
+  return { email };
+}
+
+function revokeAdmin(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const email = normEmail(body && body.email);
+  if (!email || isBootstrapAdmin(email)) return null;
+  const now = nowIso();
+  state.pm_admin_grants = (Array.isArray(state.pm_admin_grants) ? state.pm_admin_grants : []).filter((g) => normEmail(g && g.email) !== email).slice(0, 100);
+  state.pm_partners = (Array.isArray(state.pm_partners) ? state.pm_partners : []).map((p) => {
+    if (!p || normEmail(p.email) !== email) return p;
+    return Object.assign({}, p, { role: "dealer", roleLocked: false, updatedAt: now });
+  }).slice(0, 300);
+  addAudit(state, "admin_revoked", email, {}, auth && auth.email || "server");
+  db.updatedAt = now;
+  return { email };
 }
 
 function mergeRowsByOwner(existingRows, incomingRows, ownerEmail, fieldName) {
@@ -794,6 +973,40 @@ async function handleApi(req, res) {
       }
       await saveDbAsync(db);
       sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, request: approved, state: db.state });
+      return;
+    }
+    if ([
+      "rejectAccountRequest",
+      "suspendAccountRequest",
+      "deleteAccountRequest",
+      "upsertPartner",
+      "deletePartner",
+      "grantAdmin",
+      "revokeAdmin"
+    ].includes(body.action)) {
+      const auth = authFromRequest(req, db);
+      if (!auth) {
+        sendJson(req, res, 401, { ok: false, error: "invalid_or_missing_token" });
+        return;
+      }
+      if (!auth.admin || !isAdminUser(db.state, auth.email)) {
+        sendJson(req, res, 403, { ok: false, error: "admin_required" });
+        return;
+      }
+      let result = null;
+      if (body.action === "rejectAccountRequest") result = setAccountRequestStatus(db, body, auth, "rejected");
+      if (body.action === "suspendAccountRequest") result = setAccountRequestStatus(db, body, auth, "suspended");
+      if (body.action === "deleteAccountRequest") result = deleteAccountRequest(db, body, auth);
+      if (body.action === "upsertPartner") result = upsertPartnerAdmin(db, body, auth);
+      if (body.action === "deletePartner") result = deletePartnerAdmin(db, body, auth);
+      if (body.action === "grantAdmin") result = grantAdmin(db, body, auth);
+      if (body.action === "revokeAdmin") result = revokeAdmin(db, body, auth);
+      if (!result) {
+        sendJson(req, res, 404, { ok: false, error: "target_not_found_or_protected" });
+        return;
+      }
+      await saveDbAsync(db);
+      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, result, state: db.state });
       return;
     }
     if (body.action === "saveState") {
