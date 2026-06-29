@@ -698,6 +698,53 @@ function revokeAdmin(db, body, auth) {
   return { email };
 }
 
+function findDesignForMutation(state, body) {
+  const designId = String((body && (body.designId || body.id)) || "");
+  if (!designId) return null;
+  const rows = Array.isArray(state.pm_designs) ? state.pm_designs : [];
+  return rows.find((row) => row && String(row.id || "") === designId) || null;
+}
+
+function setDesignStatusAdmin(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const found = findDesignForMutation(state, body);
+  if (!found) return null;
+  const allowed = new Set(["draft", "submitted", "in_review", "changes_requested", "approved", "rejected", "downloaded"]);
+  const status = String((body && body.status) || "").trim().toLowerCase();
+  if (!allowed.has(status)) return null;
+  const now = nowIso();
+  const feedback = body && Object.prototype.hasOwnProperty.call(body, "feedback") ? String(body.feedback || "") : null;
+  let changed = null;
+  state.pm_designs = (Array.isArray(state.pm_designs) ? state.pm_designs : []).map((row) => {
+    if (!row || String(row.id || "") !== String(found.id || "")) return row;
+    const next = Object.assign({}, row, { status, updated: now });
+    if (status === "submitted") next.submittedAt = row.submittedAt || now;
+    if (status === "in_review") next.reviewedAt = now;
+    if (status === "changes_requested") next.feedbackAt = now;
+    if (status === "approved") next.approvedAt = now;
+    if (status === "rejected") next.rejectedAt = now;
+    if (status === "downloaded") next.downloadedAt = now;
+    if (feedback !== null) next.feedback = feedback;
+    changed = next;
+    return next;
+  }).slice(0, 1000);
+  addAudit(state, "design_" + status, changed.name || changed.id, { designId: changed.id, feedback: feedback || "" }, auth && auth.email || "server");
+  db.updatedAt = now;
+  return changed;
+}
+
+function deleteDesignAdmin(db, body, auth) {
+  ensureBootstrapState(db);
+  const state = db.state;
+  const found = findDesignForMutation(state, body);
+  if (!found) return null;
+  state.pm_designs = (Array.isArray(state.pm_designs) ? state.pm_designs : []).filter((row) => row && String(row.id || "") !== String(found.id || "")).slice(0, 1000);
+  addAudit(state, "design_deleted", found.name || found.id, { designId: found.id }, auth && auth.email || "server");
+  db.updatedAt = nowIso();
+  return found;
+}
+
 function mergeRowsByOwner(existingRows, incomingRows, ownerEmail, fieldName) {
   const owner = normEmail(ownerEmail);
   const base = Array.isArray(existingRows) ? existingRows.slice() : [];
@@ -898,6 +945,70 @@ function authFromRequest(req, db) {
   };
 }
 
+function cloneValue(value) {
+  return value == null ? value : JSON.parse(JSON.stringify(value));
+}
+
+function sanitizeAccountRequest(row) {
+  const out = Object.assign({}, row || {});
+  delete out.password;
+  delete out.passwordConfirm;
+  delete out.passwordHash;
+  delete out.passwordSalt;
+  delete out.passwordSetAt;
+  return out;
+}
+
+function sanitizeAccountRequests(rows) {
+  return (Array.isArray(rows) ? rows : []).map(sanitizeAccountRequest);
+}
+
+function sanitizeStateForClient(state, auth) {
+  const safe = blankState();
+  const actorEmail = normEmail(auth && auth.email);
+  const admin = !!(auth && auth.admin && isAdminUser(state, actorEmail));
+  if (admin) {
+    CENTRAL_STATE_KEYS.forEach((key) => {
+      safe[key] = key === "pm_account_requests"
+        ? sanitizeAccountRequests(state[key])
+        : cloneValue(state[key]);
+    });
+    return safe;
+  }
+  safe.pm_standard_phrases = cloneValue(state.pm_standard_phrases || []);
+  safe.pm_portal_settings = cloneValue(state.pm_portal_settings || {});
+  safe.pm_partner_groups = cloneValue(state.pm_partner_groups || []);
+  safe.pm_media_library = cloneValue(state.pm_media_library || []);
+  safe.pm_custom_pages = cloneValue(state.pm_custom_pages || []);
+  safe.pm_cms_overrides = cloneValue(state.pm_cms_overrides || {});
+  safe.pm_page_edits = cloneValue(state.pm_page_edits || {});
+  if (actorEmail) {
+    safe.pm_account_requests = sanitizeAccountRequests((state.pm_account_requests || []).filter((row) => normEmail(row && row.email) === actorEmail));
+    safe.pm_partners = cloneValue((state.pm_partners || []).filter((row) => normEmail(row && row.email) === actorEmail));
+    safe.pm_designs = cloneValue((state.pm_designs || []).filter((row) => normEmail(row && row.ownerEmail) === actorEmail));
+    safe.pm_support_tickets = cloneValue((state.pm_support_tickets || []).filter((row) => normEmail(row && row.email) === actorEmail));
+  }
+  return safe;
+}
+
+function stateAuthForLogin(email, result, state) {
+  const actorEmail = normEmail(email);
+  return {
+    email: actorEmail,
+    admin: !!(result && result.ok && (result.admin || isAdminUser(state, actorEmail))),
+    role: (result && result.request && (result.request.partnerType || result.request.role)) || "dealer"
+  };
+}
+
+function sendSyncState(req, res, status, db, body, auth) {
+  const payload = Object.assign({}, body || {});
+  if (payload.request) payload.request = sanitizeAccountRequest(payload.request);
+  if (payload.result && payload.result.passwordHash) payload.result = sanitizeAccountRequest(payload.result);
+  payload.updatedAt = db.updatedAt;
+  payload.state = sanitizeStateForClient(db.state, auth || null);
+  sendJson(req, res, status, payload);
+}
+
 async function handleApi(req, res) {
   if (req.method === "OPTIONS") {
     setCors(req, res);
@@ -921,7 +1032,8 @@ async function handleApi(req, res) {
   if (req.method === "GET") {
     try {
       await saveDbAsync(db);
-      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, state: db.state });
+      const auth = authFromRequest(req, db);
+      sendSyncState(req, res, 200, db, { ok: true }, auth);
     } catch (e) {
       sendJson(req, res, 503, {
         ok: false,
@@ -947,13 +1059,13 @@ async function handleApi(req, res) {
     if (body.action === "accountRequest") {
       const request = createAccountRequest(db, body.request || {});
       await saveDbAsync(db);
-      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, request, state: db.state });
+      sendSyncState(req, res, 200, db, { ok: true, request }, { email: request && request.email, admin: false });
       return;
     }
     if (body.action === "login") {
       const result = login(db, body.email, body.password);
       await saveDbAsync(db);
-      sendJson(req, res, 200, Object.assign({ updatedAt: db.updatedAt, state: db.state }, result));
+      sendSyncState(req, res, 200, db, Object.assign({}, result), stateAuthForLogin(body.email, result, db.state));
       return;
     }
     if (body.action === "approveAccountRequest") {
@@ -972,7 +1084,7 @@ async function handleApi(req, res) {
         return;
       }
       await saveDbAsync(db);
-      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, request: approved, state: db.state });
+      sendSyncState(req, res, 200, db, { ok: true, request: approved }, auth);
       return;
     }
     if ([
@@ -982,7 +1094,9 @@ async function handleApi(req, res) {
       "upsertPartner",
       "deletePartner",
       "grantAdmin",
-      "revokeAdmin"
+      "revokeAdmin",
+      "setDesignStatus",
+      "deleteDesign"
     ].includes(body.action)) {
       const auth = authFromRequest(req, db);
       if (!auth) {
@@ -1001,12 +1115,14 @@ async function handleApi(req, res) {
       if (body.action === "deletePartner") result = deletePartnerAdmin(db, body, auth);
       if (body.action === "grantAdmin") result = grantAdmin(db, body, auth);
       if (body.action === "revokeAdmin") result = revokeAdmin(db, body, auth);
+      if (body.action === "setDesignStatus") result = setDesignStatusAdmin(db, body, auth);
+      if (body.action === "deleteDesign") result = deleteDesignAdmin(db, body, auth);
       if (!result) {
         sendJson(req, res, 404, { ok: false, error: "target_not_found_or_protected" });
         return;
       }
       await saveDbAsync(db);
-      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, result, state: db.state });
+      sendSyncState(req, res, 200, db, { ok: true, result }, auth);
       return;
     }
     if (body.action === "saveState") {
@@ -1017,7 +1133,7 @@ async function handleApi(req, res) {
       }
       applyStatePatch(db, body.state || {}, auth, body.baseUpdatedAt || "");
       await saveDbAsync(db);
-      sendJson(req, res, 200, { ok: true, updatedAt: db.updatedAt, state: db.state });
+      sendSyncState(req, res, 200, db, { ok: true }, auth);
       return;
     }
     sendJson(req, res, 400, { ok: false, error: "unknown_action" });

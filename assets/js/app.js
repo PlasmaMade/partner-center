@@ -3,7 +3,7 @@
    - Injecteert sidebar / topbar / footer op elke pagina
    - Login-guard (GitHub Pages/localStorage + optionele externe sync)
    - Globale zoekfunctie over alle content (PM_DATA), meertalig
-   - Taalmenu (15 talen, via PM_I18N in assets/js/i18n.js)
+   - Taalmenu (NL/EN, via PM_I18N in assets/js/i18n.js)
    - Iconen, toasts, dialogen, favorieten, recent bekeken
    ============================================================ */
 (function () {
@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260629-central-auth-sync-1";
+  const PORTAL_BUILD_VERSION = "20260629-auth-sync-hardening-2";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -316,6 +316,7 @@
     } catch (e) { return false; }
   }
   const LOCAL_MERGE_STATE_KEYS = ["pm_page_edits", "pm_cms_overrides"];
+  const AUTHORITATIVE_PULL_KEYS = ["pm_account_requests", "pm_admin_grants", "pm_partners", "pm_audit_log", "pm_admin_mail_log"];
   function isPlainObject(value) {
     return !!(value && typeof value === "object" && !Array.isArray(value));
   }
@@ -401,17 +402,21 @@
       opts = opts || {};
       var preserveDirty = opts.source !== "push" && opts.source !== "request";
       var dirty = preserveDirty ? this.dirtyKeys() : [];
+      var overwrittenDirty = [];
       this.muted = true;
       try {
         CENTRAL_STATE_KEYS.forEach(function (key) {
           if (!Object.prototype.hasOwnProperty.call(state, key)) return;
           var hasLocal = localStorage.getItem(key) != null;
-          if (dirty.indexOf(key) > -1 && hasLocal && LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1) return;
+          var authoritative = (opts.source === "pull" || opts.source === "login") && AUTHORITATIVE_PULL_KEYS.indexOf(key) > -1;
+          if (dirty.indexOf(key) > -1 && hasLocal && LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1 && !authoritative) return;
+          if (authoritative && dirty.indexOf(key) > -1) overwrittenDirty.push(key);
           var incoming = mergedIncomingStateValue(key, state[key], dirty, opts.source || "remote");
           localStorage.setItem(key, JSON.stringify(incoming));
         });
       } catch (e) {}
       this.muted = false;
+      if (overwrittenDirty.length) this.clearDirty(overwrittenDirty);
       if (window.PM_PORTAL_SETTINGS) PM_PORTAL_SETTINGS.apply();
       if (window.PM_CMS) PM_CMS.apply();
       if (window.PM_PAGE_EDITS && PM_PAGE_EDITS.apply) PM_PAGE_EDITS.apply();
@@ -434,7 +439,7 @@
       if (!endpoint) return false;
       var timeout = withTimeout(opts.timeout || 4500);
       try {
-        var res = await fetch(endpoint, { cache: "no-store", signal: timeout.signal });
+        var res = await fetch(endpoint, { cache: "no-store", headers: syncAuthHeaders(), signal: timeout.signal });
         if (!res.ok) {
           this.lastError = "pull_http_" + res.status;
           return false;
@@ -628,6 +633,12 @@
     },
     revokeAdmin: async function (email) {
       return this.adminMutation("revokeAdmin", { email: email || "" });
+    },
+    setDesignStatus: async function (designId, status, feedback) {
+      return this.adminMutation("setDesignStatus", { designId: designId || "", status: status || "", feedback: feedback || "" });
+    },
+    deleteDesign: async function (designId) {
+      return this.adminMutation("deleteDesign", { designId: designId || "" });
     },
     startAutoRefresh: function () {
       if (this.interval || !this.online()) return;
@@ -1021,15 +1032,17 @@
   function approvalMailText(req) {
     var name = requestName(req);
     return [
-      "Beste " + name + ",",
+      "Partner Center account goedgekeurd.",
       "",
-      "Je aanvraag voor het PlasmaMade Partner Center is goedgekeurd.",
+      "Naam: " + name,
+      "Bedrijf: " + ((req && req.company) || "-"),
+      "E-mail: " + ((req && req.email) || "-"),
+      "Partnertype: " + ((req && (req.partnerType || req.role)) || "-"),
       "",
-      "Je kunt nu inloggen met dit e-mailadres en het wachtwoord dat je bij de aanvraag hebt aangemaakt:",
+      "De gebruiker kan nu inloggen met het wachtwoord dat bij de aanvraag is aangemaakt:",
       portalUrl(),
       "",
-      "Met vriendelijke groet,",
-      "PlasmaMade"
+      "Deze melding is uitsluitend bedoeld voor PlasmaMade Marketing."
     ].join("\n");
   }
   function adminPortalUrl() {
@@ -1100,8 +1113,8 @@
       return href;
     },
     approvalHref: function (req) {
-      var subject = "Je toegang tot het PlasmaMade Partner Center is goedgekeurd";
-      return "mailto:" + encodeURIComponent(req.email || "") +
+      var subject = "Partner Center account goedgekeurd - " + (((req && req.company) || requestName(req)) || "partner");
+      return "mailto:" + encodeURIComponent(MARKETING_EMAIL) +
         "?subject=" + encodeURIComponent(subject) +
         "&body=" + encodeURIComponent(approvalMailText(req));
     },
@@ -1110,15 +1123,15 @@
       var row = {
         id: makeId("mail"),
         type: "account_approved",
-        to: req.email,
-        subject: "Je toegang tot het PlasmaMade Partner Center is goedgekeurd",
+        to: MARKETING_EMAIL,
+        subject: "Partner Center account goedgekeurd - " + ((req.company || requestName(req)) || "partner"),
         body: approvalMailText(req),
         createdAt: new Date().toISOString()
       };
       var rows = this.list();
       rows.unshift(row);
       writeStore(MAIL_KEY, rows.slice(0, 200));
-      if (window.PM_AUDIT) PM_AUDIT.add("approval_mail_prepared", req.email, {});
+      if (window.PM_AUDIT) PM_AUDIT.add("approval_mail_prepared", req.email, { to: row.to });
       return row;
     },
     openApproval: function (req) {
@@ -2202,6 +2215,8 @@
     var key = pageKey();
     if (scrubLegacyDashboardHeroEdits(all, key)) {
       try { localStorage.setItem(PAGE_EDIT_KEY, JSON.stringify(all)); } catch (e) {}
+      if (window.PM_SYNC && PM_SYNC.noteLocalChange) PM_SYNC.noteLocalChange(PAGE_EDIT_KEY);
+      if (window.PM_SYNC && PM_SYNC.shouldPush && PM_SYNC.shouldPush(PAGE_EDIT_KEY)) PM_SYNC.schedule(PAGE_EDIT_KEY);
     }
     var edits = all[key] || {};
     removeLegacyDashboardHeroDom();
@@ -3763,7 +3778,7 @@
 
   /* Rol → vertaalsleutel (rollen worden als code opgeslagen bij login) */
   function roleKey(role) {
-    var map = { dealer: "role.dealer", distributor: "role.distributor", installer: "role.installer", studio: "role.studio", retailpartner: "role.retailpartner", international: "role.international", internal: "role.internal" };
+    var map = { dealer: "role.dealer", distributor: "role.distributor", installer: "role.installer", studio: "role.studio", retailpartner: "role.retailpartner", international: "role.international", marketing: "role.marketing", agent: "role.agent", partner: "role.partner", support: "role.support", internal: "role.internal", admin: "role.internal" };
     return map[role] || "";
   }
   window.PM_roleKey = roleKey;

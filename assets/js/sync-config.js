@@ -24,6 +24,22 @@
     return /^https?:$/i.test(location.protocol || "") && !isLocalHost() && !isCentralApiHost();
   }
 
+  function isTrustedProductionEndpoint(value) {
+    try {
+      var url = new URL(clean(value), location.href);
+      return url.protocol === "https:" &&
+        /^partner-center\.onrender\.com$/i.test(url.hostname || "") &&
+        /\/api\/sync\/?$/i.test(url.pathname || "");
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function allowEndpointOverride(value) {
+    if (!isProductionHost()) return true;
+    return isTrustedProductionEndpoint(value);
+  }
+
   function isUnsafeStoredEndpoint(value) {
     var endpoint = clean(value);
     if (!endpoint) return true;
@@ -47,7 +63,7 @@
 
   try {
     var meta = document.querySelector('meta[name="pm-sync-endpoint"]');
-    if (meta && clean(meta.content)) {
+    if (meta && clean(meta.content) && allowEndpointOverride(meta.content)) {
       endpoint = clean(meta.content);
       source = "meta";
     }
@@ -55,7 +71,7 @@
 
   try {
     var stored = localStorage.getItem("pm_remote_sync_endpoint");
-    if (clean(stored) && !isUnsafeStoredEndpoint(stored)) {
+    if (clean(stored) && !isUnsafeStoredEndpoint(stored) && allowEndpointOverride(stored)) {
       endpoint = clean(stored);
       source = "stored";
     } else if (clean(stored) && isProductionHost()) {
@@ -66,10 +82,12 @@
   try {
     var params = new URLSearchParams(location.search || "");
     var fromUrl = params.get("syncEndpoint");
-    if (clean(fromUrl)) {
+    if (clean(fromUrl) && allowEndpointOverride(fromUrl)) {
       endpoint = clean(fromUrl);
       source = "query";
       localStorage.setItem("pm_remote_sync_endpoint", endpoint);
+    } else if (clean(fromUrl) && isProductionHost()) {
+      localStorage.removeItem("pm_remote_sync_endpoint");
     }
   } catch (e) {}
 

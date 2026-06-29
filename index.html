@@ -7,7 +7,7 @@
 <meta name="description" content="PlasmaMade Partner Center - alles wat partners, dealers en installateurs nodig hebben om PlasmaMade te begrijpen, presenteren, verkopen en promoten.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-central-auth-sync-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-auth-sync-hardening-2">
 </head>
 <body data-page="login">
 <div class="login-wrap">
@@ -38,8 +38,8 @@
       <h2 data-i18n="login.welcome">Welkom terug</h2>
       <p class="sub" data-i18n="login.sub">Log in op het PlasmaMade Partner Center.</p>
       <div class="auth-tabs" role="tablist" aria-label="Partner Center toegang">
-        <button type="button" class="auth-tab active" id="auth-login-tab" data-auth-tab="login">Inloggen</button>
-        <button type="button" class="auth-tab" id="auth-request-tab" data-auth-tab="request">Account aanvragen</button>
+        <button type="button" class="auth-tab active" id="auth-login-tab" data-auth-tab="login" data-i18n="login.tabLogin">Inloggen</button>
+        <button type="button" class="auth-tab" id="auth-request-tab" data-auth-tab="request" data-i18n="login.tabRequest">Account aanvragen</button>
       </div>
       <div class="auth-alert" id="auth-alert" hidden></div>
       <form id="login-form" novalidate>
@@ -58,7 +58,7 @@
         </div>
         <input type="hidden" id="role" value="dealer">
         <div class="auth-role-note">
-          Je rol wordt bepaald door de goedgekeurde partneraanvraag. Beheerrechten worden apart door PlasmaMade toegekend.
+          <span data-i18n="login.roleNote">Je rol wordt bepaald door de goedgekeurde partneraanvraag. Beheerrechten worden apart door PlasmaMade toegekend.</span>
         </div>
         <button type="submit" class="btn btn--primary btn--block btn--lg" id="login-submit" data-i18n="login.submit">Inloggen</button>
         <p style="text-align:center;margin-top:14px;font-size:13px">
@@ -68,90 +68,90 @@
       <form id="request-form" class="auth-request" novalidate hidden>
         <div class="auth-grid">
           <div class="field">
-            <label for="req-first">Voornaam</label>
+            <label for="req-first" data-i18n="login.reqFirst">Voornaam</label>
             <input type="text" id="req-first" autocomplete="given-name" required>
           </div>
           <div class="field">
-            <label for="req-last">Achternaam</label>
+            <label for="req-last" data-i18n="login.reqLast">Achternaam</label>
             <input type="text" id="req-last" autocomplete="family-name" required>
           </div>
         </div>
         <div class="field">
-          <label for="req-email">E-mailadres</label>
+          <label for="req-email" data-i18n="login.email">E-mailadres</label>
           <input type="email" id="req-email" autocomplete="email" placeholder="jij@bedrijf.nl" required>
         </div>
         <div class="auth-grid">
           <div class="field">
-            <label for="req-pw">Wachtwoord aanmaken</label>
+            <label for="req-pw" data-i18n="login.reqPassword">Wachtwoord aanmaken</label>
             <input type="password" id="req-pw" autocomplete="new-password" minlength="8" required aria-describedby="req-pw-err">
             <p class="field-err" id="req-pw-err" hidden></p>
           </div>
           <div class="field">
-            <label for="req-pw2">Wachtwoord herhalen</label>
+            <label for="req-pw2" data-i18n="login.reqPassword2">Wachtwoord herhalen</label>
             <input type="password" id="req-pw2" autocomplete="new-password" minlength="8" required aria-describedby="req-pw2-err">
             <p class="field-err" id="req-pw2-err" hidden></p>
           </div>
         </div>
         <div class="auth-grid">
           <div class="field">
-            <label for="req-company">Bedrijfsnaam</label>
+            <label for="req-company" data-i18n="login.reqCompany">Bedrijfsnaam</label>
             <input type="text" id="req-company" autocomplete="organization" required>
           </div>
           <div class="field">
-            <label for="req-function">Functie</label>
+            <label for="req-function" data-i18n="login.reqFunction">Functie</label>
             <input type="text" id="req-function" autocomplete="organization-title" required>
           </div>
         </div>
         <div class="auth-grid">
           <div class="field">
-            <label for="req-country">Land</label>
+            <label for="req-country" data-i18n="login.reqCountry">Land</label>
             <input type="text" id="req-country" autocomplete="country-name" required>
           </div>
           <div class="field">
-            <label for="req-phone">Telefoonnummer</label>
+            <label for="req-phone" data-i18n="login.reqPhone">Telefoonnummer</label>
             <input type="tel" id="req-phone" autocomplete="tel" required>
           </div>
         </div>
         <div class="auth-grid">
           <div class="field">
-            <label for="req-type">Type partner</label>
+            <label for="req-type" data-i18n="login.reqType">Type partner</label>
             <select id="req-type" required>
-              <option value="dealer">Dealer</option>
-              <option value="distributor">Distributeur</option>
-              <option value="installer">Installateur</option>
-              <option value="studio">Keukenstudio / retailer</option>
-              <option value="retailpartner">Retailpartner</option>
-              <option value="international">Internationale partner</option>
-              <option value="marketing">Marketingpartner</option>
-              <option value="agent">Agent</option>
-              <option value="partner">Partner</option>
+              <option value="dealer" data-i18n="role.dealer">Dealer</option>
+              <option value="distributor" data-i18n="role.distributor">Distributeur</option>
+              <option value="installer" data-i18n="role.installer">Installateur</option>
+              <option value="studio" data-i18n="role.studio">Keukenstudio / retailer</option>
+              <option value="retailpartner" data-i18n="role.retailpartner">Retailpartner</option>
+              <option value="international" data-i18n="role.international">Internationale partner</option>
+              <option value="marketing" data-i18n="role.marketing">Marketingpartner</option>
+              <option value="agent" data-i18n="role.agent">Agent</option>
+              <option value="partner" data-i18n="role.partner">Partner</option>
             </select>
           </div>
           <div class="field">
-            <label for="req-website">Website</label>
+            <label for="req-website" data-i18n="login.reqWebsite">Website</label>
             <input type="url" id="req-website" autocomplete="url" placeholder="https://">
           </div>
         </div>
         <div class="field">
-          <label for="req-reason">Reden van aanvraag</label>
+          <label for="req-reason" data-i18n="login.reqReason">Reden van aanvraag</label>
           <textarea id="req-reason" rows="3" required placeholder="Vertel kort waarvoor je het Partner Center wilt gebruiken."></textarea>
         </div>
-        <button type="submit" class="btn btn--primary btn--block btn--lg" id="request-submit">Aanvraag indienen</button>
+        <button type="submit" class="btn btn--primary btn--block btn--lg" id="request-submit" data-i18n="login.reqSubmit">Aanvraag indienen</button>
       </form>
       <div class="login-note" role="note">
         <span data-i18n="login.accessNote">Beveiligde toegang voor PlasmaMade-partners. Accountaanvragen en beheerwijzigingen worden centraal verwerkt.</span>
       </div>
       <div class="login-hint">
         <span data-i18n="login.hint">Exclusieve toegang voor PlasmaMade-partners, dealers en installateurs. Nog geen account?</span>
-        <button type="button" class="text-link" id="request-link">Vraag toegang aan</button>.
+        <button type="button" class="text-link" id="request-link" data-i18n="login.hintCta">Vraag toegang aan</button>.
         <p class="muted" style="margin-top:10px;font-size:12px" data-i18n="login.privacy">Je aanvraag wordt veilig naar PlasmaMade gestuurd en is daarna zichtbaar voor beheerders.</p>
       </div>
     </div>
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-central-auth-sync-1"></script>
-<script src="assets/js/data.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/i18n.js?v=20260629-auth-sync-hardening-2"></script>
+<script src="assets/js/data.js?v=20260629-auth-sync-hardening-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var t = window.PM_t;
@@ -394,7 +394,7 @@ window.PM_PAGE_INIT = function () {
   });
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-central-auth-sync-1"></script>
-<script src="assets/js/app.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-auth-sync-hardening-2"></script>
+<script src="assets/js/app.js?v=20260629-auth-sync-hardening-2"></script>
 </body>
 </html>

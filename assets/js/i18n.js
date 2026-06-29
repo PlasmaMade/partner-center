@@ -12,20 +12,7 @@
 
   var LANGS = [
     { code: "nl", name: "Nederlands", intl: "nl-NL" },
-    { code: "en", name: "English", intl: "en-GB" },
-    { code: "de", name: "Deutsch", intl: "de-DE" },
-    { code: "fr", name: "Français", intl: "fr-FR" },
-    { code: "es", name: "Español", intl: "es-ES" },
-    { code: "it", name: "Italiano", intl: "it-IT" },
-    { code: "pt", name: "Português", intl: "pt-PT" },
-    { code: "tr", name: "Türkçe", intl: "tr-TR" },
-    { code: "da", name: "Dansk", intl: "da-DK" },
-    { code: "sv", name: "Svenska", intl: "sv-SE" },
-    { code: "no", name: "Norsk", intl: "nb-NO" },
-    { code: "fi", name: "Suomi", intl: "fi-FI" },
-    { code: "pl", name: "Polski", intl: "pl-PL" },
-    { code: "cs", name: "Čeština", intl: "cs-CZ" },
-    { code: "sl", name: "Slovenščina", intl: "sl-SI" }
+    { code: "en", name: "English", intl: "en-GB" }
   ];
   var DEFAULT = "nl";
   var STORE_KEY = "pm_lang";

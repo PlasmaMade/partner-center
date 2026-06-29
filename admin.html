@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-central-auth-sync-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-auth-sync-hardening-2">
 <style>
 .adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
 .adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
@@ -363,10 +363,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-central-auth-sync-1"></script>
-<script src="assets/js/data.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/i18n.js?v=20260629-auth-sync-hardening-2"></script>
+<script src="assets/js/data.js?v=20260629-auth-sync-hardening-2"></script>
 <!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
-<script src="assets/js/studio.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/studio.js?v=20260629-auth-sync-hardening-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
@@ -729,10 +729,30 @@ window.PM_PAGE_INIT = function () {
           '<button class="btn btn--ghost" data-des-delete="' + esc(d.id) + '">Verwijderen</button>' +
         '</div></div>';
     }).join("") : '<p class="muted" style="font-size:13px">Nog geen ontwerpen opgeslagen of ingediend.</p>';
-    document.querySelectorAll("[data-des-approve]").forEach(function (b) { b.addEventListener("click", function () { PM_DESIGNS.setStatus(b.getAttribute("data-des-approve"), "approved", "Goedgekeurd voor gebruik."); PM_toast("Design goedgekeurd"); renderDesignApprovals(); renderAudit(); }); });
-    document.querySelectorAll("[data-des-changes]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Feedback voor partner:", "Pas tekst, logo of beeldgebruik aan volgens de PlasmaMade-richtlijnen.", function (fb) { PM_DESIGNS.setStatus(b.getAttribute("data-des-changes"), "changes_requested", fb || "Aanpassing nodig."); PM_toast("Feedback opgeslagen"); renderDesignApprovals(); renderAudit(); }, { ok: "Opslaan", multiline: true, rows: 3 }); }); });
-    document.querySelectorAll("[data-des-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet geschikt voor externe communicatie.", function (fb) { PM_DESIGNS.setStatus(b.getAttribute("data-des-reject"), "rejected", fb || "Afgewezen."); PM_toast("Design afgewezen"); renderDesignApprovals(); renderAudit(); }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
-    document.querySelectorAll("[data-des-delete]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Dit ontwerp verwijderen?", function () { PM_DESIGNS.remove(b.getAttribute("data-des-delete")); PM_toast("Design verwijderd"); renderDesignApprovals(); renderAudit(); }, { ok: "Verwijderen" }); }); });
+    document.querySelectorAll("[data-des-approve]").forEach(function (b) { b.addEventListener("click", async function () {
+      var ok = await mutateDesignStatus(b.getAttribute("data-des-approve"), "approved", "Goedgekeurd voor gebruik.");
+      if (!ok) return;
+      PM_toast("Design centraal goedgekeurd");
+      renderDesignApprovals(); renderAudit();
+    }); });
+    document.querySelectorAll("[data-des-changes]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Feedback voor partner:", "Pas tekst, logo of beeldgebruik aan volgens de PlasmaMade-richtlijnen.", async function (fb) {
+      var ok = await mutateDesignStatus(b.getAttribute("data-des-changes"), "changes_requested", fb || "Aanpassing nodig.");
+      if (!ok) return;
+      PM_toast("Feedback centraal opgeslagen");
+      renderDesignApprovals(); renderAudit();
+    }, { ok: "Opslaan", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-des-reject]").forEach(function (b) { b.addEventListener("click", function () { adminPrompt("Reden voor afwijzing:", "Niet geschikt voor externe communicatie.", async function (fb) {
+      var ok = await mutateDesignStatus(b.getAttribute("data-des-reject"), "rejected", fb || "Afgewezen.");
+      if (!ok) return;
+      PM_toast("Design centraal afgewezen");
+      renderDesignApprovals(); renderAudit();
+    }, { ok: "Afwijzen", multiline: true, rows: 3 }); }); });
+    document.querySelectorAll("[data-des-delete]").forEach(function (b) { b.addEventListener("click", function () { adminConfirm("Dit ontwerp verwijderen?", async function () {
+      var ok = await deleteDesignCentral(b.getAttribute("data-des-delete"));
+      if (!ok) return;
+      PM_toast("Design centraal verwijderd");
+      renderDesignApprovals(); renderAudit();
+    }, { ok: "Verwijderen" }); }); });
   }
   function renderPhrases() {
     var rows = window.PM_PHRASES ? PM_PHRASES.list() : [];
@@ -1137,7 +1157,7 @@ window.PM_PAGE_INIT = function () {
   function adminMutationError(action, result) {
     if (result && (result.error === "invalid_or_missing_token" || /_http_401$/.test(result.error || ""))) return "Log opnieuw in als beheerder. De wijziging is niet centraal opgeslagen.";
     if (result && (result.error === "admin_required" || /_http_403$/.test(result.error || ""))) return "Je hebt geen beheerrechten voor deze centrale wijziging.";
-    if (result && (result.error === "target_not_found_or_protected" || /_http_404$/.test(result.error || ""))) return "Deze actie kon niet worden uitgevoerd omdat het account niet bestaat of beschermd is.";
+    if (result && (result.error === "target_not_found_or_protected" || /_http_404$/.test(result.error || ""))) return "Deze actie kon niet worden uitgevoerd omdat het item niet bestaat of beschermd is.";
     return action + " is niet centraal opgeslagen. Probeer opnieuw zodra de Partner Center API bereikbaar is.";
   }
   async function adminRunMutation(actionLabel, remoteFn, localFn, afterFn) {
@@ -1176,6 +1196,28 @@ window.PM_PAGE_INIT = function () {
       return adminRunMutation("Verwijderen", function () { return PM_SYNC.deleteRequest(requestId, email); }, function () { return PM_REQUESTS.remove(requestId); });
     }
     return null;
+  }
+  async function mutateDesignStatus(designId, status, feedback) {
+    var labels = {
+      approved: "Design goedkeuren",
+      changes_requested: "Feedback opslaan",
+      rejected: "Design afwijzen",
+      submitted: "Design indienen",
+      in_review: "Design beoordelen",
+      downloaded: "Download registreren"
+    };
+    return adminRunMutation(labels[status] || "Design bijwerken", function () {
+      return PM_SYNC.setDesignStatus(designId, status, feedback || "");
+    }, function () {
+      return PM_DESIGNS.setStatus(designId, status, feedback || "");
+    });
+  }
+  async function deleteDesignCentral(designId) {
+    return adminRunMutation("Design verwijderen", function () {
+      return PM_SYNC.deleteDesign(designId);
+    }, function () {
+      return PM_DESIGNS.remove(designId);
+    });
   }
   async function savePartnerCentral(partner, localFn) {
     return adminRunMutation("Partner opslaan", function () { return PM_SYNC.upsertPartner(partner); }, localFn || function () { return PM_PARTNERS.upsert(partner); });
@@ -1356,7 +1398,7 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-central-auth-sync-1"></script>
-<script src="assets/js/app.js?v=20260629-central-auth-sync-1"></script>
+<script src="assets/js/sync-config.js?v=20260629-auth-sync-hardening-2"></script>
+<script src="assets/js/app.js?v=20260629-auth-sync-hardening-2"></script>
 </body>
 </html>

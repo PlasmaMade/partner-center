@@ -150,7 +150,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .topbar{
   width:100%;box-sizing:border-box;overflow:visible;
   min-height:var(--topbar-h);background:rgba(255,255,255,.78);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
-  border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;
+  border-bottom:0;box-shadow:0 1px 0 rgba(13,17,23,.08);display:flex;align-items:center;gap:16px;
   padding:0 26px;position:sticky;top:0;z-index:50;
 }
 .topbar__title{min-width:0;flex:1 1 auto}
@@ -370,14 +370,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   align-items:end;
   min-height:300px;
   background:var(--surface);
-  border:1px solid var(--line);
+  border:0;
   border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-sm);
+  box-shadow:0 1px 0 rgba(13,17,23,.08),var(--shadow-sm);
 }
 .portal-hero--text{
   grid-template-columns:1fr;
   align-items:start;
   min-height:0;
+  border-left:4px solid var(--green);
 }
 .portal-hero__copy{padding:38px 42px 40px;position:relative;z-index:2}
 .portal-eyebrow{
@@ -727,8 +728,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .login-side__mid h1{color:#fff;font-size:42px;line-height:1.08;margin:14px 0 16px;letter-spacing:0}
 .login-side__mid p{font-size:16px;opacity:.92;max-width:420px}
 .login-side__mid .payoff{font-style:italic;margin-top:24px;opacity:.85;font-size:15px}
-.login-side__feats{position:relative;z-index:2;display:grid;gap:0;max-width:430px;border:1px solid rgba(255,255,255,.24);background:rgba(13,17,23,.34);border-radius:var(--radius);overflow:hidden}
-.login-side__feats div{display:flex;align-items:center;gap:11px;font-size:14px;opacity:.95;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.16)}
+.login-side__feats{position:relative;z-index:2;display:grid;gap:9px;max-width:430px}
+.login-side__feats div{display:flex;align-items:center;gap:11px;font-size:14px;opacity:.95;padding:0}
 .login-side__feats div:last-child{border-bottom:0}
 .login-side__feats svg{width:20px;height:20px;flex-shrink:0}
 .login-form{display:flex;align-items:center;justify-content:center;padding:46px;background:#fff}
