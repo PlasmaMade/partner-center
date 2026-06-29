@@ -7,7 +7,7 @@
 <meta name="description" content="Ontwerp in de vaste huisstijl met de ingebouwde PlasmaMade Design Studio.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-sync-4">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-ui-5">
 <style>
 .studio{display:flex;height:calc(100vh - var(--topbar-h));background:var(--bg)}
 
@@ -73,6 +73,8 @@
 .st-status.ok i{background:var(--green)}
 .st-status.warn{color:#9a681d;background:#fff7e8;border-color:#f1d39b}
 .st-status.warn i{background:var(--warn)}
+.st-status.bad{color:#8b2f2c;background:#fff3f2;border-color:#f0bbb8}
+.st-status.bad i{background:var(--danger)}
 .st-status-detail{display:none;margin:0;padding:11px 16px;border-bottom:1px solid var(--line);background:var(--surface);font-size:13px;color:var(--muted);line-height:1.45}
 .st-status-detail.show{display:flex;align-items:flex-start;gap:10px}
 .st-status-detail svg{width:17px;height:17px;color:var(--green-700);flex-shrink:0;margin-top:1px}
@@ -218,15 +220,32 @@
 .st-modal__close:hover{color:var(--ink);border-color:#d4d9df}
 .st-modal__close svg{width:17px;height:17px}
 .st-modal__body{padding:22px;overflow-y:auto}
-.st-saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
-.st-saved-thumb{width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f4f6f8;display:grid;place-items:center;color:var(--muted);font-size:12px;padding:0;cursor:pointer;text-align:center;position:relative}
-.st-saved-thumb:hover{outline:2px solid var(--green)}
+.st-saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.st-saved{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.st-saved--ok{border-color:var(--green-100)}
+.st-saved--warn{border-color:#f1d39b;background:#fffdf8}
+.st-saved--bad{border-color:#f0bbb8;background:#fffafa}
+.st-saved-main{display:block;width:100%;padding:0;text-align:left;background:transparent;color:inherit}
+.st-saved-main:hover .st-saved-thumb{outline:2px solid var(--green)}
+.st-saved-thumb{width:100%;border:0;border-bottom:1px solid var(--line);overflow:hidden;background:#f4f6f8;display:grid;place-items:center;color:var(--muted);font-size:12px;padding:0;cursor:pointer;text-align:center;position:relative}
 .st-saved-thumb img{width:100%;height:100%;object-fit:cover}
 .st-saved-pages{position:absolute;right:6px;bottom:6px;background:var(--black);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:12px}
-.st-saved-meta{margin-top:9px}
-.st-saved-meta b{font-size:13px;display:block}
+.st-saved-meta{padding:12px}
+.st-saved-meta b{font-size:14px;display:block;margin-bottom:7px;color:var(--ink);line-height:1.25}
 .st-saved-meta span{font-size:11px;color:var(--muted)}
-.st-saved-act{display:flex;gap:6px;margin-top:9px;align-items:center}
+.st-saved-topline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px}
+.st-saved-status{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;color:var(--muted);background:var(--surface-2)}
+.st-saved-status i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-saved-status.ok{color:var(--green-700);background:var(--green-50);border-color:var(--green-100)}
+.st-saved-status.warn{color:#9a681d;background:#fff7e8;border-color:#f1d39b}
+.st-saved-status.bad{color:#8b2f2c;background:#fff3f2;border-color:#f0bbb8}
+.st-saved-review{display:flex;gap:8px;border-radius:9px;padding:9px 10px;background:var(--surface-2);font-size:12px;line-height:1.45;color:var(--ink);margin-top:8px}
+.st-saved-review svg{width:15px;height:15px;flex-shrink:0;color:var(--green-700);margin-top:1px}
+.st-saved-review.warn{background:#fff8ec;color:#70501f}
+.st-saved-review.bad{background:#fff3f2;color:#8b2f2c}
+.st-saved-review.bad svg{color:var(--danger)}
+.st-saved-date{display:block;margin-top:8px}
+.st-saved-act{display:flex;gap:6px;padding:0 12px 12px;align-items:center}
 .st-preview-img{max-width:100%;max-height:72vh;border-radius:10px;box-shadow:var(--shadow);display:block;margin:0 auto 18px}
 .st-prev-lbl{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-align:center}
 .st-loading{padding:54px;text-align:center;color:var(--muted)}
@@ -353,10 +372,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-sync-4"></script>
-<script src="assets/js/data.js?v=20260629-design-review-sync-4"></script>
-<script src="assets/js/studio.js?v=20260629-design-review-sync-4"></script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-sync-4"></script>
-<script src="assets/js/app.js?v=20260629-design-review-sync-4"></script>
+<script src="assets/js/i18n.js?v=20260629-design-review-ui-5"></script>
+<script src="assets/js/data.js?v=20260629-design-review-ui-5"></script>
+<script src="assets/js/studio.js?v=20260629-design-review-ui-5"></script>
+<script src="assets/js/sync-config.js?v=20260629-design-review-ui-5"></script>
+<script src="assets/js/app.js?v=20260629-design-review-ui-5"></script>
 </body>
 </html>

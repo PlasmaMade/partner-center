@@ -319,31 +319,55 @@ var PMStudio = (function () {
     var map = (window.PM_DESIGNS && PM_DESIGNS.labels) || { draft: "Concept", submitted: "Ingediend", in_review: "In beoordeling", approved: "Goedgekeurd", rejected: "Afgewezen", changes_requested: "Aanpassing nodig", downloaded: "Gedownload" };
     return map[status || "draft"] || status || "Concept";
   }
+  function statusTone(status) {
+    if (status === "approved" || status === "downloaded") return "ok";
+    if (status === "rejected") return "bad";
+    if (status && status !== "draft") return "warn";
+    return "";
+  }
+  function reviewDate(d) {
+    return d && (d.feedbackAt || d.rejectedAt || d.approvedAt || d.reviewedAt || d.submittedAt || d.updated || d.updatedAt || d.createdAt) || "";
+  }
+  function fmtDateTime(value) {
+    if (!value) return "";
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleString(window.PM_I18N ? PM_I18N.intl() : "nl-NL");
+  }
+  function reviewMessage(d) {
+    d = d || {};
+    var status = d.status || "draft";
+    var feedback = d.feedback || "";
+    if (status === "changes_requested") return feedback ? "Feedback: " + feedback : "Aanpassing nodig. Er is nog geen toelichting ingevuld.";
+    if (status === "rejected") return feedback ? "Reden: " + feedback : "Niet goedgekeurd. Er is geen reden ingevuld.";
+    if (status === "approved") return "Goedgekeurd voor gebruik. Exporteren is beschikbaar.";
+    if (status === "downloaded") return "Goedgekeurd en gedownload. Je kunt opnieuw exporteren.";
+    if (status === "submitted") return "Ingediend. Wacht op beoordeling door PlasmaMade.";
+    if (status === "in_review") return "In beoordeling. Je ontvangt hier feedback of goedkeuring.";
+    return "Concept. Nog niet ingediend ter goedkeuring.";
+  }
+  function reviewIcon(status) {
+    return status === "rejected" ? "alert" : (status === "approved" || status === "downloaded" ? "shieldCheck" : "info");
+  }
   function renderStatus() {
     var el = $("st-status");
     if (!el) return;
     var status = state.status || "draft";
-    var cls = status === "approved" || status === "downloaded" ? " ok" : (status === "draft" ? "" : " warn");
+    var toneClass = statusTone(status);
+    var cls = toneClass ? " " + toneClass : "";
     el.className = "st-status" + cls;
     el.innerHTML = '<i></i><span>' + PM_escape(statusText(status)) + '</span>';
     var detail = $("st-status-detail");
     if (detail) {
       var saved = state.id && window.PM_DESIGNS ? PM_DESIGNS.get(state.id) : null;
-      var feedback = (saved && saved.feedback) || state.feedback || "";
-      var date = (saved && (saved.feedbackAt || saved.rejectedAt || saved.approvedAt || saved.reviewedAt || saved.submittedAt || saved.updated)) || "";
+      var merged = Object.assign({}, saved || {}, { status: status, feedback: (saved && saved.feedback) || state.feedback || "" });
+      var date = reviewDate(merged);
       var title = statusText(status);
-      var body = "";
-      var tone = "";
-      if (status === "draft") body = "Concept. Dien je ontwerp in zodra het klaar is voor controle door PlasmaMade.";
-      if (status === "submitted") { title = "Aangevraagd"; body = "Je ontwerp is aangevraagd en wacht op beoordeling door PlasmaMade."; tone = "warn"; }
-      if (status === "in_review") { title = "In beoordeling"; body = "PlasmaMade bekijkt je ontwerp. Je ontvangt hier feedback of goedkeuring."; tone = "warn"; }
-      if (status === "approved") { body = "Goedgekeurd voor gebruik. Exporteren is beschikbaar."; }
-      if (status === "downloaded") { body = "Goedgekeurd en gedownload. Je kunt de goedgekeurde versie opnieuw exporteren."; }
-      if (status === "rejected") { body = feedback ? "Reden: " + feedback : "Dit ontwerp is afgewezen. Er is geen reden ingevuld."; tone = "bad"; }
-      if (status === "changes_requested") { title = "Aanpassing nodig"; body = feedback ? "Feedback: " + feedback : "PlasmaMade vraagt om aanpassingen. Er is geen toelichting ingevuld."; tone = "warn"; }
-      detail.className = "st-status-detail show" + (tone ? " " + tone : "");
-      detail.innerHTML = icn(status === "rejected" ? "alert" : (status === "approved" || status === "downloaded" ? "shieldCheck" : "info")) +
-        '<div><b>' + PM_escape(title) + '</b><br>' + PM_escape(body) + (date ? '<br><span>' + PM_escape(new Date(date).toLocaleString(window.PM_I18N ? PM_I18N.intl() : "nl-NL")) + '</span>' : '') + '</div>';
+      if (status === "submitted") title = "Aangevraagd";
+      if (status === "changes_requested") title = "Aanpassing nodig";
+      detail.className = "st-status-detail show" + (toneClass ? " " + toneClass : "");
+      detail.innerHTML = icn(reviewIcon(status)) +
+        '<div><b>' + PM_escape(title) + '</b><br>' + PM_escape(reviewMessage(merged)) + (date ? '<br><span>' + PM_escape(fmtDateTime(date)) + '</span>' : '') + '</div>';
     }
     var ex = $("st-export-btn");
     if (ex) ex.title = status === "approved" || status === "downloaded" ? "Download goedgekeurde versie" : "Download is beschikbaar na goedkeuring";
@@ -453,6 +477,10 @@ var PMStudio = (function () {
     renderStatus();
     return true;
   }
+  function refreshSavedDesignListIfOpen() {
+    var m = $("st-open-modal");
+    if (m && m.classList.contains("open")) renderOpenDesignList();
+  }
 
   function bindDesignReviewSync() {
     if (window.__pmStudioDesignSyncBound) return;
@@ -460,6 +488,7 @@ var PMStudio = (function () {
     document.addEventListener("pm:state-sync", function (ev) {
       if (!ev.detail || ev.detail.source !== "pull") return;
       refreshOpenDesignReview();
+      refreshSavedDesignListIfOpen();
     });
   }
 
@@ -2297,27 +2326,48 @@ var PMStudio = (function () {
     d.pages = [{ bg: d.bg || { type: "color", value: "#ffffff" }, elements: d.elements || [] }];
     return d;
   }
-  function openModal() {
+  function savedDesignCard(d) {
+    var status = d.status || "draft";
+    var tone = statusTone(status);
+    var f = d.format === "custom" ? (d.customSize || { w: 1080, h: 1080 }) : (FORMATS[d.format] || FORMATS["ig-square"]);
+    var pcount = d.pages ? d.pages.length : 1;
+    var date = fmtDateTime(reviewDate(d));
+    var msg = reviewMessage(d);
+    var id = PM_escape(String(d.id || ""));
+    var name = PM_escape(d.name || "Ontwerp");
+    var statusLabel = PM_escape(statusText(status));
+    var toneClass = tone ? " " + tone : "";
+    var cardClass = tone ? " st-saved--" + tone : "";
+    return '<div class="st-saved' + cardClass + '">' +
+      '<button type="button" class="st-saved-main" data-open="' + id + '" aria-label="Open ' + name + ' - ' + statusLabel + '">' +
+        '<span class="st-saved-thumb" style="aspect-ratio:' + f.w + '/' + f.h + '">' +
+          (d.thumb ? '<img src="' + d.thumb + '" alt="">' : '<span>' + name + '</span>') +
+          (pcount > 1 ? '<span class="st-saved-pages">' + PM_escape(T("studio.pageCount", { n: pcount })) + '</span>' : '') +
+        '</span>' +
+        '<span class="st-saved-meta">' +
+          '<b>' + name + '</b>' +
+          '<span class="st-saved-topline"><span class="st-saved-status' + toneClass + '"><i></i>' + statusLabel + '</span>' + (date ? '<span>' + PM_escape(date) + '</span>' : '') + '</span>' +
+          '<span class="st-saved-review' + toneClass + '">' + icn(reviewIcon(status)) + '<span>' + PM_escape(msg) + '</span></span>' +
+        '</span>' +
+      '</button>' +
+      '<div class="st-saved-act">' +
+        '<button type="button" class="btn btn--primary btn--sm" data-open="' + id + '">Open dit ontwerp</button>' +
+        '<button type="button" class="st-del st-neutral" data-rename="' + id + '" title="' + T("studio.rename") + '">✎</button>' +
+        '<button type="button" class="st-del st-neutral" data-clone="' + id + '" title="' + T("studio.propDuplicate") + '">⧉</button>' +
+        '<button type="button" class="st-del" data-del="' + id + '" title="' + T("studio.propDelete") + '">' + icn("trash") + '</button>' +
+      '</div></div>';
+  }
+  function renderOpenDesignList() {
     var list = getDesigns().sort(function (a, b) { return a.updated < b.updated ? 1 : -1; });
-    var m = $("st-open-modal");
-    $("st-open-body").innerHTML = list.length ? '<div class="st-saved-grid">' + list.map(function (d) {
-      var f = d.format === "custom" ? (d.customSize || { w: 1080, h: 1080 }) : (FORMATS[d.format] || FORMATS["ig-square"]);
-      var pcount = d.pages ? d.pages.length : 1;
-      var fb = d.feedback ? " - " + d.feedback : "";
-      return '<div class="st-saved"><button class="st-saved-thumb" data-open="' + d.id + '" style="aspect-ratio:' + f.w + '/' + f.h + '">' + (d.thumb ? '<img src="' + d.thumb + '">' : '<span>' + PM_escape(d.name) + '</span>') + (pcount > 1 ? '<span class="st-saved-pages">' + T("studio.pageCount", { n: pcount }) + '</span>' : '') + '</button>' +
-        '<div class="st-saved-meta"><b>' + PM_escape(d.name) + '</b><span>' + statusText(d.status || "draft") + fb + ' - ' + new Date(d.updated).toLocaleString(window.PM_I18N ? PM_I18N.intl() : "nl-NL") + '</span></div>' +
-        '<div class="st-saved-act"><button class="btn btn--ghost btn--sm" data-open="' + d.id + '">' + T("studio.open") + '</button>' +
-        '<button class="st-del st-neutral" data-rename="' + d.id + '" title="' + T("studio.rename") + '">✎</button>' +
-        '<button class="st-del st-neutral" data-clone="' + d.id + '" title="' + T("studio.propDuplicate") + '">⧉</button>' +
-        '<button class="st-del" data-del="' + d.id + '" title="' + T("studio.propDelete") + '">' + icn("trash") + '</button></div></div>';
-    }).join("") + '</div>' : '<div class="empty">' + icn("save") + '<h4>' + T("studio.noDesigns") + '</h4><p>' + T("studio.noDesignsText") + '</p></div>';
-    m.classList.add("open");
+    var body = $("st-open-body");
+    if (!body) return;
+    body.innerHTML = list.length ? '<div class="st-saved-grid">' + list.map(savedDesignCard).join("") + '</div>' : '<div class="empty">' + icn("save") + '<h4>' + T("studio.noDesigns") + '</h4><p>' + T("studio.noDesignsText") + '</p></div>';
     $("st-open-body").querySelectorAll("[data-open]").forEach(function (b) { b.addEventListener("click", function () { doOpen(b.getAttribute("data-open")); }); });
     $("st-open-body").querySelectorAll("[data-del]").forEach(function (b) {
       b.addEventListener("click", function () {
         var doDel = function () {
           setDesigns(getDesigns().filter(function (d) { return d.id !== b.getAttribute("data-del"); }));
-          openModal();
+          renderOpenDesignList();
         };
         if (window.PM_confirm) PM_confirm(T("studio.delConfirm"), doDel);
         else if (confirm(T("studio.delConfirm"))) doDel();
@@ -2328,7 +2378,7 @@ var PMStudio = (function () {
         var l = getDesigns(), d = l.find(function (x) { return x.id === b.getAttribute("data-rename"); });
         if (!d) return;
         stPrompt(T("studio.renamePrompt"), d.name, function (n) {
-          if (n) { d.name = n.trim() || d.name; setDesigns(l); if (state.id === d.id) { state.name = d.name; $("st-name").value = d.name; } openModal(); }
+          if (n) { d.name = n.trim() || d.name; setDesigns(l); if (state.id === d.id) { state.name = d.name; $("st-name").value = d.name; } renderOpenDesignList(); }
         }, { ok: "Opslaan" });
       });
     });
@@ -2339,9 +2389,14 @@ var PMStudio = (function () {
         var copy = JSON.parse(JSON.stringify(d));
         copy.id = "d_" + Date.now(); copy.name = d.name + " " + T("studio.copySuffix"); copy.updated = new Date().toISOString();
         copy.status = "draft"; copy.feedback = ""; copy.submittedAt = null; copy.approvedAt = null; copy.downloadedAt = null;
-        l.push(copy); setDesigns(l); openModal();
+        l.push(copy); setDesigns(l); renderOpenDesignList();
       });
     });
+  }
+  function openModal() {
+    renderOpenDesignList();
+    var m = $("st-open-modal");
+    if (m) m.classList.add("open");
   }
   function doOpen(id) {
     var d = getDesigns().find(function (x) { return x.id === id; }); if (!d) return;
