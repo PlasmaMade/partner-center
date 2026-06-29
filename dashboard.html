@@ -7,7 +7,7 @@
 <meta name="description" content="Jouw startpunt in het PlasmaMade Partner Center: producten, marketing, kennis en tools.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-auth-sync-hardening-2">
+<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-sync-4">
 </head>
 <body data-page="dashboard">
 <div class="layout">
@@ -65,8 +65,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-auth-sync-hardening-2"></script>
-<script src="assets/js/data.js?v=20260629-auth-sync-hardening-2"></script>
+<script src="assets/js/i18n.js?v=20260629-design-review-sync-4"></script>
+<script src="assets/js/data.js?v=20260629-design-review-sync-4"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -181,8 +181,11 @@ window.PM_PAGE_INIT = function () {
   var designLabels = window.PM_DESIGNS ? PM_DESIGNS.labels : {};
   document.getElementById("design-status-list").innerHTML = myDesigns.length ? myDesigns.map(function (d) {
     var status = d.status || "draft";
-    var reason = d.feedback ? " - " + d.feedback : "";
-    var meta = (designLabels[status] || status) + reason;
+    var meta = designLabels[status] || status;
+    if (status === "approved" || status === "downloaded") meta += " - export beschikbaar";
+    if (status === "changes_requested") meta += d.feedback ? " - Feedback: " + d.feedback : " - feedback ontvangen";
+    if (status === "rejected") meta += d.feedback ? " - Reden: " + d.feedback : " - niet goedgekeurd";
+    if (status === "submitted" || status === "in_review") meta += " - wacht op beoordeling";
     return '<a href="studio.html?design=' + encodeURIComponent(d.id) + '" class="portal-list__row">' +
       '<span class="portal-list__icon">' + PM_ICON(status === "approved" || status === "downloaded" ? "shieldCheck" : "palette") + '</span>' +
       '<span class="portal-list__txt"><b>' + esc(d.name || "Ontwerp") + '</b><span>' + esc(meta) + '</span></span>' +
@@ -190,7 +193,7 @@ window.PM_PAGE_INIT = function () {
   }).join("") : '<div class="portal-list__empty">Nog geen ontwerpen. Open de Design Studio om materiaal te maken en ter goedkeuring in te dienen.</div>';
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-auth-sync-hardening-2"></script>
-<script src="assets/js/app.js?v=20260629-auth-sync-hardening-2"></script>
+<script src="assets/js/sync-config.js?v=20260629-design-review-sync-4"></script>
+<script src="assets/js/app.js?v=20260629-design-review-sync-4"></script>
 </body>
 </html>

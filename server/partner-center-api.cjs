@@ -40,6 +40,8 @@ const CENTRAL_STATE_KEYS = [
   "pm_page_edits"
 ];
 const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
+const DESIGN_REVIEW_STATES = new Set(["in_review", "changes_requested", "approved", "rejected", "downloaded"]);
+const DESIGN_REVIEW_FIELDS = ["status", "feedback", "feedbackAt", "reviewedAt", "approvedAt", "rejectedAt", "downloadedAt", "downloadedKind", "submittedAt"];
 const ARRAY_STATE_KEYS = new Set([
   "pm_admin_grants",
   "pm_audit_log",
@@ -745,6 +747,78 @@ function deleteDesignAdmin(db, body, auth) {
   return found;
 }
 
+function dateValue(value) {
+  const n = Date.parse(value || "");
+  return Number.isFinite(n) ? n : 0;
+}
+
+function designReviewTime(row) {
+  if (!row) return 0;
+  const times = DESIGN_REVIEW_FIELDS.map((field) => dateValue(row[field]));
+  if (DESIGN_REVIEW_STATES.has(String(row.status || ""))) times.push(dateValue(row.updated || row.updatedAt));
+  return Math.max(0, ...times);
+}
+
+function designContentTime(row) {
+  if (!row) return 0;
+  return dateValue(row.contentUpdatedAt || row.updatedAt || row.updated || row.createdAt);
+}
+
+function copyDesignReviewFields(target, source) {
+  if (!target || !source) return target;
+  DESIGN_REVIEW_FIELDS.forEach((field) => {
+    if (Object.prototype.hasOwnProperty.call(source, field)) target[field] = source[field];
+  });
+  return target;
+}
+
+function mergeDesignForOwner(existing, incoming, ownerEmail) {
+  const owner = normEmail(ownerEmail);
+  const nextIncoming = Object.assign({}, incoming || {}, { ownerEmail: owner });
+  if (!existing) {
+    const status = String(nextIncoming.status || "draft").toLowerCase();
+    if (!["draft", "submitted"].includes(status)) {
+      DESIGN_REVIEW_FIELDS.forEach((field) => { delete nextIncoming[field]; });
+      nextIncoming.status = "draft";
+      nextIncoming.feedback = "";
+    }
+    return nextIncoming;
+  }
+  const incomingContentIsNewer = designContentTime(nextIncoming) >= designContentTime(existing);
+  const next = incomingContentIsNewer
+    ? Object.assign({}, existing, nextIncoming)
+    : Object.assign({}, nextIncoming, existing);
+  const incomingStatus = String(nextIncoming.status || "").toLowerCase();
+  const existingStatus = String(existing.status || "").toLowerCase();
+  const incomingReview = designReviewTime(nextIncoming);
+  const existingReview = designReviewTime(existing);
+  let reviewSource = existing;
+  if (incomingStatus === "submitted" && incomingReview >= existingReview) reviewSource = nextIncoming;
+  if (incomingStatus === "downloaded" && ["approved", "downloaded"].includes(existingStatus) && incomingReview >= existingReview) reviewSource = nextIncoming;
+  if (!existingReview && ["draft", "submitted"].includes(incomingStatus)) reviewSource = nextIncoming;
+  copyDesignReviewFields(next, reviewSource);
+  next.ownerEmail = owner;
+  return next;
+}
+
+function mergeDesignRowsByOwner(existingRows, incomingRows, ownerEmail) {
+  const owner = normEmail(ownerEmail);
+  const base = Array.isArray(existingRows) ? existingRows.slice() : [];
+  const incoming = Array.isArray(incomingRows) ? incomingRows : [];
+  const byId = new Map();
+  base.forEach((row) => {
+    if (row && row.id) byId.set(String(row.id), row);
+  });
+  incoming.forEach((row) => {
+    if (!row || !row.id) return;
+    const rowOwner = normEmail(row.ownerEmail);
+    if (rowOwner !== owner) return;
+    const id = String(row.id);
+    byId.set(id, mergeDesignForOwner(byId.get(id), row, owner));
+  });
+  return Array.from(byId.values()).sort((a, b) => String(b.updatedAt || b.createdAt || b.updated || "").localeCompare(String(a.updatedAt || a.createdAt || a.updated || "")));
+}
+
 function mergeRowsByOwner(existingRows, incomingRows, ownerEmail, fieldName) {
   const owner = normEmail(ownerEmail);
   const base = Array.isArray(existingRows) ? existingRows.slice() : [];
@@ -811,7 +885,7 @@ function applyStatePatch(db, patch, auth, baseUpdatedAt) {
     });
   } else {
     if (Object.prototype.hasOwnProperty.call(incoming, "pm_designs")) {
-      state.pm_designs = mergeRowsByOwner(state.pm_designs, incoming.pm_designs, auth.email, "ownerEmail").slice(0, 1000);
+      state.pm_designs = mergeDesignRowsByOwner(state.pm_designs, incoming.pm_designs, auth.email).slice(0, 1000);
     }
     if (Object.prototype.hasOwnProperty.call(incoming, "pm_support_tickets")) {
       state.pm_support_tickets = mergeRowsByOwner(state.pm_support_tickets, incoming.pm_support_tickets, auth.email, "email").slice(0, 1000);

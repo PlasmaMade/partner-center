@@ -436,8 +436,31 @@ var PMStudio = (function () {
 
     window.addEventListener("resize", function () { applyView(); });
     document.addEventListener("keydown", onKey);
+    bindDesignReviewSync();
     bindCanvasPointer();
     loadUploads(); // eigen beelden uit IndexedDB laden (+ migratie van oude localStorage-uploads)
+  }
+
+  function refreshOpenDesignReview() {
+    if (!state.id || !window.PM_DESIGNS) return false;
+    var saved = PM_DESIGNS.get(state.id);
+    if (!saved) return false;
+    var before = [state.status || "", state.feedback || ""].join("|");
+    state.status = saved.status || state.status || "draft";
+    state.feedback = saved.feedback || "";
+    var after = [state.status || "", state.feedback || ""].join("|");
+    if (before === after) return false;
+    renderStatus();
+    return true;
+  }
+
+  function bindDesignReviewSync() {
+    if (window.__pmStudioDesignSyncBound) return;
+    window.__pmStudioDesignSyncBound = true;
+    document.addEventListener("pm:state-sync", function (ev) {
+      if (!ev.detail || ev.detail.source !== "pull") return;
+      refreshOpenDesignReview();
+    });
   }
 
   function fillToolbarIcons() {
@@ -2228,13 +2251,15 @@ var PMStudio = (function () {
     var user = (window.PM_AUTH && PM_AUTH.getUser && PM_AUTH.getUser()) || {};
     var i = list.findIndex(function (d) { return d.id === state.id; });
     var existing = i > -1 ? list[i] : {};
+    var now = new Date().toISOString();
     var snap = Object.assign({}, existing, {
       id: state.id,
       name: state.name,
       format: state.format,
       customSize: state.customSize,
       pages: JSON.parse(JSON.stringify(state.pages)),
-      updated: new Date().toISOString(),
+      updated: now,
+      contentUpdatedAt: now,
       status: state.status || existing.status || "draft",
       feedback: state.feedback || existing.feedback || "",
       ownerEmail: state.ownerEmail || existing.ownerEmail || user.email || "",
@@ -2264,6 +2289,7 @@ var PMStudio = (function () {
     state.status = "submitted";
     state.feedback = "";
     renderStatus();
+    if (window.PM_SYNC && PM_SYNC.flushDirty) PM_SYNC.flushDirty({ timeout: 6500 });
     PM_toast("Ontwerp ingediend ter goedkeuring");
   }
   function migrate(d) {

@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260629-auth-sync-hardening-2";
+  const PORTAL_BUILD_VERSION = "20260629-design-review-sync-4";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -317,6 +317,8 @@
   }
   const LOCAL_MERGE_STATE_KEYS = ["pm_page_edits", "pm_cms_overrides"];
   const AUTHORITATIVE_PULL_KEYS = ["pm_account_requests", "pm_admin_grants", "pm_partners", "pm_audit_log", "pm_admin_mail_log"];
+  const DESIGN_REVIEW_STATES = ["in_review", "changes_requested", "approved", "rejected", "downloaded"];
+  const DESIGN_REVIEW_FIELDS = ["status", "feedback", "feedbackAt", "reviewedAt", "approvedAt", "rejectedAt", "downloadedAt", "downloadedKind", "submittedAt"];
   function isPlainObject(value) {
     return !!(value && typeof value === "object" && !Array.isArray(value));
   }
@@ -332,7 +334,91 @@
     });
     return out;
   }
+  function designById(rows) {
+    var map = {};
+    (Array.isArray(rows) ? rows : []).forEach(function (row) {
+      if (row && row.id) map[String(row.id)] = row;
+    });
+    return map;
+  }
+  function dateValue(value) {
+    var n = Date.parse(value || "");
+    return Number.isFinite(n) ? n : 0;
+  }
+  function designReviewTime(row) {
+    if (!row) return 0;
+    return Math.max.apply(Math, DESIGN_REVIEW_FIELDS.map(function (field) { return dateValue(row[field]); }).concat([
+      DESIGN_REVIEW_STATES.indexOf(row.status || "") > -1 ? dateValue(row.updated || row.updatedAt) : 0
+    ]));
+  }
+  function designContentTime(row) {
+    if (!row) return 0;
+    return dateValue(row.contentUpdatedAt || row.updatedAt || row.updated || row.createdAt);
+  }
+  function copyDesignReviewFields(target, source) {
+    if (!target || !source) return target;
+    DESIGN_REVIEW_FIELDS.forEach(function (field) {
+      if (Object.prototype.hasOwnProperty.call(source, field)) target[field] = source[field];
+    });
+    return target;
+  }
+  function mergeDesignRow(remote, local, preferLocalContent) {
+    if (!local) return remote;
+    if (!remote) return local;
+    var remoteHasNewerContent = designContentTime(remote) > designContentTime(local);
+    var out = preferLocalContent || !remoteHasNewerContent
+      ? Object.assign({}, remote, local)
+      : Object.assign({}, local, remote);
+    var remoteReview = designReviewTime(remote);
+    var localReview = designReviewTime(local);
+    copyDesignReviewFields(out, remoteReview >= localReview ? remote : local);
+    return out;
+  }
+  function mergeDesignRows(remoteRows, localRows, preferLocalContent) {
+    var out = [];
+    var seen = {};
+    var localMap = designById(localRows);
+    (Array.isArray(remoteRows) ? remoteRows : []).forEach(function (remote) {
+      if (!remote || !remote.id) return;
+      var id = String(remote.id);
+      var local = localMap[id] || null;
+      seen[id] = true;
+      out.push(mergeDesignRow(remote, local, !!preferLocalContent));
+    });
+    (Array.isArray(localRows) ? localRows : []).forEach(function (local) {
+      if (!local || !local.id || seen[String(local.id)]) return;
+      out.push(local);
+    });
+    return out.sort(function (a, b) {
+      return String(b.updated || b.updatedAt || b.feedbackAt || b.approvedAt || b.submittedAt || "").localeCompare(String(a.updated || a.updatedAt || a.feedbackAt || a.approvedAt || a.submittedAt || ""));
+    });
+  }
+  function designReviewUpdates(beforeRows, afterRows) {
+    var user = (typeof getUser === "function") ? getUser() : null;
+    var userEmail = normEmail(user && user.email);
+    var before = designById(beforeRows);
+    return (Array.isArray(afterRows) ? afterRows : []).filter(function (row) {
+      if (!row || !row.id) return false;
+      if (userEmail && normEmail(row.ownerEmail) && normEmail(row.ownerEmail) !== userEmail) return false;
+      var previous = before[String(row.id)] || {};
+      var status = row.status || "draft";
+      if (DESIGN_REVIEW_STATES.indexOf(status) === -1) return false;
+      return DESIGN_REVIEW_FIELDS.some(function (field) {
+        return String(previous[field] || "") !== String(row[field] || "");
+      });
+    }).map(function (row) {
+      return {
+        id: row.id,
+        name: row.name || "Ontwerp",
+        status: row.status || "draft",
+        feedback: row.feedback || ""
+      };
+    });
+  }
   function mergedIncomingStateValue(key, incoming, dirtyKeys, source) {
+    if (key === "pm_designs" && (source === "pull" || source === "login")) {
+      return mergeDesignRows(incoming, readStore(key, []), (dirtyKeys || []).indexOf(key) > -1);
+    }
     if (LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1) return incoming;
     var localRaw = null;
     try { localRaw = localStorage.getItem(key); } catch (e) {}
@@ -403,15 +489,19 @@
       var preserveDirty = opts.source !== "push" && opts.source !== "request";
       var dirty = preserveDirty ? this.dirtyKeys() : [];
       var overwrittenDirty = [];
+      var designUpdates = [];
       this.muted = true;
       try {
         CENTRAL_STATE_KEYS.forEach(function (key) {
           if (!Object.prototype.hasOwnProperty.call(state, key)) return;
           var hasLocal = localStorage.getItem(key) != null;
           var authoritative = (opts.source === "pull" || opts.source === "login") && AUTHORITATIVE_PULL_KEYS.indexOf(key) > -1;
-          if (dirty.indexOf(key) > -1 && hasLocal && LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1 && !authoritative) return;
+          var designReviewPull = key === "pm_designs" && (opts.source === "pull" || opts.source === "login");
+          if (dirty.indexOf(key) > -1 && hasLocal && LOCAL_MERGE_STATE_KEYS.indexOf(key) === -1 && !authoritative && !designReviewPull) return;
           if (authoritative && dirty.indexOf(key) > -1) overwrittenDirty.push(key);
+          var beforeDesigns = designReviewPull ? readStore(key, []) : null;
           var incoming = mergedIncomingStateValue(key, state[key], dirty, opts.source || "remote");
+          if (designReviewPull) designUpdates = designUpdates.concat(designReviewUpdates(beforeDesigns, incoming));
           localStorage.setItem(key, JSON.stringify(incoming));
         });
       } catch (e) {}
@@ -421,7 +511,7 @@
       if (window.PM_CMS) PM_CMS.apply();
       if (window.PM_PAGE_EDITS && PM_PAGE_EDITS.apply) PM_PAGE_EDITS.apply();
       if (!opts.quiet && window.PM_rebuildShell) PM_rebuildShell();
-      try { document.dispatchEvent(new CustomEvent("pm:state-sync", { detail: { source: opts.source || "remote", changed: !!opts.changed } })); } catch (e) {}
+      try { document.dispatchEvent(new CustomEvent("pm:state-sync", { detail: { source: opts.source || "remote", changed: !!opts.changed, designUpdates: designUpdates } })); } catch (e) {}
       return true;
     },
     snapshot: function (keys) {
@@ -4047,6 +4137,14 @@
     if (page !== "login") {
       document.addEventListener("pm:state-sync", function (ev) {
         if (!ev.detail || ev.detail.source !== "pull") return;
+        var designUpdates = Array.isArray(ev.detail.designUpdates) ? ev.detail.designUpdates : [];
+        if (designUpdates.length && window.PM_toast) {
+          var d = designUpdates[0];
+          var label = d.status === "approved" || d.status === "downloaded"
+            ? "Ontwerp goedgekeurd"
+            : (d.status === "changes_requested" ? "Feedback ontvangen" : (d.status === "rejected" ? "Ontwerp afgewezen" : "Ontwerpstatus bijgewerkt"));
+          PM_toast(label + ": " + (d.name || "Ontwerp") + (designUpdates.length > 1 ? " +" + (designUpdates.length - 1) : ""));
+        }
         if (!ev.detail.changed) return;
         if (document.hidden) return;
         var active = document.activeElement;
