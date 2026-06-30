@@ -158,7 +158,7 @@ window.PM_DATA = (function () {
       flagship: false,
       type: "Air Cleaner · standalone · professioneel",
       family: "Air Cleaner",
-      image: "assets/img/ultrafine/ultrafine.jpg",
+      image: "assets/img/ultrafine/ultrafine.png",
       tagline: "Luchtkwaliteit op het hoogste niveau, binnen jouw organisatie — cleanroomkwaliteit zonder de cleanroom.",
       description: "De AirClean UltraFine combineert twee toptechnologieën — de GUC4184 ESP-filter en het GUC1223 E-filter (ESD) — tot het krachtigste duo op de markt. Een vrijstaande unit die fijnstof, geuren, allergenen en micro-organismen maximaal reduceert in commerciële en professionele ruimtes.",
       benefits: [

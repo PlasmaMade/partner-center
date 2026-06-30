@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260630-rollback-stable-bjonkeren-3";
+  const PORTAL_BUILD_VERSION = "20260630-tight-ready-vlinders-2";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -2221,7 +2221,7 @@
     return String(key || pageKey()).toLowerCase() === "dashboard.html";
   }
   function legacyDashboardHeroMatch(value) {
-    return /hero-filters\.png|portal-hero__media|portal-hero__product|portal-hero__butterflies/i.test(String(value || ""));
+    return /hero-filters\.png/i.test(String(value || ""));
   }
   function scrubLegacyDashboardHeroEdits(all, key) {
     key = key || pageKey();
