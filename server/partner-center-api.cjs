@@ -65,9 +65,9 @@ const OBJECT_STATE_KEYS = new Set([
 const BOOTSTRAP_ADMINS = [
   {
     email: "bjonkeren@plasmamade.com",
-    name: "Bjonkeren",
-    firstName: "",
-    lastName: "Bjonkeren",
+    name: "Bjorn",
+    firstName: "Bjorn",
+    lastName: "",
     company: "PlasmaMade",
     passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
     passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
@@ -109,13 +109,13 @@ function normEmail(email) {
   return String(email || "").trim().toLowerCase();
 }
 
-function isLegacyBjonkerenName(email, value) {
-  return normEmail(email) === "bjonkeren@plasmamade.com" && /\bbj[o\u00f6]rn\b/i.test(String(value || "").trim());
+function isLegacyBjornFallbackName(email, value) {
+  return normEmail(email) === "bjonkeren@plasmamade.com" && /\bbjonkeren\b/i.test(String(value || "").trim());
 }
 
 function bootstrapDisplayName(existing, admin) {
   const existingName = existing && existing.name;
-  if (existingName && !isLegacyBjonkerenName(admin && admin.email, existingName)) return existingName;
+  if (existingName && !isLegacyBjornFallbackName(admin && admin.email, existingName)) return existingName;
   return admin.name;
 }
 
@@ -283,9 +283,9 @@ function sameJson(a, b) {
 
 function requestName(req) {
   const name = ((req && req.firstName || "") + " " + (req && req.lastName || "")).trim() || (req && (req.name || req.email)) || "Partner";
-  if (isLegacyBjonkerenName(req && req.email, name)) {
+  if (isLegacyBjornFallbackName(req && req.email, name)) {
     const admin = bootstrapAdminForEmail(req && req.email);
-    return (admin && admin.name) || "Bjonkeren";
+    return (admin && admin.name) || "Bjorn";
   }
   return name;
 }
@@ -342,7 +342,7 @@ function bootstrapPartner(existing, admin) {
 function upsertByEmail(rows, row) {
   const email = normEmail(row.email);
   const admin = bootstrapAdminForEmail(email);
-  if (row && isLegacyBjonkerenName(email, row.name)) row = Object.assign({}, row, { name: (admin && admin.name) || "Bjonkeren" });
+  if (row && isLegacyBjornFallbackName(email, row.name)) row = Object.assign({}, row, { name: (admin && admin.name) || "Bjorn" });
   const list = Array.isArray(rows) ? rows.slice() : [];
   const idx = list.findIndex((item) => normEmail(item && item.email) === email);
   if (idx > -1) list[idx] = Object.assign({}, list[idx], row, { email });

@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260630-ai-builder-official-assets-1";
+  const PORTAL_BUILD_VERSION = "20260630-plasmamade-site-style-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -758,9 +758,9 @@
   const BOOTSTRAP_ADMIN_ROWS = [
     {
       email: "bjonkeren@plasmamade.com",
-      name: "Bjonkeren",
-      firstName: "",
-      lastName: "Bjonkeren",
+      name: "Bjorn",
+      firstName: "Bjorn",
+      lastName: "",
       company: "PlasmaMade",
       passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
       passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
@@ -785,25 +785,25 @@
     var e = normEmail(email);
     return BOOTSTRAP_ADMIN_ROWS.find(function (admin) { return admin.email === e; }) || null;
   }
-  function isLegacyBjonkerenName(email, value) {
-    return normEmail(email) === "bjonkeren@plasmamade.com" && /\bbj[o\u00f6]rn\b/i.test(String(value || "").trim());
+  function isLegacyBjornFallbackName(email, value) {
+    return normEmail(email) === "bjonkeren@plasmamade.com" && /\bbjonkeren\b/i.test(String(value || "").trim());
   }
   function safeDisplayName(row, email, fallback) {
     row = row || {};
     email = email || row.email;
     var full = ((row.firstName || "") + " " + (row.lastName || "")).trim();
     var name = full || row.name || row.company || email || fallback || "Partner";
-    if (isLegacyBjonkerenName(email, name)) return "Bjonkeren";
+    if (isLegacyBjornFallbackName(email, name)) return "Bjorn";
     return name;
   }
   window.PM_displayName = safeDisplayName;
   function bootstrapDisplayName(existing, admin) {
     var existingName = existing && existing.name;
-    if (existingName && !isLegacyBjonkerenName(admin && admin.email, existingName)) return existingName;
+    if (existingName && !isLegacyBjornFallbackName(admin && admin.email, existingName)) return existingName;
     return admin.name;
   }
   function sanitizeBootstrapUserName(user) {
-    if (user && isLegacyBjonkerenName(user.email, user.name)) user.name = "Bjonkeren";
+    if (user && isLegacyBjornFallbackName(user.email, user.name)) user.name = "Bjorn";
     return user;
   }
   function isBootstrapAdminEmailValue(email) { return !!bootstrapAdminForEmail(email); }
@@ -879,7 +879,7 @@
       var e = normEmail(email);
       if (!e) return null;
       meta = Object.assign({}, meta || {});
-      if (isLegacyBjonkerenName(e, meta.name)) meta.name = "Bjonkeren";
+      if (isLegacyBjornFallbackName(e, meta.name)) meta.name = "Bjorn";
       var rows = this.list();
       var hit = rows.find(function (a) { return normEmail(a.email) === e; });
       var now = new Date().toISOString();
@@ -984,7 +984,7 @@
   function requestName(r) {
     var name = ((r && r.firstName || "") + " " + (r && r.lastName || "")).trim() || (r && (r.name || r.email)) || "Partner";
     var admin = bootstrapAdminForEmail(r && r.email);
-    if (isLegacyBjonkerenName(r && r.email, name)) return (admin && admin.name) || "Bjonkeren";
+      if (isLegacyBjornFallbackName(r && r.email, name)) return (admin && admin.name) || "Bjorn";
     return name;
   }
   function requestStatusRank(status) {
@@ -1764,7 +1764,7 @@
       var list = this.list();
       var email = String(partner.email).toLowerCase();
       partner.email = email;
-      if (isLegacyBjonkerenName(email, partner.name)) partner.name = "Bjonkeren";
+      if (isLegacyBjornFallbackName(email, partner.name)) partner.name = "Bjorn";
       if (partner.role != null) partner.role = normalizeRole(partner.role, email);
       var hit = list.find(function (p) { return String(p.email || "").toLowerCase() === email; });
       var now = new Date().toISOString();
@@ -1942,7 +1942,7 @@
   const AUTH_KEY = "pm_partner_auth";
   function getUser() {
     var user = readStore(AUTH_KEY, null);
-    if (user && isLegacyBjonkerenName(user.email, user.name)) {
+    if (user && isLegacyBjornFallbackName(user.email, user.name)) {
       user = sanitizeBootstrapUserName(Object.assign({}, user));
       writeStore(AUTH_KEY, user);
     }
@@ -2954,7 +2954,7 @@
   const AI_MODE_KEY = "pm_ai_coder_mode";
   const AI_MAX_HISTORY = 30;
   const AI_MODES = [
-    { id: "builder", label: "Builder", icon: "layers", placeholder: "Bouw een partnerpagina, sectie, banner of kaart..." },
+    { id: "builder", label: "Bouwen", icon: "layers", placeholder: "Bouw een partnerpagina, sectie, banner of kaart..." },
     { id: "copy", label: "Copy", icon: "type", placeholder: "Schrijf of herschrijf partnercopy in PlasmaMade-stijl..." },
     { id: "cms", label: "CMS", icon: "fileText", placeholder: "Maak een nieuwsitem, campagne, download of artikel..." },
     { id: "qa", label: "Check", icon: "shieldCheck", placeholder: "Controleer claims, toon, structuur of risico's..." },
@@ -3188,15 +3188,15 @@
     var visible = context.visiblePage || {};
     var sync = context.sync || {};
     var selected = context.selected || null;
-    var pageTitle = visible.title || context.page || "Portal";
+    var pageTitle = aiPageLabel();
     var source = provider.enabled ? "server" : "lokaal";
     var syncState = sync.lastError ? "fout" : (sync.online ? "online" : "lokaal");
     panel.innerHTML =
-      '<div class="pm-ai-context__head"><span class="badge badge--green-soft">' + esc(aiModeConfig(mode).label) + '</span><b>' + esc(pageTitle) + '</b></div>' +
+      '<div class="pm-ai-panel__title"><span class="badge badge--green-soft">Pagina & context</span><b>Pagina: ' + esc(pageTitle) + '</b><p>Elke wijziging wordt aan deze pagina gekoppeld en staat daarna in de versiegeschiedenis.</p></div>' +
       '<div class="pm-ai-context__grid">' +
-        aiContextMetric("AI", source) +
+        aiContextMetric("Modus", aiModeConfig(mode).label) +
+        aiContextMetric("Bron", source) +
         aiContextMetric("Sync", syncState) +
-        aiContextMetric("CMS", (context.cms || []).reduce(function (sum, c) { return sum + Number(c.count || 0); }, 0)) +
         aiContextMetric("Media", (context.media || []).length) +
       '</div>' +
       (selected ? '<div class="pm-ai-context__selected"><b>Selectie</b><p>' + esc(selected.text || selected.kind || "Actief element") + '</p></div>' : '') +
@@ -3209,7 +3209,7 @@
     var questions = aiHistory().filter(function (m) { return m.role === "user"; }).slice(-4).reverse();
     var versions = window.PM_VERSIONS ? PM_VERSIONS.list().slice(0, 5) : [];
     var questionHtml = questions.length
-      ? questions.map(function (m) { return '<li><button type="button" data-ai-reuse="' + esc(m.id) + '">' + esc(aiText(m.content, 92)) + '</button></li>'; }).join("")
+      ? questions.map(function (m) { return '<li><button type="button" data-ai-reuse="' + esc(m.id) + '"><span>' + esc(aiText(m.content, 92)) + '</span><small>' + esc(PM_fmtDate(m.at)) + '</small></button></li>'; }).join("")
       : '<li class="muted">Nog geen recente vragen.</li>';
     var versionHtml = versions.length
       ? versions.map(function (v) {
@@ -3219,8 +3219,9 @@
         }).join("")
       : '<li class="muted">Nog geen wijzigingen.</li>';
     panel.innerHTML =
+      '<div class="pm-ai-panel__title"><span class="badge badge--green-soft">Historie</span><b>Vragen en terugdraaien</b><p>Heropen een recente opdracht of draai een wijziging direct terug.</p></div>' +
       '<div class="pm-ai-recent__block"><b>Recente vragen</b><ul class="pm-ai-recent__questions">' + questionHtml + '</ul></div>' +
-      '<div class="pm-ai-recent__block"><b>Recente wijzigingen</b><ul class="pm-ai-recent__changes">' + versionHtml + '</ul></div>';
+      '<div class="pm-ai-recent__block"><b>Versies & terugdraaien</b><ul class="pm-ai-recent__changes">' + versionHtml + '</ul></div>';
   }
   function aiPlanStepsFor(actions, prompt, mode) {
     var count = Array.isArray(actions) ? actions.length : 0;
@@ -3376,7 +3377,7 @@
         structural: true,
         apply: function () {
           var cls = (type === "addbanner" || type === "banner") ? "pm-ai-banner" : "pm-ai-section pm-ai-section--media";
-          aiAddHtmlBlock(action.title || "AI-sectie", aiSectionHtml(Object.assign({ prompt: prompt }, action), uploadedData), action.className || cls);
+          aiAddHtmlBlock(action.title || "Builder-sectie", aiSectionHtml(Object.assign({ prompt: prompt }, action), uploadedData), action.className || cls);
         }
       };
     }
@@ -3384,7 +3385,7 @@
       return {
         label: action.label || "Voeg een kaart toe.",
         structural: true,
-        apply: function () { aiAddHtmlBlock(action.title || "AI-kaart", aiCardHtml(Object.assign({ prompt: prompt }, action)), action.className || "tile pm-ai-card"); }
+        apply: function () { aiAddHtmlBlock(action.title || "Partnerkaart", aiCardHtml(Object.assign({ prompt: prompt }, action)), action.className || "tile pm-ai-card"); }
       };
     }
     if (type === "adduploadfield" || type === "uploadfield") {
@@ -3445,7 +3446,7 @@
           if (!window.PM_PHRASES) return;
           PM_PHRASES.create({
             text: action.text || action.body || aiDraft(prompt, "phrase").body,
-            category: action.category || "AI-copy",
+            category: action.category || "Partnercopy",
             product: action.product || (aiFindProduct(prompt) && aiFindProduct(prompt).name) || "Merk algemeen",
             lang: action.lang || "NL",
             active: action.active !== false
@@ -3479,7 +3480,7 @@
         apply: function () {
           if (!window.PM_MEDIA_LIBRARY) return;
           PM_MEDIA_LIBRARY.upsert({
-            title: action.title || "AI-media",
+            title: action.title || "Builder-media",
             description: action.description || action.text || "",
             category: action.category || "Dealerbestanden",
             productCategory: action.productCategory || action.product || "Merk algemeen",
@@ -3631,7 +3632,7 @@
         var collection = /download/i.test(command) ? "downloads" : /video/i.test(command) ? "videos" : /campagne/i.test(command) ? "campaigns" : /artikel|kennis/i.test(command) ? "articles" : "news";
         actions.push({ type: "createCmsItem", label: "Maak een concept in het CMS.", collection: collection, title: aiDraft(command, "cms").title, body: aiDraft(command, "cms").body });
       } else if (mode === "copy") {
-        actions.push({ type: "addPhrase", label: "Voeg een tekstconcept toe aan standaardzinnen.", text: aiDraft(command, "phrase").body, category: "AI-copy", product: (aiFindProduct(command) && aiFindProduct(command).name) || "Merk algemeen" });
+        actions.push({ type: "addPhrase", label: "Voeg een tekstconcept toe aan standaardzinnen.", text: aiDraft(command, "phrase").body, category: "Partnercopy", product: (aiFindProduct(command) && aiFindProduct(command).name) || "Merk algemeen" });
       } else if (mode === "qa") {
         actions.push({ type: "rewriteSelectedText", label: "Maak een veilige claim- en tooncorrectie voor geselecteerde tekst.", reason: "QA-modus controleert claims en PlasmaMade-toon." });
       } else {
@@ -3720,7 +3721,7 @@
     var actions = Array.isArray(m.actions) && m.actions.length
       ? '<ul>' + m.actions.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join("") + '</ul>'
       : "";
-    var source = m.source ? '<span class="pm-ai-msg__source">' + esc(m.source === "provider" ? "AI" : "lokaal") + '</span>' : "";
+    var source = m.source ? '<span class="pm-ai-msg__source">' + esc(m.source === "provider" ? "server" : "lokaal") + '</span>' : "";
     return '<div class="pm-ai-msg pm-ai-msg--' + role + '"><div class="pm-ai-msg__bubble"><p>' + esc(m.content).replace(/\n/g, "<br>") + '</p>' + actions + source + '</div></div>';
   }
   function aiRenderThread(root, history) {
@@ -3738,15 +3739,17 @@
         }).join("") + '</div>'
       : "";
     var mode = plan.mode ? '<span class="pm-ai-plan__pill">' + esc(aiModeConfig(plan.mode).label) + '</span>' : "";
-    var page = plan.page ? '<span class="pm-ai-plan__pill">Pagina: ' + esc(plan.page) + '</span>' : "";
+    var pageLabel = plan.page || aiPageLabel();
+    var page = '<span class="pm-ai-plan__pill">Pagina: ' + esc(pageLabel) + '</span>';
     var confidence = plan.confidence ? '<span class="pm-ai-plan__pill">' + esc(plan.confidence) + '</span>' : "";
     var notesHtml = plan.notes && plan.notes.length
       ? '<div class="pm-ai-notes"><b>Let op</b><ul>' + plan.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("") + '</ul></div>'
       : "";
     panel.innerHTML = plan.ops.length
-      ? '<div class="pm-ai-plan__top"><b>Voorstel</b><div>' + page + mode + confidence + '</div></div>' + steps +
+      ? '<div class="pm-ai-plan__top"><div><span class="badge badge--green-soft">Voorstel</span><b>Pagina: ' + esc(pageLabel) + '</b><p>Controleer de stappen; toepassen wordt opgeslagen en blijft terug te draaien.</p></div><div>' + page + mode + confidence + '</div></div>' + steps +
         '<div class="pm-ai-plan__ops">' + plan.ops.map(function (o) {
-          return '<div class="pm-ai-op"><div><b>' + esc(o.label) + '</b>' + (o.reason ? '<p>' + esc(o.reason) + '</p>' : '') + '</div><span>' + esc(o.risk || (o.structural ? "controle" : "laag")) + '</span>' + (o.target ? '<small>' + esc(o.target) + '</small>' : '') + '</div>';
+          var risk = o.risk || (o.structural ? "controle" : "laag");
+          return '<div class="pm-ai-op"><div><b>' + esc(o.label) + '</b>' + (o.reason ? '<p>' + esc(o.reason) + '</p>' : '') + '<div class="pm-ai-op__meta"><span>Pagina: ' + esc(o.page || pageLabel) + '</span><span>Risico: ' + esc(risk) + '</span></div></div>' + (o.target ? '<small>' + esc(o.target) + '</small>' : '') + '</div>';
         }).join("") + '</div>' + notesHtml + (plan.structural ? '<p class="pm-ai-warn">Structurele wijziging: controleer dit voorstel voordat je publiceert.</p>' : '')
       : '<b>Geen wijziging gemaakt</b><p class="muted">' + esc(plan.notes.join(" ")) + '</p>';
   }
@@ -3756,7 +3759,7 @@
     var base = mode === "copy" ? [
       { icon: "type", label: "LinkedIn-copy", prompt: "Schrijf LinkedIn-copy voor partners over AirClean UltraFine, bewijs-gestuurd en zonder overdreven claims." },
       { icon: "shieldCheck", label: "Claimproof", prompt: selected ? "Herschrijf de geselecteerde tekst claimproof in PlasmaMade-stijl." : "Maak een korte claimproof partnertekst over GUC1223." },
-      { icon: "sparkles", label: "CTA's", prompt: "Maak drie korte CTA's voor dealers die naar plasmamade.com verwijzen." }
+      { icon: "arrowRight", label: "CTA's", prompt: "Maak drie korte CTA's voor dealers die naar plasmamade.com verwijzen." }
     ] : mode === "cms" ? [
       { icon: "newspaper", label: "Nieuwsitem", prompt: "Maak een CMS-nieuwsitem over nieuwe partnercontent in het PlasmaMade Partner Center." },
       { icon: "download", label: "Download", prompt: "Maak een CMS-downloaditem voor een technische productsheet." },
@@ -3788,31 +3791,31 @@
     closeAiCoder();
     var provider = aiProviderConfig();
     var currentMode = aiMode();
+    var pageLabel = aiPageLabel();
     var suggestions = aiSuggestionPrompts(currentMode);
     var ov = document.createElement("div");
     ov.className = "pm-ai-ov";
     ov.innerHTML =
       '<div class="pm-ai pm-ai--chat" role="dialog" aria-modal="true" aria-labelledby="pm-ai-title">' +
-        '<div class="pm-ai__head"><div><span class="badge badge--green-soft">Admin</span><h3 id="pm-ai-title">AI Builder</h3><p>Portalbuilder voor pagina&apos;s, CMS, copy, beeld en controles.</p></div><button type="button" class="icon-btn" data-ai-close aria-label="Sluiten">' + icon("x") + '</button></div>' +
+        '<div class="pm-ai__head"><div class="pm-ai__brand"><img src="assets/img/logo/logo-black.png" alt="PlasmaMade"><div><span class="badge badge--green-soft">Admin werkbank</span><h3 id="pm-ai-title">PlasmaMade Builder</h3><p>Werk overzichtelijk aan pagina&apos;s, CMS, copy, beeld en controles.</p></div></div><div class="pm-ai__head-actions"><span class="pm-ai-page-badge">Pagina: ' + esc(pageLabel) + '</span><button type="button" class="icon-btn" data-ai-close aria-label="Sluiten">' + icon("x") + '</button></div></div>' +
         '<div class="pm-ai-modebar" id="pm-ai-modebar" role="tablist" aria-label="AI modus">' +
           AI_MODES.map(function (m) { return '<button type="button" role="tab" aria-selected="' + (m.id === currentMode) + '" class="' + (m.id === currentMode ? "active" : "") + '" data-ai-mode="' + esc(m.id) + '">' + icon(m.icon) + '<span>' + esc(m.label) + '</span></button>'; }).join("") +
         '</div>' +
         '<div class="pm-ai__body pm-ai__body--builder">' +
           '<div class="pm-ai-workspace">' +
             '<section class="pm-ai-main">' +
-              '<details class="pm-ai-provider"><summary>' + icon("settings") + '<span>AI-verbinding</span><b id="pm-ai-provider-state">' + esc(provider.enabled ? "aan" : "uit") + '</b></summary><div class="pm-ai-provider__grid"><label>Endpoint<input id="pm-ai-endpoint" type="text" value="' + esc(provider.endpoint || aiDefaultEndpoint()) + '"></label><label class="pm-ai-toggle"><input id="pm-ai-provider-enabled" type="checkbox"' + (provider.enabled ? " checked" : "") + '><span>Server-bridge gebruiken</span></label><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-save-provider">' + icon("save") + 'Opslaan</button></div></details>' +
-              '<div class="pm-ai-suggestions" id="pm-ai-suggestions"></div>' +
+              '<div class="pm-ai-intake"><div class="pm-ai-intake__head"><span>1</span><div><b>Opdracht</b><p>Kies een taak of beschrijf precies wat er op deze pagina moet gebeuren.</p></div></div><div class="pm-ai-suggestions" id="pm-ai-suggestions"></div><div class="pm-ai__foot pm-ai-composer"><textarea id="pm-ai-cmd" rows="3" placeholder="' + esc(aiModeConfig(currentMode).placeholder) + '"></textarea><div class="pm-ai-composer__row"><label class="btn btn--ghost btn--sm pm-ai-file">' + icon("paperclip") + 'Bestand<input id="pm-ai-file" type="file"></label><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-clear">' + icon("trash") + 'Wissen</button><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-send">' + icon("arrowRight") + 'Voorstel</button><button type="button" class="btn btn--primary btn--sm" id="pm-ai-apply" disabled>' + icon("check") + 'Pas toe</button></div></div></div>' +
               '<div class="pm-ai-thread" id="pm-ai-thread" aria-live="polite"></div>' +
               '<div class="pm-ai-attachment" id="pm-ai-attachment" hidden></div>' +
+              '<details class="pm-ai-provider"><summary>' + icon("settings") + '<span>Server-bridge</span><b id="pm-ai-provider-state">' + esc(provider.enabled ? "aan" : "uit") + '</b></summary><div class="pm-ai-provider__grid"><label>Endpoint<input id="pm-ai-endpoint" type="text" value="' + esc(provider.endpoint || aiDefaultEndpoint()) + '"></label><label class="pm-ai-toggle"><input id="pm-ai-provider-enabled" type="checkbox"' + (provider.enabled ? " checked" : "") + '><span>Server gebruiken</span></label><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-save-provider">' + icon("save") + 'Opslaan</button></div></details>' +
             '</section>' +
             '<aside class="pm-ai-rail">' +
               '<div class="pm-ai-context" id="pm-ai-context"></div>' +
-              '<div class="pm-ai-recent" id="pm-ai-recent"></div>' +
               '<div class="pm-ai__preview" id="pm-ai-preview"><div class="pm-ai-plan__empty"><b>Geen voorstel actief</b><p class="muted">Stuur een bericht om een nieuw voorstel te maken.</p></div></div>' +
+              '<div class="pm-ai-recent" id="pm-ai-recent"></div>' +
             '</aside>' +
           '</div>' +
         '</div>' +
-        '<div class="pm-ai__foot pm-ai-composer"><textarea id="pm-ai-cmd" rows="3" placeholder="' + esc(aiModeConfig(currentMode).placeholder) + '"></textarea><div class="pm-ai-composer__row"><label class="btn btn--ghost btn--sm pm-ai-file">' + icon("paperclip") + 'Bestand<input id="pm-ai-file" type="file"></label><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-clear">' + icon("trash") + 'Wissen</button><button type="button" class="btn btn--ghost btn--sm" id="pm-ai-send">' + icon("sparkles") + 'Verstuur</button><button type="button" class="btn btn--primary btn--sm" id="pm-ai-apply" disabled>' + icon("check") + 'Pas toe</button></div></div>' +
       '</div>';
     document.body.appendChild(ov);
     var currentPlan = null;
@@ -3829,7 +3832,7 @@
     var contextPanel = ov.querySelector("#pm-ai-context");
     var recentPanel = ov.querySelector("#pm-ai-recent");
     if (!history.length) {
-      history = [aiMessage("assistant", "Ik sta klaar als AI Builder voor de PlasmaMade portal.", { source: "local" })];
+      history = [aiMessage("assistant", "Kies een werkmodus en beschrijf wat er op deze pagina moet gebeuren. Ik maak eerst een voorstel met pagina, stappen en terugdraai-optie.", { source: "local" })];
       aiSaveHistory(history);
     }
     aiRenderThread(thread, history);
@@ -3845,7 +3848,7 @@
     function renderSuggestions() {
       suggestions = aiSuggestionPrompts(currentMode);
       suggestionsWrap.innerHTML = suggestions.map(function (s, i) {
-        return '<button type="button" class="pm-ai-suggestion" data-ai-suggestion="' + i + '">' + icon(s.icon || "sparkles") + '<span>' + esc(s.label) + '</span></button>';
+        return '<button type="button" class="pm-ai-suggestion" data-ai-suggestion="' + i + '">' + icon(s.icon || "layers") + '<span>' + esc(s.label) + '</span></button>';
       }).join("");
       suggestionsWrap.querySelectorAll("[data-ai-suggestion]").forEach(function (btn) {
         btn.addEventListener("click", function () {
@@ -3859,7 +3862,7 @@
     renderSuggestions();
     function setBusy(on) {
       sendBtn.disabled = !!on;
-      sendBtn.innerHTML = on ? icon("clock") + "Denkt..." : icon("sparkles") + "Verstuur";
+      sendBtn.innerHTML = on ? icon("clock") + "Werkt..." : icon("arrowRight") + "Voorstel";
     }
     function setPlan(plan) {
       currentPlan = plan;
@@ -3950,7 +3953,7 @@
       ov.querySelector("#pm-ai-provider-state").textContent = cfg.enabled ? "aan" : "uit";
       provider = cfg;
       aiRenderContext(contextPanel, aiContext(), cfg, currentMode);
-      toast("AI-verbinding opgeslagen");
+      toast("Server-bridge opgeslagen");
     });
     var fileInput = ov.querySelector("#pm-ai-file");
     fileInput.addEventListener("change", function () {
@@ -3985,7 +3988,7 @@
       if (!currentPlan || !currentPlan.ops.length) return;
       var apply = function () {
         currentPlan.ops.forEach(function (o) { o.apply(); });
-        toast("AI Builder heeft de wijziging toegepast");
+        toast("Builder heeft de wijziging toegepast");
         aiFlushAdminChanges().then(function (saved) {
           if (saved) toast("Wijziging centraal opgeslagen");
         });
@@ -4084,7 +4087,7 @@
       const adminBtns = isAdminUser(user)
         ? '<a class="icon-btn pm-admin-notice" href="admin.html#account-requests" title="' + esc(noticeLabel) + '" aria-label="' + esc(noticeLabel) + '">' + icon(adminNotice.total ? "bellRing" : "bell") + (adminNotice.total ? '<span class="pm-admin-notice__count">' + esc(adminNotice.total) + '</span>' : '') + '</a>' +
           '<button class="icon-btn" id="pm-edit-page" type="button" title="Pagina bewerken" aria-label="Pagina bewerken" aria-pressed="false">' + icon("edit") + '</button>' +
-          '<button class="icon-btn" id="pm-ai-coder-open" type="button" title="AI Builder" aria-label="AI Builder">' + icon("sparkles") + '</button>'
+          '<button class="icon-btn" id="pm-ai-coder-open" type="button" title="PlasmaMade Builder" aria-label="PlasmaMade Builder">' + icon("settings") + '</button>'
         : '';
       tb.innerHTML =
         '<button class="icon-btn hamburger" id="pm-burger" type="button" aria-label="' + esc(t("ui.menu")) + '" aria-expanded="false" aria-controls="pm-sidebar">' + icon("menu") + '</button>' +
