@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260630-rollback-stable-bjorn-2";
+  const PORTAL_BUILD_VERSION = "20260630-rollback-stable-bjonkeren-3";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -758,9 +758,9 @@
   const BOOTSTRAP_ADMIN_ROWS = [
     {
       email: "bjonkeren@plasmamade.com",
-      name: "Bjorn",
-      firstName: "Bjorn",
-      lastName: "",
+      name: "Bjonkeren",
+      firstName: "",
+      lastName: "Bjonkeren",
       company: "PlasmaMade",
       passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
       passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
@@ -785,25 +785,25 @@
     var e = normEmail(email);
     return BOOTSTRAP_ADMIN_ROWS.find(function (admin) { return admin.email === e; }) || null;
   }
-  function isLegacyBjornFallbackName(email, value) {
-    return normEmail(email) === "bjonkeren@plasmamade.com" && /\bbjonkeren\b/i.test(String(value || "").trim());
+  function isLegacyBjonkerenName(email, value) {
+    return normEmail(email) === "bjonkeren@plasmamade.com" && /^bjorn(?:\s+jonkeren)?$/i.test(String(value || "").trim());
   }
   function safeDisplayName(row, email, fallback) {
     row = row || {};
     email = email || row.email;
     var full = ((row.firstName || "") + " " + (row.lastName || "")).trim();
     var name = full || row.name || row.company || email || fallback || "Partner";
-    if (isLegacyBjornFallbackName(email, name)) return "Bjorn";
+    if (isLegacyBjonkerenName(email, name)) return "Bjonkeren";
     return name;
   }
   window.PM_displayName = safeDisplayName;
   function bootstrapDisplayName(existing, admin) {
     var existingName = existing && existing.name;
-    if (existingName && !isLegacyBjornFallbackName(admin && admin.email, existingName)) return existingName;
+    if (existingName && !isLegacyBjonkerenName(admin && admin.email, existingName)) return existingName;
     return admin.name;
   }
   function sanitizeBootstrapUserName(user) {
-    if (user && isLegacyBjornFallbackName(user.email, user.name)) user.name = "Bjorn";
+    if (user && isLegacyBjonkerenName(user.email, user.name)) user.name = "Bjonkeren";
     return user;
   }
   function isBootstrapAdminEmailValue(email) { return !!bootstrapAdminForEmail(email); }
@@ -879,7 +879,7 @@
       var e = normEmail(email);
       if (!e) return null;
       meta = Object.assign({}, meta || {});
-      if (isLegacyBjornFallbackName(e, meta.name)) meta.name = "Bjorn";
+      if (isLegacyBjonkerenName(e, meta.name)) meta.name = "Bjonkeren";
       var rows = this.list();
       var hit = rows.find(function (a) { return normEmail(a.email) === e; });
       var now = new Date().toISOString();
@@ -984,7 +984,7 @@
   function requestName(r) {
     var name = ((r && r.firstName || "") + " " + (r && r.lastName || "")).trim() || (r && (r.name || r.email)) || "Partner";
     var admin = bootstrapAdminForEmail(r && r.email);
-    if (isLegacyBjornFallbackName(r && r.email, name)) return (admin && admin.name) || "Bjorn";
+    if (isLegacyBjonkerenName(r && r.email, name)) return (admin && admin.name) || "Bjonkeren";
     return name;
   }
   function requestStatusRank(status) {
@@ -1764,7 +1764,7 @@
       var list = this.list();
       var email = String(partner.email).toLowerCase();
       partner.email = email;
-      if (isLegacyBjornFallbackName(email, partner.name)) partner.name = "Bjorn";
+      if (isLegacyBjonkerenName(email, partner.name)) partner.name = "Bjonkeren";
       if (partner.role != null) partner.role = normalizeRole(partner.role, email);
       var hit = list.find(function (p) { return String(p.email || "").toLowerCase() === email; });
       var now = new Date().toISOString();
@@ -1942,7 +1942,7 @@
   const AUTH_KEY = "pm_partner_auth";
   function getUser() {
     var user = readStore(AUTH_KEY, null);
-    if (user && isLegacyBjornFallbackName(user.email, user.name)) {
+    if (user && isLegacyBjonkerenName(user.email, user.name)) {
       user = sanitizeBootstrapUserName(Object.assign({}, user));
       writeStore(AUTH_KEY, user);
     }
