@@ -7,7 +7,7 @@
 <meta name="description" content="PlasmaMade-productinformatie: specificaties, voordelen en verkoopargumenten.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
+<link rel="stylesheet" href="assets/css/style.css?v=20260630-ai-builder-official-assets-1">
 </head>
 <body data-page="product">
 <div class="layout">
@@ -19,8 +19,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/i18n.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/data.js?v=20260630-ai-builder-official-assets-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -79,7 +79,7 @@ window.PM_PAGE_INIT = function () {
     return '<div class="grid grid--2">' + dls.map(function (d) {
       return '<a class="asset" href="assets/downloads/' + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") + '" download style="flex-direction:row;align-items:center;gap:14px;padding:14px 16px">' +
         '<span style="width:42px;height:42px;border-radius:10px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON("fileText") + '</span>' +
-        '<span style="flex:1"><span style="font-weight:600;font-size:14px;display:block">' + esc(lc("downloads", d.id, "title", d.title)) + '</span><span class="muted" style="font-size:12px">' + esc(d.type) + ' Â· ' + esc(PM_fmtSize(d.size)) + ' Â· ' + esc(PM_dict("langLabels", d.lang)) + '</span></span>' +
+        '<span style="flex:1"><span style="font-weight:600;font-size:14px;display:block">' + esc(lc("downloads", d.id, "title", d.title)) + '</span><span class="muted" style="font-size:12px">' + esc(d.type) + ' · ' + esc(PM_fmtSize(d.size)) + ' · ' + esc(PM_dict("langLabels", d.lang)) + '</span></span>' +
         '<span class="green">' + PM_ICON("download") + '</span></a>';
     }).join("") + '</div>';
   }
@@ -98,7 +98,7 @@ window.PM_PAGE_INIT = function () {
     return '<div class="grid grid--2" style="align-items:start">' + tds.map(function (td) {
       return '<a class="asset" href="assets/testdocs/' + td.file + '.pdf" download style="flex-direction:row;align-items:center;gap:12px;padding:13px 15px">' +
         '<span style="width:40px;height:40px;border-radius:10px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON("shieldCheck") + '</span>' +
-        '<span style="flex:1;min-width:0"><span style="font-weight:600;font-size:13.5px;display:block">' + esc(lc("testdocs", td.id, "title", td.title)) + '</span><span class="muted" style="font-size:12px">' + esc(PM_dict("categories", td.category)) + ' Â· ' + esc(PM_fmtSize(td.size)) + '</span></span>' +
+        '<span style="flex:1;min-width:0"><span style="font-weight:600;font-size:13.5px;display:block">' + esc(lc("testdocs", td.id, "title", td.title)) + '</span><span class="muted" style="font-size:12px">' + esc(PM_dict("categories", td.category)) + ' · ' + esc(PM_fmtSize(td.size)) + '</span></span>' +
         '<span class="green">' + PM_ICON("download") + '</span></a>';
     }).join("") + '</div>';
   }
@@ -117,7 +117,7 @@ window.PM_PAGE_INIT = function () {
         '<div style="display:flex;gap:8px;padding:14px;overflow-x:auto" id="thumbs"></div>' +
       '</div>' +
       '<div>' +
-        '<div class="product-card__type" style="font-size:13px;margin-bottom:4px">' + esc(L.type) + ' Â· ' + esc(p.family) + '</div>' +
+        '<div class="product-card__type" style="font-size:13px;margin-bottom:4px">' + esc(L.type) + ' · ' + esc(p.family) + '</div>' +
         '<div class="flex items-center gap" style="gap:10px"><h2 style="font-size:30px;margin-bottom:8px">' + esc(p.name) + '</h2>' +
           '<button type="button" class="fav-btn' + (isFav ? " on" : "") + '" id="fav-btn" aria-pressed="' + isFav + '" aria-label="' + esc(t(isFav ? "common.favRemove" : "common.favAdd")) + '">' + PM_ICON("star") + '</button></div>' +
         '<p style="font-size:16px;color:var(--muted);margin-bottom:16px">' + esc(L.tagline) + '</p>' +
@@ -234,7 +234,7 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/sync-config.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/app.js?v=20260630-ai-builder-official-assets-1"></script>
 </body>
 </html>

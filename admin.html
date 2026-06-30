@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer en analytics voor het PlasmaMade Partner Center.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
+<link rel="stylesheet" href="assets/css/style.css?v=20260630-ai-builder-official-assets-1">
 <style>
 .adm-bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:6px}
 .adm-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;justify-content:flex-end;height:100%}
@@ -221,12 +221,12 @@
       <section class="admin-suite-grid" id="admin-suite">
         <div class="card"><div class="card__body">
           <div class="admin-panel-head">
-            <div><h3>AI-bewerker</h3><p>Chat met de portal, laat de AI meedenken en zet pagina's, beelden, copy en CMS-wijzigingen klaar als toepasbare acties.</p></div>
-            <span class="badge badge--green-soft">Builder</span>
+            <div><h3>AI Builder/Coder</h3><p>Bouw pagina's, CMS, copy, beelden en controles met een overzichtelijk actieplan voor admins.</p></div>
+            <span class="badge badge--green-soft">Admin AI</span>
           </div>
-          <p class="muted" style="font-size:13px">Werkt met gesprekshistorie, portalcontext, server-bridge, bevestiging bij structurele wijzigingen en versiegeschiedenis.</p>
+          <p class="muted" style="font-size:13px">Met werkmodi, portalcontext, server-bridge, bevestiging bij structurele wijzigingen en versiegeschiedenis.</p>
           <div class="settings-row">
-            <button type="button" class="btn btn--primary btn--sm" id="admin-ai-open">Bouw met AI</button>
+            <button type="button" class="btn btn--primary btn--sm" id="admin-ai-open">Open AI Builder</button>
             <button type="button" class="btn btn--ghost btn--sm" id="admin-edit-mode">Portal in bewerkmodus</button>
           </div>
         </div></div>
@@ -363,10 +363,10 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/i18n.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/data.js?v=20260630-ai-builder-official-assets-1"></script>
 <!-- studio.js alleen voor de live template-telling (definieert PMStudio; init draait niet op deze pagina) -->
-<script src="assets/js/studio.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/studio.js?v=20260630-ai-builder-official-assets-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape;
@@ -588,7 +588,7 @@ window.PM_PAGE_INIT = function () {
         title: title.trim(),
         audience: "Partners",
         status: "draft",
-        intro: "Een nieuwe PlasmaMade-landingspagina. Pas tekst, beeld en blokken aan via de AI-bewerker of het contentbeheer.",
+        intro: "Een nieuwe PlasmaMade-landingspagina. Pas tekst, beeld en blokken aan via de AI Builder of het contentbeheer.",
         blocks: [
           { title: "Heldere informatie", text: "Bundel documenten, campagnes en productinformatie voor een specifieke partnergroep." },
           { title: "Bewaakte huisstijl", text: "Gebruik PlasmaMade-kleuren, Libre Franklin en echte merkassets." },
@@ -636,7 +636,7 @@ window.PM_PAGE_INIT = function () {
       : '';
     document.getElementById("request-count").textContent = open + " open";
     var requestRows = rows.length ? rows.slice(0, 8).map(function (r) {
-      var name = ((r.firstName || "") + " " + (r.lastName || "")).trim() || r.email || "Partner";
+      var name = window.PM_displayName ? window.PM_displayName(r, r.email, r.email || "Partner") : (((r.firstName || "") + " " + (r.lastName || "")).trim() || r.email || "Partner");
       var mailInfo = r.approvalMailAt ? '<div class="admin-item__meta">Bevestigingsmail voorbereid: ' + esc(PM_fmtDate(r.approvalMailAt)) + '</div>' : '';
       var actions = r.status === "approved"
         ? '<button class="btn btn--ghost" data-req-view="' + esc(r.id) + '">Bekijken</button><button class="btn btn--ghost" data-req-mail="' + esc(r.id) + '">Mail opnieuw openen</button><button class="btn btn--ghost" data-req-suspend="' + esc(r.id) + '">Blokkeren</button><button class="btn btn--ghost" data-req-delete="' + esc(r.id) + '">Verwijderen</button>'
@@ -993,8 +993,8 @@ window.PM_PAGE_INIT = function () {
   document.getElementById("support-inbox").innerHTML = tickets.length ? tickets.slice(0, 8).map(function (tk) {
     return '<div class="act-row"><span class="ai">' + PM_ICON("lifebuoy") + '</span><div style="min-width:0">' +
       '<div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(tk.subject || tk.id) + '</div>' +
-      '<div class="muted" style="font-size:12px">' + esc(tk.id) + ' Â· ' + esc(t("admin.ticketMeta", { category: tk.category || "Support", date: PM_fmtDate(tk.createdAt) })) + '</div>' +
-      '<div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc((tk.company || "â€”") + " Â· " + (tk.email || "â€”")) + '</div>' +
+      '<div class="muted" style="font-size:12px">' + esc(tk.id) + ' · ' + esc(t("admin.ticketMeta", { category: tk.category || "Support", date: PM_fmtDate(tk.createdAt) })) + '</div>' +
+      '<div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc((tk.company || "—") + " · " + (tk.email || "—")) + '</div>' +
     '</div><span class="badge ' + (tk.status === "closed" ? "badge--grey" : "badge--green-soft") + '">' + esc(tk.status === "closed" ? t("support.ticketClosed") : t("support.ticketOpen")) + '</span></div>';
   }).join("") : '<p class="muted" style="font-size:13px">' + esc(t("admin.noTickets")) + '</p>';
 
@@ -1029,7 +1029,7 @@ window.PM_PAGE_INIT = function () {
     return {
       naam: p.company || p.name || p.email || "Partner",
       type: roleKey ? t(roleKey) : (p.role === "support" ? t("nav.support") : (p.role || "Partner")),
-      regio: p.email ? String(p.email).split("@")[1] || "â€”" : "â€”",
+      regio: p.email ? String(p.email).split("@")[1] || "—" : "—",
       days: days,
       on: (p.status || "active") === "active"
     };
@@ -1038,14 +1038,14 @@ window.PM_PAGE_INIT = function () {
     partners.push({
       naam: authUser.company || authUser.name || "Partner",
       type: t(PM_roleKey(authUser.role) || "role.dealer"),
-      regio: String(authUser.email).split("@")[1] || "â€”",
+      regio: String(authUser.email).split("@")[1] || "—",
       days: 0,
       on: true
     });
   }
   document.getElementById("partners").innerHTML =
     '<thead><tr><th>' + esc(t("admin.thPartner")) + '</th><th>' + esc(t("admin.thType")) + '</th><th>' + esc(t("admin.thRegion")) + '</th><th>' + esc(t("admin.thLastActive")) + '</th><th>' + esc(t("admin.thStatus")) + '</th></tr></thead><tbody>' +
-    (partners.length ? partners : [{ naam: t("admin.noData"), type: "â€”", regio: "â€”", days: 0, on: false }]).map(function (p) {
+    (partners.length ? partners : [{ naam: t("admin.noData"), type: "—", regio: "—", days: 0, on: false }]).map(function (p) {
       var when = p.days === 0 ? t("admin.agoToday") : t("admin.agoDays", { n: p.days });
       return '<tr><td style="font-weight:600">' + esc(p.naam) + '</td><td>' + esc(p.type) + '</td><td>' + esc(p.regio) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (p.on ? '' : ' off') + '"><i></i>' + esc(t(p.on ? "admin.active" : "admin.inactive")) + '</span></td></tr>';
     }).join("") + '</tbody>';
@@ -1059,7 +1059,7 @@ window.PM_PAGE_INIT = function () {
   }
   function accountDisplayName(row) {
     row = row || {};
-    return ((row.firstName || "") + " " + (row.lastName || "")).trim() || row.name || row.company || row.email || "Partner";
+    return window.PM_displayName ? window.PM_displayName(row, row.email, "Partner") : (((row.firstName || "") + " " + (row.lastName || "")).trim() || row.name || row.company || row.email || "Partner");
   }
   function findRequestByEmail(email) {
     var e = String(email || "").toLowerCase();
@@ -1326,7 +1326,7 @@ window.PM_PAGE_INIT = function () {
           ? '<button type="button" class="btn btn--ghost" data-admin-revoke="' + esc(p.email || "") + '">Admin intrekken</button>'
           : '<button type="button" class="btn btn--ghost" data-admin-grant="' + esc(p.email || "") + '">Admin maken</button>');
         var deleteBtn = fixedAdmin ? "" : '<button type="button" class="btn btn--ghost" data-partner-delete="' + esc(p.email || "") + '">Verwijderen</button>';
-        return '<tr><td style="font-weight:600">' + esc(p.company || p.name || p.email || "Partner") + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-view="' + esc(p.email || "") + '">Bekijken</button><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + deleteBtn + '</div></td></tr>';
+        return '<tr><td style="font-weight:600">' + esc(window.PM_displayName ? window.PM_displayName(p, p.email, "Partner") : (p.company || p.name || p.email || "Partner")) + (isAdm ? ' <span class="badge badge--green-soft">Admin</span>' : '') + '</td><td>' + esc(p.email || "-") + '</td><td>' + esc(adminRoleLabel(p.role)) + '</td><td>' + esc(region) + '</td><td>' + esc(when) + '</td><td><span class="status-dot' + (on ? '' : ' off') + '"><i></i>' + esc(adminPartnerStatus(p.status)) + '</span></td><td><div class="partner-actions"><button type="button" class="btn btn--ghost" data-partner-view="' + esc(p.email || "") + '">Bekijken</button><button type="button" class="btn btn--ghost" data-partner-edit="' + esc(p.email || "") + '">Bewerken</button>' + adminBtn + deleteBtn + '</div></td></tr>';
       }).join("") + '</tbody>';
     document.querySelectorAll("[data-partner-view]").forEach(function (b) { b.addEventListener("click", function () { openAccountView("partner", b.getAttribute("data-partner-view")); }); });
     document.querySelectorAll("[data-partner-edit]").forEach(function (b) { b.addEventListener("click", function () { adminEditPartner(b.getAttribute("data-partner-edit")); }); });
@@ -1398,7 +1398,7 @@ window.PM_PAGE_INIT = function () {
   }
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/sync-config.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/app.js?v=20260630-ai-builder-official-assets-1"></script>
 </body>
 </html>

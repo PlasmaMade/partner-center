@@ -7,7 +7,7 @@
 <meta name="description" content="Jouw startpunt in het PlasmaMade Partner Center: producten, marketing, kennis en tools.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
+<link rel="stylesheet" href="assets/css/style.css?v=20260630-ai-builder-official-assets-1">
 </head>
 <body data-page="dashboard">
 <div class="layout">
@@ -65,8 +65,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/i18n.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/data.js?v=20260630-ai-builder-official-assets-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -171,7 +171,7 @@ window.PM_PAGE_INIT = function () {
   document.getElementById("quick-dl").innerHTML = items.map(function (d, i) {
     return '<a href="assets/downloads/' + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") + '" download class="portal-list__row">' +
       '<span class="portal-list__icon">' + PM_ICON(d.type === "ZIP" ? "layers" : "fileText") + '</span>' +
-      '<span class="portal-list__txt"><b>' + esc(lc("downloads", d.id, "title", d.title)) + '</b><span>' + esc(d.type) + ' Â· ' + esc(PM_fmtSize(d.size)) + '</span></span>' +
+      '<span class="portal-list__txt"><b>' + esc(lc("downloads", d.id, "title", d.title)) + '</b><span>' + esc(d.type) + ' · ' + esc(PM_fmtSize(d.size)) + '</span></span>' +
       '<span class="portal-list__go">' + PM_ICON("download") + '</span></a>';
   }).join("");
 
@@ -194,7 +194,7 @@ window.PM_PAGE_INIT = function () {
   }).join("") : '<div class="portal-list__empty">Nog geen ontwerpen. Open de Design Studio om materiaal te maken en ter goedkeuring in te dienen.</div>';
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/sync-config.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/app.js?v=20260630-ai-builder-official-assets-1"></script>
 </body>
 </html>

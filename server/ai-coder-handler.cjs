@@ -64,17 +64,19 @@ const ACTION_ALIASES = {
 
 const SYSTEM_PROMPT = [
   "Je bent de AI-bewerker in het PlasmaMade Partner Center: een senior Codex-achtige product-, copy- en portalassistent voor beheerders.",
-  "Gedrag: warm, scherp, proactief en concreet. Denk mee zoals een goede collega: vat niet eindeloos samen, stel alleen een korte vervolgvraag als een veilige actie echt niet kan.",
-  "Doel: zet losse vragen om naar toepasbare portal-acties, CMS-concepten, partnerpagina's, copy, beeldwissels of navigatievoorstellen.",
+  "Gedrag: warm, scherp, proactief en concreet. Werk als een rustige senior builder: begrijp de intentie, maak een compact plan, lever daarna toepasbare acties.",
+  "Doel: zet losse vragen om naar overzichtelijke portal-bouwplannen, CMS-concepten, partnerpagina's, copy, beeldwissels, QA-checks of navigatievoorstellen.",
+  "Werkmodi: builder = pagina/sectie bouwen, copy = tekst en tone-of-voice, cms = CMS-item of mediabibliotheek, qa = claims/risico's controleren, code = technisch wijzigingsplan binnen de veilige actiecatalogus.",
   "Werk strikt met de meegegeven portalcontext, bestaande assets, productdata en merkregels. Verzin geen productspecificaties, awards, certificeringen, medische garanties of testresultaten.",
   "PlasmaMade-regels: schrijf PlasmaMade exact zo; primaire kleur #13A538; toon is fris, direct, premium en technisch betrouwbaar; B2B gebruikt bewijs en 'uw'; consumentencopy mag directer zijn.",
   "Toegestane bewezen claims alleen wanneer ze in context staan: min. 10 jaar / 9.000 uur, 97% recyclebaar, tot 98% reductie virussen en bacterien, geen afvoer naar buiten nodig, CE/UKCA/ROHS/RED voor GUC1223/GUC1323, Interflow-resultaten voor AirClean UltraFine.",
   "Als de gebruiker om copy vraagt: lever meteen bruikbare tekst in de juiste taal en zet waar logisch een addPhrase- of createCmsItem-actie klaar.",
   "Als de gebruiker om platformbouw vraagt: maak kleine, veilige acties die de beheerder kan toepassen. Nooit destructief, nooit adminrechten wijzigen, nooit externe scripts injecteren.",
+  "Als de gebruiker om code vraagt: geef geen losse broncode-injectie, maar vertaal de wens naar veilige bestaande portal-acties, CMS-wijzigingen of een duidelijk technisch plan in notes.",
   "Als een actie onzeker is: benoem dat kort in notes en maak liever een concept of navigatievoorstel dan een riskante wijziging.",
-  "Geef uitsluitend JSON terug met reply (string), actions (array), notes (array). Geen markdown buiten JSON.",
+  "Geef uitsluitend JSON terug met reply (string), plan (array), actions (array), notes (array), confidence (string) en mode (string). Geen markdown buiten JSON.",
   "Ondersteunde action types: addSection, addBanner, addCard, addUploadField, replaceImage, rewriteSelectedText, updateSettings, createCustomPage, createDistributorPage, addPhrase, createCmsItem, addMedia, moveSectionBefore, whitespace, navigate.",
-  "Houd actions maximaal 6 items en maak labels menselijk leesbaar. De browser past acties pas toe na bevestiging van de beheerder.",
+  "Houd actions maximaal 6 items en maak labels menselijk leesbaar. Geef elke actie waar mogelijk reason, target en risk mee. De browser past acties pas toe na bevestiging van de beheerder.",
   process.env.PM_AI_EXTRA_PROMPT || ""
 ].filter(Boolean).join("\n");
 
@@ -83,6 +85,21 @@ const RESPONSE_SCHEMA = {
   additionalProperties: false,
   properties: {
     reply: { type: "string" },
+    mode: { type: "string" },
+    confidence: { type: "string" },
+    plan: {
+      type: "array",
+      maxItems: 6,
+      items: {
+        type: "object",
+        additionalProperties: true,
+        properties: {
+          step: { type: "string" },
+          status: { type: "string" },
+          detail: { type: "string" }
+        }
+      }
+    },
     notes: { type: "array", items: { type: "string" } },
     actions: {
       type: "array",
@@ -106,6 +123,10 @@ const RESPONSE_SCHEMA = {
           ctaHref: { type: "string" },
           href: { type: "string" },
           selector: { type: "string" },
+          target: { type: "string" },
+          reason: { type: "string" },
+          risk: { type: "string" },
+          preview: { type: "string" },
           collection: { type: "string" },
           category: { type: "string" },
           product: { type: "string" },
@@ -189,7 +210,7 @@ function sanitizeAction(action) {
   [
     "title", "kicker", "body", "text", "intro", "description", "alt",
     "category", "product", "audience", "status", "lang", "icon", "className",
-    "collection", "selector", "maxWidth", "padding", "spacing"
+    "collection", "selector", "target", "reason", "risk", "preview", "maxWidth", "padding", "spacing"
   ].forEach((key) => {
     if (next[key] != null) next[key] = clampText(next[key], key === "body" || key === "text" || key === "description" ? 1600 : 260);
   });
@@ -214,8 +235,16 @@ function sanitizeResult(raw) {
   let result = raw && typeof raw === "object" ? raw : { reply: String(raw || ""), actions: [] };
   const actions = Array.isArray(result.actions) ? result.actions : [];
   const notes = Array.isArray(result.notes) ? result.notes : [];
+  const plan = Array.isArray(result.plan) ? result.plan : [];
   return {
     reply: clampText(result.reply || result.message || "Ik heb een voorstel klaargezet.", 2400),
+    mode: clampText(result.mode || "", 40),
+    confidence: clampText(result.confidence || "", 40),
+    plan: plan.map((step) => ({
+      step: clampText(step && (step.step || step.title || step.label), 160),
+      status: clampText(step && step.status, 60),
+      detail: clampText(step && (step.detail || step.text || step.body), 260)
+    })).filter((step) => step.step).slice(0, 6),
     actions: actions.map(sanitizeAction).filter(Boolean).slice(0, 8),
     notes: notes.map((note) => clampText(note, 320)).filter(Boolean).slice(0, 8),
     source: "provider"
@@ -279,6 +308,9 @@ function compactPayload(payload) {
   const context = truncateDeep(payload.context || {}, 2200, 0);
   const history = Array.isArray(payload.history) ? payload.history.slice(-12) : [];
   return [
+    "Werkmodus:",
+    clampText(payload.mode || "builder", 80),
+    "",
     "Portalcontext JSON:",
     JSON.stringify(context).slice(0, MAX_CONTEXT_CHARS),
     "",

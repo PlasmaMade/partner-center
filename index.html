@@ -7,7 +7,7 @@
 <meta name="description" content="PlasmaMade Partner Center - alles wat partners, dealers en installateurs nodig hebben om PlasmaMade te begrijpen, presenteren, verkopen en promoten.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
+<link rel="stylesheet" href="assets/css/style.css?v=20260630-ai-builder-official-assets-1">
 </head>
 <body data-page="login">
 <div class="login-wrap">
@@ -150,8 +150,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/i18n.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/data.js?v=20260630-ai-builder-official-assets-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var t = window.PM_t;
@@ -272,7 +272,7 @@ window.PM_PAGE_INIT = function () {
       if (access.request) {
         var status = access.status || "pending";
         PM_AUTH.setUser({
-          name: ((access.request.firstName || "") + " " + (access.request.lastName || "")).trim(),
+          name: window.PM_displayName ? window.PM_displayName(access.request, email, email) : email,
           role: access.request.partnerType || access.request.role || "dealer",
           email: email,
           company: access.request.company || PM_companyFromEmail(email),
@@ -288,7 +288,7 @@ window.PM_PAGE_INIT = function () {
     var local = email.split("@")[0].replace(/[._-]+/g, " ");
     var name = local.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
     var req = access.request || null;
-    if (req) name = ((req.firstName || "") + " " + (req.lastName || "")).trim() || name;
+    if (req) name = window.PM_displayName ? window.PM_displayName(req, email, name) : name;
     var company = (req && req.company) || PM_companyFromEmail(email);
     role = (access.internal || access.admin) ? "internal" : ((req && (req.partnerType || req.role)) || "dealer");
     var now = new Date().toISOString();
@@ -394,7 +394,7 @@ window.PM_PAGE_INIT = function () {
   });
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/sync-config.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/app.js?v=20260630-ai-builder-official-assets-1"></script>
 </body>
 </html>

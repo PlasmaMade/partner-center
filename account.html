@@ -7,7 +7,7 @@
 <meta name="description" content="Beheer je PlasmaMade Partner Center-account, gegevens en voorkeuren.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260629-design-review-overview-6">
+<link rel="stylesheet" href="assets/css/style.css?v=20260630-ai-builder-official-assets-1">
 </head>
 <body data-page="account">
 <div class="layout">
@@ -136,8 +136,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/data.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/i18n.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/data.js?v=20260630-ai-builder-official-assets-1"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var t = window.PM_t, esc = window.PM_escape, icon = window.PM_ICON;
@@ -158,10 +158,10 @@ window.PM_PAGE_INIT = function () {
     if (u.avatar) { var im = document.createElement("img"); im.src = u.avatar; im.alt = ""; av.insertBefore(im, av.firstChild); }
     else { var sp = document.createElement("span"); sp.className = "ini"; sp.textContent = PM_AUTH.initials(u); av.insertBefore(sp, av.firstChild); }
 
-    document.getElementById("acct-name").textContent = u.name || "Partner";
+    document.getElementById("acct-name").textContent = window.PM_displayName ? window.PM_displayName(u, u.email, "Partner") : (u.name || "Partner");
     var roleK = PM_roleKey(u.role);
     document.getElementById("acct-role").textContent = roleK ? t(roleK) : (u.role || "Partner");
-    document.getElementById("acct-company").textContent = u.company ? "Â· " + u.company : "";
+    document.getElementById("acct-company").textContent = u.company ? "· " + u.company : "";
     var meta = [];
     if (u.email) meta.push(["mail", u.email]);
     if (u.phone) meta.push(["phone", u.phone]);
@@ -219,7 +219,7 @@ window.PM_PAGE_INIT = function () {
   function fillForm() {
     var u = PM_AUTH.getUser() || {};
     renderRoleOptions();
-    document.getElementById("f-name").value = u.name || "";
+    document.getElementById("f-name").value = window.PM_displayName ? window.PM_displayName(u, u.email, "") : (u.name || "");
     document.getElementById("f-company").value = u.company || "";
     document.getElementById("f-email").value = u.email || "";
     document.getElementById("f-email").readOnly = true;
@@ -360,7 +360,7 @@ window.PM_PAGE_INIT = function () {
   document.getElementById("acct-tip-finder").innerHTML = icon("filter") + esc(t("nav.finder"));
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260629-design-review-overview-6"></script>
-<script src="assets/js/app.js?v=20260629-design-review-overview-6"></script>
+<script src="assets/js/sync-config.js?v=20260630-ai-builder-official-assets-1"></script>
+<script src="assets/js/app.js?v=20260630-ai-builder-official-assets-1"></script>
 </body>
 </html>

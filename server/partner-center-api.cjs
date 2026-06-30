@@ -110,7 +110,7 @@ function normEmail(email) {
 }
 
 function isLegacyBjonkerenName(email, value) {
-  return normEmail(email) === "bjonkeren@plasmamade.com" && /^bjorn(?:\s+jonkeren)?$/i.test(String(value || "").trim());
+  return normEmail(email) === "bjonkeren@plasmamade.com" && /\bbj[o\u00f6]rn\b/i.test(String(value || "").trim());
 }
 
 function bootstrapDisplayName(existing, admin) {

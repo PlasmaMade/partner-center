@@ -1,6 +1,6 @@
 # PlasmaMade Partner Center
 
-Production-ready Partner Center frontend with a shared sync API for account requests, admin state, partner data, support tickets, designs, CMS edits, portal settings and the admin AI editor.
+Production-ready Partner Center frontend with a shared sync API for account requests, admin state, partner data, support tickets, designs, CMS edits, portal settings and the admin AI Builder/Coder.
 
 ## Run Locally
 
@@ -16,11 +16,11 @@ GitHub Pages can host the static frontend, but it cannot run a backend or databa
 
 - `GET /api/sync` pulls central state.
 - `POST /api/sync` handles `login`, `accountRequest` and authenticated `saveState`.
-- `POST /api/ai-coder` powers the admin AI editor with server-side OpenAI credentials.
+- `POST /api/ai-coder` powers the admin AI Builder/Coder with server-side OpenAI credentials.
 - Data is stored in Neon/Postgres when `DATABASE_URL` is set.
 - Without `DATABASE_URL`, local testing stores data in `server/data/state.json`.
 - Admin sessions use signed tokens; set `PM_SYNC_SECRET` before production.
-- The AI editor requires an admin session token and `OPENAI_API_KEY` on the server. Without a key, the frontend falls back to safe local proposals.
+- The AI Builder/Coder requires an admin session token and `OPENAI_API_KEY` on the server. Without a key, the frontend falls back to safe local proposals with the same builder modes and action-plan UI.
 
 Copy `.env.example` to `.env` on the server and set:
 
