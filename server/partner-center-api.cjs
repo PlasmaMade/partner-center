@@ -1258,9 +1258,12 @@ function serveStatic(req, res, pathname) {
       res.end("Not found");
       return;
     }
+    const ext = path.extname(target).toLowerCase();
+    const hasQuery = String(req.url || "").includes("?");
+    const cacheControl = ext === ".html" || hasQuery ? "no-store, max-age=0" : "public, max-age=60";
     res.writeHead(200, {
-      "content-type": MIME[path.extname(target).toLowerCase()] || "application/octet-stream",
-      "cache-control": pathname.includes("?") ? "no-store" : "public, max-age=60"
+      "content-type": MIME[ext] || "application/octet-stream",
+      "cache-control": cacheControl
     });
     res.end(buf);
   });
