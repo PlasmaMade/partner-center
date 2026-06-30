@@ -65,9 +65,9 @@ const OBJECT_STATE_KEYS = new Set([
 const BOOTSTRAP_ADMINS = [
   {
     email: "bjonkeren@plasmamade.com",
-    name: "Bjorn Jonkeren",
-    firstName: "Bjorn",
-    lastName: "Jonkeren",
+    name: "Bjonkeren",
+    firstName: "",
+    lastName: "Bjonkeren",
     company: "PlasmaMade",
     passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
     passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
@@ -107,6 +107,16 @@ const MIME = {
 
 function normEmail(email) {
   return String(email || "").trim().toLowerCase();
+}
+
+function isLegacyBjonkerenName(email, value) {
+  return normEmail(email) === "bjonkeren@plasmamade.com" && /^bjorn(?:\s+jonkeren)?$/i.test(String(value || "").trim());
+}
+
+function bootstrapDisplayName(existing, admin) {
+  const existingName = existing && existing.name;
+  if (existingName && !isLegacyBjonkerenName(admin && admin.email, existingName)) return existingName;
+  return admin.name;
 }
 
 function nowIso() {
@@ -250,6 +260,7 @@ async function loadDbAsync() {
 
 async function saveDbAsync(db) {
   const normalized = normalizeDb(db);
+  ensureBootstrapState(normalized);
   if (!DATABASE_URL) {
     saveDb(normalized);
     return normalized;
@@ -271,7 +282,12 @@ function sameJson(a, b) {
 }
 
 function requestName(req) {
-  return ((req && req.firstName || "") + " " + (req && req.lastName || "")).trim() || (req && (req.name || req.email)) || "Partner";
+  const name = ((req && req.firstName || "") + " " + (req && req.lastName || "")).trim() || (req && (req.name || req.email)) || "Partner";
+  if (isLegacyBjonkerenName(req && req.email, name)) {
+    const admin = bootstrapAdminForEmail(req && req.email);
+    return (admin && admin.name) || "Bjonkeren";
+  }
+  return name;
 }
 
 function companyFromEmail(email) {
@@ -297,7 +313,7 @@ function bootstrapGrant(existing, admin) {
   return Object.assign({}, existing || {}, {
     id: (existing && existing.id) || admin.grantId,
     email: admin.email,
-    name: (existing && existing.name) || admin.name,
+    name: bootstrapDisplayName(existing, admin),
     source: "bootstrap_admin",
     grantedBy: (existing && existing.grantedBy) || "system",
     grantedAt: (existing && existing.grantedAt) || admin.createdAt
@@ -308,7 +324,7 @@ function bootstrapPartner(existing, admin) {
   admin = admin || bootstrapAdminForEmail(existing && existing.email) || BOOTSTRAP_ADMINS[0];
   return Object.assign({}, existing || {}, {
     id: (existing && existing.id) || admin.partnerId,
-    name: admin.name,
+    name: bootstrapDisplayName(existing, admin),
     email: admin.email,
     company: admin.company,
     country: (existing && existing.country) || "Nederland",
@@ -325,6 +341,8 @@ function bootstrapPartner(existing, admin) {
 
 function upsertByEmail(rows, row) {
   const email = normEmail(row.email);
+  const admin = bootstrapAdminForEmail(email);
+  if (row && isLegacyBjonkerenName(email, row.name)) row = Object.assign({}, row, { name: (admin && admin.name) || "Bjonkeren" });
   const list = Array.isArray(rows) ? rows.slice() : [];
   const idx = list.findIndex((item) => normEmail(item && item.email) === email);
   if (idx > -1) list[idx] = Object.assign({}, list[idx], row, { email });
@@ -891,6 +909,7 @@ function applyStatePatch(db, patch, auth, baseUpdatedAt) {
       state.pm_support_tickets = mergeRowsByOwner(state.pm_support_tickets, incoming.pm_support_tickets, auth.email, "email").slice(0, 1000);
     }
   }
+  ensureBootstrapState(db);
   addAudit(state, "remote_state_saved", auth.email, { admin: actorAdmin, staleMerge: staleAdminSave, keys: Object.keys(incoming).filter((key) => CENTRAL_STATE_KEYS.includes(key)) }, auth.email);
   db.updatedAt = nowIso();
 }
