@@ -139,7 +139,7 @@ window.PM_LOCALES.de = {
     "login.hintCta": "Zugang anfragen",
     "login.accessNote": "Geschützter Zugang für PlasmaMade Partner. Kontoanfragen und Admin-Änderungen werden zentral verarbeitet.",
     "login.privacy": "Ihre Anfrage is securely sent to PlasmaMade und then becomes visible to administratoders.",
-    "dash.greetMorning": "Good moderning",
+    "dash.greetMorning": "Guten Morgen",
     "dash.greetAfternoon": "Guten Tag",
     "dash.greetEvening": "Guten Abend",
     "dash.heroIntro": "Alles für Produktberatung, Vertrieb, Marketing und Support. Übersichtlich, aktuell und vollständig im PlasmaMade-Stil.",
