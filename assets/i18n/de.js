@@ -1,6 +1,6 @@
 /* ============================================================
    PlasmaMade Partner Center - Language file: German (de)
-   Generated from assets/i18n/en.js by tools/build-de-locale.cjs.
+   Professionally edited German locale.
    Structure mirrors assets/i18n/nl.js exactly.
    "content" overlays the Dutch source data in assets/js/data.js.
    ============================================================ */
@@ -25,17 +25,17 @@ window.PM_LOCALES.de = {
     "nav.support": "Kontakt & Support",
     "nav.admin": "Admin & Analysen",
     "nav.account": "Mein Konto",
-    "grp.overview": "Ubersicht",
+    "grp.overview": "Übersicht",
     "grp.kp": "Wissen & Produkt",
     "grp.ms": "Marketing & Vertrieb",
     "grp.fb": "Dateien & Nachweise",
     "grp.uh": "Updates & Hilfe",
     "grp.admin": "Admin",
     "grp.account": "Konto",
-    "role.dealer": "Handler",
+    "role.dealer": "Händler",
     "role.distributor": "Distributor",
     "role.installer": "Installateur",
-    "role.studio": "Kuchenstudio / Handler",
+    "role.studio": "Küchenstudio / Händler",
     "role.retailpartner": "Retail-Partner",
     "role.international": "Internationaler Partner",
     "role.marketing": "Marketing",
@@ -45,28 +45,28 @@ window.PM_LOCALES.de = {
     "role.internal": "Interner Mitarbeiter",
     "ui.search": "Partner Center durchsuchen...",
     "ui.logout": "Vom Partner Center abmelden",
-    "ui.logoutConfirm": "Mochten Sie sich vom Partner Center abmelden?",
+    "ui.logoutConfirm": "Möchten Sie sich vom Partner Center abmelden?",
     "ui.logoutBtn": "Abmelden",
     "ui.help": "Brauchen Sie Hilfe?",
     "ui.helpText": "Fragen zu Produkten oder Materialien? Wir helfen gern.",
     "ui.helpLink": "Kontakt & Support",
     "ui.skip": "Zum Inhalt springen",
     "ui.lang": "Sprache",
-    "ui.langNote": "Interface in Niederlandisch, Englisch und Deutsch. Dokumente bleiben in der jeweils angegebenen Dokumentsprache verfugbar.",
+    "ui.langNote": "Benutzeroberfläche auf Niederländisch, Englisch und Deutsch. Dokumente bleiben in der jeweils angegebenen Dokumentsprache verfügbar.",
     "ui.langLoadError": "Die Sprache konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
-    "ui.noResults": "Keine Ergebnisse fur",
+    "ui.noResults": "Keine Ergebnisse für",
     "ui.noResultsHint": "Versuchen Sie einen anderen Suchbegriff, zum Beispiel einen Produktnamen oder ein Thema.",
-    "ui.menu": "Menu offnen oder schliessen",
+    "ui.menu": "Menü öffnen oder schließen",
     "ui.mainNav": "Hauptnavigation",
-    "ui.accountMenu": "Kontomenu",
+    "ui.accountMenu": "Kontomenü",
     "ui.myAccount": "Mein Konto",
     "ui.preferences": "Einstellungen",
     "ui.helpSupport": "Hilfe & Support",
     "common.cancel": "Abbrechen",
-    "common.confirm": "Bestatigen",
-    "common.open": "Offnen",
-    "common.close": "Schliessen",
-    "common.back": "Zuruck",
+    "common.confirm": "Bestätigen",
+    "common.open": "Öffnen",
+    "common.close": "Schließen",
+    "common.back": "Zurück",
     "common.copy": "Kopieren",
     "common.copied": "Kopiert",
     "common.copiedClip": "In die Zwischenablage kopiert",
@@ -75,45 +75,45 @@ window.PM_LOCALES.de = {
     "common.new": "Neu",
     "common.notFound": "Nicht gefunden",
     "common.notFoundText": "Dieses Element existiert nicht mehr oder wurde verschoben.",
-    "common.backOverview": "Zuruck zur Ubersicht",
+    "common.backOverview": "Zurück zur Übersicht",
     "common.readMore": "Mehr lesen",
     "common.viewAll": "Alle anzeigen",
-    "common.openStudio": "Design Studio offnen",
+    "common.openStudio": "Design Studio öffnen",
     "common.print": "Drucken",
-    "common.reset": "Filter loschen",
+    "common.reset": "Filter löschen",
     "common.share": "Teilen",
     "common.copyLink": "Link kopieren",
     "common.linkCopied": "Link in die Zwischenablage kopiert",
     "common.tip": "Tipp:",
     "common.video": "Video",
-    "common.favAdd": "Zu Favoriten hinzufugen",
+    "common.favAdd": "Zu Favoriten hinzufügen",
     "common.favRemove": "Aus Favoriten entfernen",
-    "common.favAdded": "Zu Favoriten hinzugefugt",
+    "common.favAdded": "Zu Favoriten hinzugefügt",
     "common.favRemoved": "Aus Favoriten entfernt",
     "common.updated": "Aktualisiert",
     "common.minRead": "{n} Min. Lesezeit",
     "common.language": "Sprache",
     "common.docLang": "Dokumentsprache",
     "common.multilingual": "Mehrsprachig",
-    "common.fileMissing": "Diese Datei ist derzeit nicht verfugbar. Bitte kontaktieren Sie marketing@plasmamade.com.",
+    "common.fileMissing": "Diese Datei ist derzeit nicht verfügbar. Bitte kontaktieren Sie marketing@plasmamade.com.",
     "common.demoData": "Portaldaten",
     "common.loading": "Wird geladen...",
-    "login.docTitle": "Anmelden — PlasmaMade Partner Center",
+    "login.docTitle": "Anmelden - PlasmaMade Partner Center",
     "login.eyebrow": "Partner Center",
     "login.headline": "PlasmaMade Partner Center",
-    "login.intro": "Ein zentraler Ort fur Produktinformationen, Marketingmaterialien, Vertriebstools, Support und PlasmaMade-konformes Design.",
+    "login.intro": "Ein zentraler Ort für Produktinformationen, Marketingmaterialien, Vertriebstools, Support und PlasmaMade-konformes Design.",
     "login.feat1": "Produktinformationen & Dokumentation",
     "login.feat2": "Marketingmaterialien & Markenassets",
     "login.feat3": "Vertriebstools & Support",
-    "login.feat4": "Geschutzte PlasmaMade-Markenidentitat",
-    "login.welcome": "Willkommen zuruck",
+    "login.feat4": "Geschützte PlasmaMade-Markenidentität",
+    "login.welcome": "Willkommen zurück",
     "login.sub": "Melden Sie sich im PlasmaMade Partner Center an.",
     "login.email": "E-Mail-Adresse",
     "login.emailPh": "sie@firma.de",
     "login.password": "Passwort",
     "login.showPw": "Passwort anzeigen",
     "login.hidePw": "Passwort ausblenden",
-    "login.role": "Ich bin...",
+    "login.role": "Ich bin ...",
     "login.tabLogin": "Anmelden",
     "login.tabRequest": "Konto beantragen",
     "login.roleNote": "Ihre Rolle wird durch die genehmigte Partneranfrage festgelegt. Adminrechte werden separat von PlasmaMade vergeben.",
@@ -127,24 +127,24 @@ window.PM_LOCALES.de = {
     "login.reqPhone": "Telefonnummer",
     "login.reqType": "Partnertyp",
     "login.reqWebsite": "Website",
-    "login.reqReason": "Grund der Anfrage",
+    "login.reqReason": "Gründ der Anfrage",
     "login.reqSubmit": "Anfrage senden",
     "login.submit": "Anmelden",
     "login.submitting": "Anmelden...",
-    "login.forgot": "Fodergot Ihre passwoderd?",
-    "login.forgotSubject": "Fodergot passwoderd — Partner Center",
-    "login.errEmail": "Bitte enter a valid email address.",
-    "login.errPassword": "Bitte enter Ihre passwoderd (at least 6 characters).",
-    "login.hint": "Exclusive access foder PlasmaMade Partner, dealers und Installeateurs. Keine Konto yet?",
-    "login.hintCta": "Anfrage access",
-    "login.accessNote": "Secure access foder PlasmaMade Partner. Konto Anfrages und admin changes are processed centralley.",
+    "login.forgot": "Passwort vergessen?",
+    "login.forgotSubject": "Passwort vergessen - Partner Center",
+    "login.errEmail": "Geben Sie bitte eine gültige E-Mail-Adresse ein.",
+    "login.errPassword": "Geben Sie bitte Ihr Passwort ein (mindestens 6 Zeichen).",
+    "login.hint": "Exklusiver Zugang für PlasmaMade Partner, Händler und Installateure. Noch kein Konto?",
+    "login.hintCta": "Zugang anfragen",
+    "login.accessNote": "Geschützter Zugang für PlasmaMade Partner. Kontoanfragen und Admin-Änderungen werden zentral verarbeitet.",
     "login.privacy": "Ihre Anfrage is securely sent to PlasmaMade und then becomes visible to administratoders.",
     "dash.greetMorning": "Good moderning",
     "dash.greetAfternoon": "Guten Tag",
     "dash.greetEvening": "Guten Abend",
-    "dash.heroIntro": "Everything foder Produkt advice, sales, marketing und Suppodert. Calm, aktuell und fully in PlasmaMade style.",
-    "dash.heroCtaFinder": "Find the right Filter",
-    "dash.heroCtaStudio": "Design Studio offnen",
+    "dash.heroIntro": "Alles für Produktberatung, Vertrieb, Marketing und Support. Übersichtlich, aktuell und vollständig im PlasmaMade-Stil.",
+    "dash.heroCtaFinder": "Passenden Filter finden",
+    "dash.heroCtaStudio": "Design Studio öffnen",
     "dash.heroCtaMarketing": "Anzeigen marketing Materialien",
     "dash.statProducts": "Produkte",
     "dash.statProductsSub": "mit full specifications",
@@ -154,7 +154,7 @@ window.PM_LOCALES.de = {
     "dash.statVideosSub": "linked to Produkte",
     "dash.statTestdocs": "Testdokumente",
     "dash.statTestdocsSub": "independent Nachweis",
-    "dash.forYou": "Recommended foder you",
+    "dash.forYou": "Für Sie empfohlen",
     "dash.quick": "Schnellzugriff",
     "dash.featProducts": "Produkt advice",
     "dash.allProducts": "Alle Produkte",
@@ -162,41 +162,41 @@ window.PM_LOCALES.de = {
     "dash.allNews": "Alle anzeigen",
     "dash.featCampaign": "Featured Kampagne",
     "dash.quickDownloads": "Meist genutzt",
-    "dash.allDownloads": "Alle herunterladens",
+    "dash.allDownloads": "Alle Downloads",
     "dash.recentViewed": "Zuletzt angesehen",
-    "dash.recentEmpty": "Neinthing viewed yet. Everything Sie offnen will appear here.",
+    "dash.recentEmpty": "Noch nichts angesehen. Alles, was Sie öffnen, erscheint hier.",
     "dash.favorites": "Favoriten",
-    "dash.favoritesEmpty": "Keine favourites yet. Verwenden Sie the star on a Produkt page to speichern something.",
+    "dash.favoritesEmpty": "Noch keine Favoriten. Markieren Sie Produkte oder Inhalte mit dem Stern, um sie hier zu speichern.",
     "dash.tile.products.t": "Produktinformationen",
     "dash.tile.products.d": "Specifications, benefits, Anwendungen und sales arguments.",
     "dash.tile.finder.t": "Filter-Finder",
-    "dash.tile.finder.d": "Find the right Filter foder any situation in just a few clicks.",
+    "dash.tile.finder.d": "Finden Sie mit wenigen Klicks den passenden Filter für jede Situation.",
     "dash.tile.knowledge.t": "Wissensdatenbank",
     "dash.tile.knowledge.d": "Clear explanations of Luftqualitat, technology und sustainability.",
     "dash.tile.videos.t": "Videoanleitungen",
-    "dash.tile.videos.d": "Official videos, linked to Produkt und topic.",
+    "dash.tile.videos.d": "Offizielle Videos, verknüpft mit Produkt und Thema.",
     "dash.tile.marketing.t": "Marketingmaterialien",
-    "dash.tile.marketing.d": "Brochures, social visuals, banners, renders und modere.",
+    "dash.tile.marketing.d": "Broschüren, Social-Media-Visuals, Banner, Renderings und mehr.",
     "dash.tile.campaigns.t": "Kampagnen",
-    "dash.tile.campaigns.d": "Aktuell Kampagnen mit captions, visuals und planning.",
+    "dash.tile.campaigns.d": "Aktuelle Kampagnen mit Textvorschlägen, Visuals und Planung.",
     "dash.tile.sales.t": "Vertriebstools",
-    "dash.tile.sales.d": "Pitches, arguments per audience und customer Fragen.",
+    "dash.tile.sales.d": "Pitches, Argumente pro Zielgruppe und Antworten auf Kundenfragen.",
     "dash.tile.studio.t": "Design Studio",
     "dash.tile.studio.d": "Erstellen on-Marke Materialien mit protected PlasmaMade styling.",
     "dash.tile.downloads.t": "Downloads",
-    "dash.tile.downloads.d": "Alle files, Filtered by type, language und Produkt.",
+    "dash.tile.downloads.d": "Alle Dateien, gefiltert nach Typ, Sprache und Produkt.",
     "dash.tile.testdocs.t": "Testdokumente",
-    "dash.tile.testdocs.d": "Independent Nachweis: Interflow, TÜV, VDE und modere.",
+    "dash.tile.testdocs.d": "Unabhängige Nachweise: Interflow, TÜV, VDE und mehr.",
     "dash.tile.news.t": "Neuigkeiten & Updates",
-    "dash.tile.news.d": "Produkt updates, trade fairs und partner neus.",
+    "dash.tile.news.d": "Produktupdates, Messen und Partnerneuigkeiten.",
     "dash.tile.support.t": "Kontakt & Support",
-    "dash.tile.support.d": "Fragen? We're happy to help.",
-    "dash.roleIntro.dealer": "Foder dealers: sales arguments, comparisons und aktuell Kampagne Materialien.",
-    "dash.roleIntro.distributor": "Foder distributoders: the full Produkt line, documentation und international Materialien.",
-    "dash.roleIntro.installer": "Foder Installeateurs: Installeation infodermation, technology sheets und Produkt specifications.",
-    "dash.roleIntro.studio": "Foder Kuche studios und Retailers: premium Prasentation Materialien und the Produkt selectoder.",
-    "dash.roleIntro.internal": "Foder internal employees: administration, Analysen und the full content library.",
-    "products.intro": "Everything about the PlasmaMade Produkt line: specifications, benefits, Anwendungen, target groups, Installeation und sales arguments. Click through to a Produkt foder the full infodermation.",
+    "dash.tile.support.d": "Fragen? Wir helfen gern.",
+    "dash.roleIntro.dealer": "Für Händler: Verkaufsargumente, Vergleiche und aktuelle Kampagnenmaterialien.",
+    "dash.roleIntro.distributor": "Für Distributoren: die vollständige Produktlinie, Dokumentation und internationale Materialien.",
+    "dash.roleIntro.installer": "Für Installateure: Montageinformationen, Technikblätter und Produktspezifikationen.",
+    "dash.roleIntro.studio": "Für Küchenstudios und Händler: hochwertige Präsentationsmaterialien und der Produktberater.",
+    "dash.roleIntro.internal": "Für interne Mitarbeiter: Administration, Analysen und die vollständige Content-Bibliothek.",
+    "products.intro": "Alles über die PlasmaMade-Produktlinie: Spezifikationen, Vorteile, Anwendungen, Zielgruppen, Montage und Verkaufsargumente. Öffnen Sie ein Produkt für alle Details.",
     "products.searchPh": "Suchen by Produkt name oder type…",
     "products.count": "{n} Produkte",
     "products.countOne": "1 Produkt",
@@ -209,68 +209,68 @@ window.PM_LOCALES.de = {
     "products.guideProduct": "Recommended Produkt",
     "products.guide1": "Modern designer oder walle-mounted Dunstabzugshaube (Ø122/126 oder Ø147/151 mm)",
     "products.guide2": "Smalleer oder existing Dunstabzugshaube (Ø100 mm, up to 600 m³/h)",
-    "products.guide3": "Hob mit integriertem Abzug (offnen Kuche)",
-    "products.guide4": "Large oder professional space (Buro, Gesundheitswesen, Gastronomie, Schule)",
-    "products.guide5": "Personal woderkspace oder smalle room",
+    "products.guide3": "Kochfeld mit integriertem Abzug (offene Küche)",
+    "products.guide4": "Großer oder professioneller Raum (Büro, Gesundheitswesen, Gastronomie, Schule)",
+    "products.guide5": "Persönlicher Arbeitsplatz oder kleiner Raum",
     "products.cmpTitle": "Schnellvergleich",
-    "products.cmpFull": "Vollstandiger Vergleich",
+    "products.cmpFull": "Vollständiger Vergleich",
     "products.cmpFeature": "Merkmal",
     "products.ctaTitle": "Which Filter fits which hood?",
-    "products.ctaText": "Verwenden Sie the Filter Finder foder instant advice, oder Kontakt marketing foder a tailodered recommendation.",
-    "products.ctaBtn": "Offnen the Filter Finder",
-    "products.ctaBtn2": "Ask foder advice",
-    "finder.intro": "Answer a few shodert Fragen und discover which PlasmaMade Filter best fits Ihre customer's situation — including the reasoning und a link to the Produkt page.",
+    "products.ctaText": "Nutzen Sie den Filter-Finder für eine direkte Empfehlung oder kontaktieren Sie Marketing für eine individuelle Beratung.",
+    "products.ctaBtn": "Filter-Finder öffnen",
+    "products.ctaBtn2": "Beratung anfragen",
+    "finder.intro": "Beantworten Sie einige kurze Fragen und finden Sie den PlasmaMade-Filter, der am besten zur Situation Ihres Kunden passt — inklusive Begründung und Link zur Produktseite.",
     "finder.step": "Schritt {n} von {total}",
-    "finder.back": "Zuruck",
+    "finder.back": "Zurück",
     "finder.restart": "Neu starten",
     "finder.help": "Lieber direkt personliche Beratung?",
-    "finder.q.where": "Where do Sie want to clean the air?",
-    "finder.q.hood": "What kind of extraction is in the Kuche?",
-    "finder.q.room": "Wie gross ist der professionelle Raum?",
-    "finder.opt.kitchen.t": "In the Kuche",
-    "finder.opt.kitchen.d": "Cooker hood oder hob mit built-in extraction — at home oder in a Kuche studio.",
+    "finder.q.where": "Wo soll die Luft gereinigt werden?",
+    "finder.q.hood": "Welche Art von Abzug gibt es in der Küche?",
+    "finder.q.room": "Wie groß ist der professionelle Raum?",
+    "finder.opt.kitchen.t": "In der Küche",
+    "finder.opt.kitchen.d": "Dunstabzugshaube oder Kochfeld mit integriertem Abzug — zu Hause oder im Küchenstudio.",
     "finder.opt.pro.t": "In einem professionellen Raum",
-    "finder.opt.pro.d": "Buro, Gesundheitswesen, Gastronomie, Schule, Retail oder spoderts facility.",
-    "finder.opt.desk.t": "At a woderkspace oder smalle room",
+    "finder.opt.pro.d": "Büro, Gesundheitswesen, Gastronomie, Schule, Retail oder Sportstätte.",
+    "finder.opt.desk.t": "Am Arbeitsplatz oder in einem kleinen Raum",
     "finder.opt.desk.d": "Desk, reception oder treatment room — a personal clean-air zone.",
     "finder.opt.design.t": "Design oder walle Dunstabzugshaube",
     "finder.opt.design.d": "Round connection Ø122/126 oder Ø147/151 mm, up to 1,000 m³/h.",
     "finder.opt.compact.t": "Existing oder compact hood (Ø100 mm)",
     "finder.opt.compact.d": "Smalleer Dunstabzugshaube mit a round Ø100 mm connection, up to 600 m³/h.",
     "finder.opt.downdraft.t": "Hob mit integriertem Abzug",
-    "finder.opt.downdraft.d": "Downdraft extraction in the woderktop — offnen Kuche, keine separate hood.",
+    "finder.opt.downdraft.d": "Downdraft-Abzug in der Arbeitsplatte — offene Küche, keine separate Haube.",
     "finder.opt.unknown.t": "Ich bin mir nicht sicher",
-    "finder.opt.unknown.d": "Keine problem — we'll show the most universal Filter und help Sie further.",
+    "finder.opt.unknown.d": "Kein Problem — wir zeigen den universellsten Filter und helfen weiter.",
     "finder.opt.small.t": "Smalle space (20 – 50 m²)",
-    "finder.opt.small.d": "Consulting room, treatment room, smalle Buro oder waiting area.",
+    "finder.opt.small.d": "Beratungsraum, Behandlungsraum, kleines Büro oder Wartebereich.",
     "finder.opt.medium.t": "Mittlerer Raum (50-150 m²)",
-    "finder.opt.medium.d": "Offnen-plan Buro, classroom, Gastronomie venue oder Retail space.",
-    "finder.opt.large.t": "Grosser Raum (> 150 m²)",
-    "finder.opt.large.d": "Spoderts halle, large Retail oder offnen Buro — multiple units.",
-    "finder.unitsNote": "Foder spaces larger than 150 m² we recommend multiple units. PlasmaMade will gladly calculate the right configuration foder you.",
+    "finder.opt.medium.d": "Großraumbüro, Klassenzimmer, Gastronomiefläche oder Retail-Fläche.",
+    "finder.opt.large.t": "Großer Raum (> 150 m²)",
+    "finder.opt.large.d": "Sporthalle, große Retail-Fläche oder offenes Büro — mehrere Geräte.",
+    "finder.unitsNote": "Für Räume über 150 m² empfehlen wir mehrere Geräte. PlasmaMade berechnet gern die passende Konfiguration.",
     "finder.result.match": "Beste Empfehlung",
     "finder.result.advice": "Unsere Empfehlung",
     "finder.result.cta": "Anzeigen this Produkt",
     "finder.result.sheet": "Produktblatt",
-    "finder.result.why": "Why this Filter fits",
+    "finder.result.why": "Warum dieser Filter passt",
     "finder.result.specs": "Wichtigste Spezifikationen",
-    "finder.result.alt": "Also woderth considering",
+    "finder.result.alt": "Ebenfalls interessant",
     "finder.result.contact": "Anfrage personal advice",
-    "finder.reason.guc1223.1": "Fits almost any design und walle Dunstabzugshaube thanks to two connection sizes (Ø122/126 und Ø147/151 mm).",
-    "finder.reason.guc1223.2": "Woderks on Umluft — keine outside exhaust needed, ideal foder apartments und renovations.",
-    "finder.reason.guc1223.3": "The most chosen E-Filter und our flagship: up to 1,000 m³/h und a 10–15 year Lebensdauer.",
-    "finder.reason.guc1212.1": "Made specificalley foder an existing, smalleer hood mit a round Ø100 mm connection.",
-    "finder.reason.guc1212.2": "The same proven plasma und ESD technology as the flagship, in a compact fodermat.",
-    "finder.reason.guc1212.3": "Turns any Umluft hood into a full solution — up to 600 m³/h, ohne remodelling.",
-    "finder.reason.guc1323.1": "The dedicated Filter foder a hob mit integrated (downdraft) extraction.",
-    "finder.reason.guc1323.2": "Flat design — concealed under the plinth oder on the walle.",
-    "finder.reason.guc1323.3": "Preserves the clean look of the offnen Kuche, up to 1,000 m³/h.",
-    "finder.reason.airclean-ultrafine.1": "Cleanroom quality (ISO 6/7) foder professional spaces — proven by the Interflow test.",
+    "finder.reason.guc1223.1": "Passt auf die meisten Design- und Wandhauben dank Ø122/126- und Ø147/151-mm-Anschluss.",
+    "finder.reason.guc1223.2": "Arbeitet mit Umluft — keine Abluft nach außen nötig, ideal für Wohnungen und Renovierungen.",
+    "finder.reason.guc1223.3": "Der meistgewählte E-Filter und unser Flaggschiff: bis 1.000 m³/h und 10–15 Jahre Lebensdauer.",
+    "finder.reason.guc1212.1": "Speziell für eine bestehende, kleinere Haube mit rundem Ø100-mm-Anschluss entwickelt.",
+    "finder.reason.guc1212.2": "Dieselbe bewährte Plasma- und ESD-Technologie wie beim Flaggschiff, im kompakten Format.",
+    "finder.reason.guc1212.3": "Macht jede Umlufthaube zur vollwertigen Lösung - bis 600 m³/h, ohne Umbau.",
+    "finder.reason.guc1323.1": "Der spezielle Filter für Kochfelder mit integriertem Downdraft-Abzug.",
+    "finder.reason.guc1323.2": "Flaches Design — unsichtbar unter dem Sockel oder an der Wand montiert.",
+    "finder.reason.guc1323.3": "Erhält die klare Optik der offenen Küche, bis 1.000 m³/h.",
+    "finder.reason.airclean-ultrafine.1": "Reinraumqualität (ISO 6/7) für professionelle Räume — belegt durch den Interflow-Test.",
     "finder.reason.airclean-ultrafine.2": "ESP + ESD: up to 98% of Viren und Bakterien und up to 85% of Feinstaub removed.",
-    "finder.reason.airclean-ultrafine.3": "Plug-und-play und low-maintenance: simply clean the ESP Plattenmodul in the dishwasher.",
-    "finder.reason.table-air-cleaner.1": "A personal clean-air zone foder a desk, reception oder treatment room.",
-    "finder.reason.table-air-cleaner.2": "Plug & play — instant saubere Luft in the immediate surroundings, keine Installeation.",
-    "finder.reason.table-air-cleaner.3": "Quiet und low-maintenance mit a reusable Filter module.",
+    "finder.reason.airclean-ultrafine.3": "Plug-and-play und wartungsarm: Das ESP-Plattenmodul wird einfach in der Spülmaschine gereinigt.",
+    "finder.reason.table-air-cleaner.1": "Eine persönliche Clean-Air-Zone für Schreibtisch, Empfang oder Behandlungsraum.",
+    "finder.reason.table-air-cleaner.2": "Plug & play — sofort saubere Luft in der direkten Umgebung, ohne Installation.",
+    "finder.reason.table-air-cleaner.3": "Leise und wartungsarm mit wiederverwendbarem Filtermodul.",
     "account.intro": "Manage Ihre profile, preferences und security. Ihre data is kept safely in this browser.",
     "account.editProfile": "Profile Details",
     "account.profileSub": "Update Ihre name, Unternehmen und Kontakt Details.",
@@ -280,46 +280,46 @@ window.PM_LOCALES.de = {
     "account.fldPhone": "Telefon",
     "account.phonePh": "+31 …",
     "account.fldRole": "Funktion / Rolle",
-    "account.save": "Speichern changes",
+    "account.save": "Änderungen speichern",
     "account.saved": "Profil aktualisiert",
-    "account.errName": "Bitte enter Ihre name.",
-    "account.errEmail": "Bitte enter a valid email address.",
+    "account.errName": "Geben Sie bitte Ihren Namen ein.",
+    "account.errEmail": "Geben Sie bitte eine gültige E-Mail-Adresse ein.",
     "account.memberSince": "Mitglied seit {date}",
-    "account.photoTooBig": "Image too large — choose a smalleer file.",
+    "account.photoTooBig": "Bild zu groß — wählen Sie eine kleinere Datei.",
     "account.photoSaved": "Profilfoto aktualisiert",
     "account.prefsTitle": "Einstellungen",
-    "account.prefsSub": "Set up Ihre woderkspace.",
+    "account.prefsSub": "Richten Sie Ihren Arbeitsbereich ein.",
     "account.prefLang": "Sprache der Oberflache",
     "account.prefStart": "Startseite nach dem Login",
     "account.prefsSaved": "Preference speichernd",
-    "account.notifTitle": "Neintifications",
+    "account.notifTitle": "Benachrichtigungen",
     "account.notifEmail": "E-Mail-Updates",
-    "account.notifEmailSub": "Impodertierenant announcements und changes by email.",
+    "account.notifEmailSub": "Wichtige Ankündigungen und Änderungen per E-Mail.",
     "account.notifProduct": "Produkt & document updates",
-    "account.notifProductSub": "Alerts foder neu Produkte, sheets und Hundbuchs.",
+    "account.notifProductSub": "Benachrichtigungen zu neuen Produkten, Datenblättern und Handbüchern.",
     "account.notifCampaign": "Kampagne tips",
-    "account.notifCampaignSub": "Seasonal und promotional tips foder Ihre marketing.",
+    "account.notifCampaignSub": "Saisonale und verkaufsfördernde Tipps für Ihr Marketing.",
     "account.securityTitle": "Sicherheit",
-    "account.securitySub": "Change Ihre passwoderd und manage Ihre session.",
-    "account.newPw": "Neu passwoderd",
+    "account.securitySub": "Ändern Sie Ihr Passwort und verwalten Sie Ihre Sitzung.",
+    "account.newPw": "Neues Passwort",
     "account.confirmPw": "Passwort wiederholen",
     "account.pwHint": "Mindestens 8 Zeichen.",
-    "account.updatePw": "Update passwoderd",
-    "account.pwUpdated": "Passwoderd updated",
-    "account.pwMismatch": "The passwoderds do not match.",
-    "account.pwTooShort": "Verwenden Sie at least 8 characters.",
+    "account.updatePw": "Passwort aktualisieren",
+    "account.pwUpdated": "Passwort aktualisiert",
+    "account.pwMismatch": "Die Passwörter stimmen nicht überein.",
+    "account.pwTooShort": "Verwenden Sie mindestens 8 Zeichen.",
     "account.sessionTitle": "Aktiv session",
     "account.sessionText": "Angemeldet auf {device}",
     "account.dataTitle": "Konto data",
-    "account.dataSub": "Expodertieren oder clear the data stodered localley in this browser.",
-    "account.exportTitle": "Expodertieren my data",
+    "account.dataSub": "Exportieren oder löschen Sie die lokal in diesem Browser gespeicherten Daten.",
+    "account.exportTitle": "Meine Daten exportieren",
     "account.exportSub": "Herunterladen alle Ihre local data as a JSON file.",
     "account.exportBtn": "Exportieren",
-    "account.exportDone": "Data expodertierened",
-    "account.clearTitle": "Lokale Daten loschen",
-    "account.clearSub": "Entfernens designs, favourites, hochladens und statistics from this browser.",
-    "account.clearBtn": "Loschen",
-    "account.clearConfirm": "Are Sie sure Sie want to clear Ihre local designs, favourites, hochladens und statistics? This cannot be undone.",
+    "account.exportDone": "Daten exportiert",
+    "account.clearTitle": "Lokale Daten löschen",
+    "account.clearSub": "Entfernt Designs, Favoriten, Uploads und Statistiken aus diesem Browser.",
+    "account.clearBtn": "Löschen",
+    "account.clearConfirm": "Möchten Sie Ihre lokalen Designs, Favoriten, Uploads und Statistiken wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
     "account.cleared": "Lokale Daten geloscht",
     "account.activityTitle": "Ihre activity",
     "account.actDesigns": "Speichernd designs",
@@ -328,109 +328,109 @@ window.PM_LOCALES.de = {
     "account.actFavoritesSub": "Produkte und articles",
     "account.actDownloads": "Downloads",
     "account.actDownloadsSub": "In diesem Browser gezahlt",
-    "account.actTickets": "Suppodert Anfrages",
-    "account.actTicketsSub": "Registered through Kontakt & Suppodert",
+    "account.actTickets": "Supportanfragen",
+    "account.actTicketsSub": "Registriert über Kontakt & Support",
     "account.actRecent": "Zuletzt angesehen",
-    "account.actRecentSub": "Most recently offnened items",
-    "account.tipTitle": "Get modere out of the Partner Center",
-    "account.tipText": "Erstellen on-Marke material in the Design Studio in a few clicks, oder find the right Filter mit the Filter Finder.",
-    "product.back": "Back to Produkte",
+    "account.actRecentSub": "Most recently öffnened items",
+    "account.tipTitle": "Mehr aus dem Partner Center holen",
+    "account.tipText": "Erstellen Sie in wenigen Klicks markenkonformes Material im Design Studio oder finden Sie den passenden Filter mit dem Filter-Finder.",
+    "product.back": "Zurück zu den Produkten",
     "product.notFoundTitle": "Produkt not found",
     "product.notFoundText": "This Produkt does not exist oder has been moved.",
     "product.allProducts": "Alle Produkte",
-    "product.tabOverview": "Ubersicht",
+    "product.tabOverview": "Übersicht",
     "product.tabSpecs": "Spezifikationen",
     "product.tabApps": "Anwendungen & audiences",
-    "product.tabInstall": "Installeation & maintenance",
+    "product.tabInstall": "Installation & Wartung",
     "product.tabSales": "Verkaufsargumente",
-    "product.tabDl": "Herunterladens, video & tests",
+    "product.tabDl": "Downloads, video & tests",
     "product.tabFaq": "FAQ",
     "product.benefits": "Wichtigste Vorteile",
     "product.short": "Auf einen Blick",
     "product.applications": "Anwendungen",
     "product.audiences": "Geeignete Zielgruppen",
-    "product.installation": "Installeation",
+    "product.installation": "Installation",
     "product.maintenance": "Wartung",
     "product.salesArgs": "Verkaufsargumente",
-    "product.salesTip": "Tip: combine these arguments mit the <a href=\"sales-tools.html\" class=\"green\">sales tools</a> foder pitches, comparisons und email templates.",
+    "product.salesTip": "Tipp: Kombinieren Sie diese Argumente mit den <a href=\"sales-tools.html\" class=\"green\">Vertriebstools</a> für Pitches, Vergleiche und E-Mail-Vorlagen.",
     "product.downloads": "Downloads",
-    "product.dlNone": "Keine direct herunterladens linked. See the <a href=\"herunterladens.html\" class=\"green\">herunterladens page</a> foder alle Materialien.",
+    "product.dlNone": "Keine direkten Downloads verknüpft. Auf der <a href=\"downloads.html\" class=\"green\">Downloadseite</a> finden Sie alle Materialien.",
     "product.videos": "Videos",
-    "product.videoNone": "Keine video linked. See alle <a href=\"videos.html\" class=\"green\">video guides</a>.",
+    "product.videoNone": "Kein Video verknüpft. Alle <a href=\"videos.html\" class=\"green\">Videoanleitungen</a> ansehen.",
     "product.testdocs": "Test Dokumente & Nachweis",
     "product.tdNone": "Keine test Dokumente linked.",
     "product.faq": "Frequently asked Fragen",
-    "product.related": "Related Produkte",
+    "product.related": "Verwandte Produkte",
     "product.dlSheet": "Herunterladen Produktblatt",
     "product.quote": "Anfrage a quote",
     "product.makeMaterial": "Erstellen Materialien",
     "product.thumbAria": "Bild {n} von {name} anzeigen",
-    "kb.intro": "Understund PlasmaMade und pass the stodery on to Ihre Kunden. Clear explanations of Luftqualitat, plasma filtration, health, sustainability und Anwendungen — backed by proven figures.",
+    "kb.intro": "Verstehen Sie PlasmaMade und geben Sie die Geschichte an Ihre Kunden weiter. Klare Erklärungen zu Luftqualität, Plasmafiltration, Gesundheit, Nachhaltigkeit und Anwendungen — gestützt durch belegte Zahlen.",
     "kb.pollTitle": "Was entfernt PlasmaMade aus der Luft?",
     "kb.pollSub": "Up to 98% of Krankheitserreger · up to 85% of Feinstaub (UltraFine)",
-    "kb.poll1t": "Geruche & VOCs",
+    "kb.poll1t": "Gerüche & VOCs",
     "kb.poll1d": "Durch Plasma abgebaut",
     "kb.poll2t": "Feinstaub",
     "kb.poll2d": "Bis zu 85% weniger",
     "kb.poll3t": "Viruses & Bakterien",
     "kb.poll3d": "Bis zu 98% gefiltert",
-    "kb.poll4t": "Pollen & Alleergene",
-    "kb.poll4d": "Entfernend from the air",
+    "kb.poll4t": "Pollen & Allergene",
+    "kb.poll4d": "Aus der Luft entfernt",
     "kb.poll5t": "Aerosole",
     "kb.poll5d": "Neutralisiert",
     "kb.poll6t": "Schimmel & Gase",
     "kb.poll6d": "Abgebaut",
-    "kb.searchPh": "Suchen the knowledge base…",
+    "kb.searchPh": "Wissensdatenbank durchsuchen ...",
     "kb.count": "{n} Artikel",
     "kb.countOne": "1 Artikel",
-    "kb.emptyTitle": "Neinthing found",
+    "kb.emptyTitle": "Nichts gefunden",
     "kb.emptyText": "Adjust Ihre suchen oder Filter.",
-    "article.back": "Zuruck zur Wissensdatenbank",
+    "article.back": "Zurück zur Wissensdatenbank",
     "article.notFoundTitle": "Artikel nicht gefunden",
     "article.notFoundText": "This knowledge article does not exist oder has been moved.",
     "article.toKb": "Zur Wissensdatenbank",
     "article.related": "Verwandte Artikel",
-    "article.relatedNone": "Keine related articles.",
-    "article.more": "Need modere?",
+    "article.relatedNone": "Keine verwandten Artikel.",
+    "article.more": "Mehr erfahren?",
     "article.toc": "Inhalt",
     "article.tellTitle": "Pass this stodery on",
-    "article.tellText": "Erstellen a social post oder flyer mit this message in the design studio.",
-    "article.allVideos": "Alle videos",
-    "article.source": "Source: Total brochure EU-NL 2026 und official PlasmaMade Produkt documentation · updated May 2026",
-    "videos.intro": "Official PlasmaMade videos, linked to the right Produkt und topic. Verwenden Sie them in customer conversations, on Ihre website oder share them directly — alle videos below may be shared mit Kunden.",
-    "videos.searchPh": "Suchen foder a video…",
+    "article.tellText": "Erstellen Sie mit dieser Botschaft einen Social Post oder Flyer im Design Studio.",
+    "article.allVideos": "Alle Videos",
+    "article.source": "Quelle: Gesamtbroschüre EU-NL 2026 und offizielle PlasmaMade-Produktdokumentation · aktualisiert Mai 2026",
+    "videos.intro": "Offizielle PlasmaMade-Videos, verknüpft mit dem passenden Produkt und Thema. Nutzen Sie sie im Kundengespräch, auf Ihrer Website oder teilen Sie sie direkt mit Kunden.",
+    "videos.searchPh": "Video suchen...",
     "videos.allProducts": "Alle Produkte",
-    "videos.allTopics": "Alle topics",
+    "videos.allTopics": "Alle Themen",
     "videos.count": "{n} Videos",
     "videos.countOne": "1 Video",
-    "videos.emptyTitle": "Keine videos found",
-    "videos.emptyText": "Adjust Ihre suchen oder Filters.",
-    "videos.shareable": "Shareable mit Kunden",
+    "videos.emptyTitle": "Keine Videos gefunden",
+    "videos.emptyText": "Passen Sie Ihre Suche oder Filter an.",
+    "videos.shareable": "Mit Kunden teilbar",
     "videos.playAria": "Video abspielen: {title}",
     "videos.summary": "Zusammenfassung",
-    "videos.subsYouTube": "Subtitles via YouTube (automaticalley verfugbar)",
-    "videos.subsNone": "Keine subtitles verfugbar",
-    "videos.relDownloads": "Related herunterladens",
-    "videos.tip": "link a video to Ihre quote oder email by sharing the link. Produkt videos also appear automaticalley on the relevant <a href=\"Produkte.html\" class=\"green\">Produkt pages</a> und in the <a href=\"knowledge.html\" class=\"green\">knowledge base</a>.",
-    "videos.unavailable": "This video is aktuellly unverfugbar.",
-    "videos.copyLink": "Kopieren video link",
-    "mkt.intro": "Alle Marke assets in one place: brochures, leaflets, social visuals, banners, Produkt images, renders, videos, logos, Prasentations und press Materialien. Filter by categodery, Produkt, Kampagne, language und file type.",
+    "videos.subsYouTube": "Untertitel über YouTube (automatisch verfügbar)",
+    "videos.subsNone": "Keine Untertitel verfügbar",
+    "videos.relDownloads": "Zugehörige Downloads",
+    "videos.tip": "Verknüpfen Sie ein Video mit Ihrem Angebot oder Ihrer E-Mail, indem Sie den Link teilen. Produktvideos erscheinen außerdem automatisch auf den relevanten <a href=\"products.html\" class=\"green\">Produktseiten</a> und in der <a href=\"knowledge.html\" class=\"green\">Wissensdatenbank</a>.",
+    "videos.unavailable": "Dieses Video ist derzeit nicht verfügbar.",
+    "videos.copyLink": "Videolink kopieren",
+    "mkt.intro": "Alle Markenassets an einem Ort: Broschüren, Faltblätter, Social-Media-Visuals, Banner, Produktbilder, Renderings, Videos, Logos, Präsentationen und Pressematerialien. Filtern Sie nach Kategorie, Produkt, Kampagne, Sprache und Dateityp.",
     "mkt.searchPh": "Suchen marketing Materialien…",
-    "mkt.allCats": "Alle categoderies",
+    "mkt.allCats": "Alle Kategorien",
     "mkt.allProducts": "Alle Produkte",
-    "mkt.allTypes": "Alle types",
+    "mkt.allTypes": "Alle Typen",
     "mkt.allLangs": "Alle languages",
     "mkt.allCampaigns": "Alle Kampagnen",
     "mkt.count": "{n} Elemente",
     "mkt.countOne": "1 Element",
     "mkt.emptyTitle": "Keine Materialien found",
-    "mkt.emptyText": "Adjust Ihre Filters oder suchen.",
+    "mkt.emptyText": "Passen Sie Ihre Filter oder Suche an.",
     "mkt.request": "Anfrage",
     "mkt.requestSubject": "Anfrage video file",
     "mkt.studio": "Studio",
-    "mkt.studioTitle": "Offnen in design studio",
-    "mkt.type.brochure": "Broschure",
-    "mkt.type.leaflet": "Leaflet",
+    "mkt.studioTitle": "Öffnen in design studio",
+    "mkt.type.brochure": "Broschüre",
+    "mkt.type.leaflet": "Faltblatt",
     "mkt.type.social": "Social",
     "mkt.type.banner": "Banner",
     "mkt.type.advertentie": "Anzeige",
@@ -438,14 +438,14 @@ window.PM_LOCALES.de = {
     "mkt.type.foto": "Foto",
     "mkt.type.video": "Video",
     "mkt.type.logo": "Logo",
-    "mkt.type.presentatie": "Prasentation",
+    "mkt.type.presentatie": "Präsentation",
     "mkt.type.persmateriaal": "Presse",
-    "camps.intro": "Aktuell und ongoing PlasmaMade Kampagnen. Foder each Kampagne you'll find the goal, codere message, target group, visuals, ready-made captions, planning und herunterladens — ready to deploy.",
+    "camps.intro": "Aktuelle und laufende PlasmaMade-Kampagnen. Pro Kampagne finden Sie Ziel, Kernbotschaft, Zielgruppe, Bildmaterial, fertige Captions, Planung und Downloads — bereit für den Einsatz.",
     "camps.count": "{n} Kampagnen",
     "camps.countOne": "1 Kampagne",
     "camps.emptyTitle": "Keine Kampagnen found",
     "camps.emptyText": "Adjust Ihre Filter.",
-    "camp.back": "Back to Kampagnen",
+    "camp.back": "Zurück zu den Kampagnen",
     "camp.notFoundTitle": "Kampagne not found",
     "camp.notFoundText": "This Kampagne does not exist oder has been moved.",
     "camp.all": "Alle Kampagnen",
@@ -454,25 +454,25 @@ window.PM_LOCALES.de = {
     "camp.audience": "Zielgruppe",
     "camp.period": "Dauer",
     "camp.channels": "Kanale",
-    "camp.owner": "Kampagne owner",
+    "camp.owner": "Kampagnenverantwortlicher",
     "camp.about": "About this Kampagne",
     "camp.goal": "Ziel",
-    "camp.core": "Codere message:",
-    "camp.captions": "Recommended captions & sample kopieren",
+    "camp.core": "Kernbotschaft:",
+    "camp.captions": "Empfohlene Texte & Beispiel kopieren",
     "camp.caption": "Caption {n}",
     "camp.captionCopied": "Caption in die Zwischenablage kopiert",
     "camp.assets": "Visuals & advertising Materialien",
     "camp.moreMaterial": "Mehr Materialien",
     "camp.planning": "Planung",
     "camp.templates": "Vorlagen",
-    "camp.templatesText": "Verwenden Sie the Marke templates in the design studio to quickly create on-Marke Materialien.",
-    "sales.intro": "Compact, ready-to-verwenden tools foder customer conversations: pitches, arguments per Produkt und audience, answers to customer Fragen, email templates und clear plain-language explanations.",
+    "camp.templatesText": "Nutzen Sie die Markenvorlagen im Design Studio, um schnell markenkonforme Materialien zu erstellen.",
+    "sales.intro": "Kompakte, sofort einsetzbare Tools für Kundengespräche: Pitches, Argumente pro Produkt und Zielgruppe, Antworten auf Kundenfragen, E-Mail-Vorlagen und einfache Erklärungen.",
     "sales.tabPitch": "Pitches",
     "sales.tabArgs": "Argumente",
     "sales.tabSeg": "Pro Zielgruppe",
     "sales.tabCmp": "Vergleich",
     "sales.tabCalc": "Savings calculatoder",
-    "sales.tabObj": "Customer Fragen",
+    "sales.tabObj": "Kundenfragen",
     "sales.tabSimple": "Einfach erklarte Antworten",
     "sales.tabEmails": "E-Mail-Vorlagen",
     "sales.pitch10": "10-Sekunden-Pitch",
@@ -481,76 +481,76 @@ window.PM_LOCALES.de = {
     "sales.strongest": "Die starksten Argumente",
     "sales.sustainability": "Nachhaltigkeitsargumente",
     "sales.perProduct": "Sales arguments per Produkt",
-    "sales.segIntro": "Argumentation tailodered to Ihre customer's environment.",
+    "sales.segIntro": "Argumentation, abgestimmt auf die Umgebung Ihres Kunden.",
     "sales.cmpIntro": "PlasmaMade E-Filter versus a traditional carbon/grease Filter.",
     "sales.cmpFeature": "Merkmal",
     "sales.cmpTrad": "Traditional Filter",
     "sales.cmpPM": "PlasmaMade E-Filter",
-    "sales.objIntro": "Common customer Fragen und objections — mit a strong, honest answer.",
-    "sales.simpleIntro": "Shodert explanations in plain language — perfect to verwenden verbatim mit Kunden.",
-    "sales.emailsIntro": "Leseny-made emails foder quotes, follow-up und introductions. Kopieren, personalise und send.",
+    "sales.objIntro": "Häufige Kundenfragen und Einwände - mit starken, ehrlichen Antworten.",
+    "sales.simpleIntro": "Kurze Erklärungen in einfacher Sprache - ideal für Kundengespräche.",
+    "sales.emailsIntro": "Fertige E-Mails für Angebote, Nachfassaktionen und Einführungen. Kopieren, personalisieren und senden.",
     "sales.emailSubject": "Betreff:",
     "sales.print": "Druckfreundliche Ansicht",
-    "sales.calcIntro": "Show in numbers what a customer speicherns by keine longer replacing a carbon Filter every year. Adjust the values to Ihre customer's situation.",
+    "sales.calcIntro": "Zeigen Sie in Zahlen, was ein Kunde spart, wenn er nicht jedes Jahr einen Kohlefilter ersetzt. Passen Sie die Werte an die Kundensituation an.",
     "sales.calcInputsTitle": "Situation des Kunden",
     "sales.calcInputsSub": "Schatzen Sie die Werte; alles ist sofort anpassbar.",
     "sales.calcPrice": "Price of a traditional carbon Filter (€)",
-    "sales.calcFreq": "Ersetzenments per year",
+    "sales.calcFreq": "Austausch pro Jahr",
     "sales.calcYears": "Vergleichszeitraum (Jahre)",
     "sales.calcYearsVal": "{n} Jahre",
     "sales.calcUnits": "Number of Dunstabzugshauben / locations",
-    "sales.calcSaveLabel": "Geschatzte Ersparnis uber den Zeitraum",
-    "sales.calcSaveSub": "vermiedene Austauschkosten uber {years} Jahre · {units} Standort(e)",
+    "sales.calcSaveLabel": "Geschatzte Ersparnis über den Zeitraum",
+    "sales.calcSaveSub": "vermiedene Austauschkosten über {years} Jahre · {units} Standort(e)",
     "sales.calcTrad": "Carbon Filter (replaced each time)",
     "sales.calcPM": "PlasmaMade E-Filter (10-15 Jahre)",
-    "sales.calcWaste": "discarded Filters avoided",
+    "sales.calcWaste": "vermiedene entsorgte Filter",
     "sales.calcReplacements": "replacement rounds speichernd",
-    "sales.calcStatement": "Leseny to share",
-    "sales.calcStatementText": "Over {years} years this customer replaces und discards an estimated {waste} carbon Filters — woderth {cost} in replacement costs. A PlasmaMade E-Filter lasts 10 to 15 years und is maintenance-free: keine WegwerfFilter, keine annual replacement costs.",
-    "sales.calcDisclaimer": "Indicative calculation based on the avoided replacement costs of carbon Filters. The purchase price of the E-Filter varies per model und dealer.",
-    "dl.intro": "Alle files in one place: brochures, Produktblatts, Hundbuchs, technisch documentation, Prasentations und Marke assets. Filter by categodery, Produkt, type und document language.",
-    "dl.searchPh": "Suchen foder a file…",
+    "sales.calcStatement": "Bereit zum Teilen",
+    "sales.calcStatementText": "Über {years} Jahre ersetzt und entsorgt dieser Kunde voraussichtlich {waste} Kohlefilter — im Wert von {cost} an Austauschkosten. Ein PlasmaMade E-Filter hält 10 bis 15 Jahre und ist wartungsfrei: kein Wegwerffilter, keine jährlichen Austauschkosten.",
+    "sales.calcDisclaimer": "Richtwert auf Basis vermiedener Austauschkosten von Kohlefiltern. Der Kaufpreis des E-Filters variiert je nach Modell und Händler.",
+    "dl.intro": "Alle Dateien an einem Ort: Broschüren, Produktblätter, Handbücher, technische Dokumentation, Präsentationen und Markenassets. Filtern Sie nach Kategorie, Produkt, Typ und Dokumentsprache.",
+    "dl.searchPh": "Datei suchen...",
     "dl.allProducts": "Alle Produkte",
-    "dl.allTypes": "Alle file types",
+    "dl.allTypes": "Alle Dateitypen",
     "dl.allLangs": "Alle document languages",
     "dl.count": "{n} Dateien",
     "dl.countOne": "1 Datei",
-    "dl.emptyTitle": "Keine files found",
-    "dl.emptyText": "Adjust Ihre Filters.",
-    "dl.langNote": "The language label refers to the document itself. Neint every document is verfugbar in every language — choose the document language Sie need.",
+    "dl.emptyTitle": "Keine Dateien gefunden",
+    "dl.emptyText": "Passen Sie Ihre Filter an.",
+    "dl.langNote": "Die Sprachangabe bezieht sich auf das Dokument selbst. Nicht jedes Dokument ist in jeder Sprache verfügbar — wählen Sie die benötigte Dokumentsprache.",
     "dl.sort": "Sodert",
     "dl.sortCat": "By categodery",
     "dl.sortName": "Nach Name (A-Z)",
-    "dl.sortSize": "Nach Dateigrosse",
-    "td.intro": "Independent Nachweis foder the perfodermance und safety of PlasmaMade. Verwenden Sie these repoderts to substantiate claims in conversations mit geschaftlich Kunden, Gesundheitswesen institutions und specifiers.",
+    "dl.sortSize": "Nach Dateigroße",
+    "td.intro": "Unabhängige Nachweise zur Leistung und Sicherheit von PlasmaMade. Nutzen Sie diese Berichte, um Aussagen in Gesprächen mit Geschäftskunden, Gesundheitseinrichtungen und Planern zu belegen.",
     "td.highlightBadge": "Key Nachweis",
     "td.highlightTitle": "Interflow-Studie (2024)",
-    "td.highlightText": "The AirClean UltraFine perfoderms almost identicalley to a HEPA Filter (R² = 0.996). Independently validated by Interflow, specialist in Reinraum validation.",
-    "td.downloadDoc": "Herunterladen study",
-    "td.readExplain": "Lesen the explanation",
-    "td.searchPh": "Suchen foder a test document…",
+    "td.highlightText": "Der AirClean UltraFine arbeitet nahezu identisch wie ein HEPA-Filter (R² = 0,996). Unabhängig validiert durch Interflow, Spezialist für Reinraumvalidierung.",
+    "td.downloadDoc": "Studie herunterladen",
+    "td.readExplain": "Erklärung lesen",
+    "td.searchPh": "Testdokument suchen...",
     "td.allProducts": "Alle Produkte",
     "td.useAll": "Technisch & kommerziell",
     "td.count": "{n} Dokumente",
     "td.countOne": "1 Dokument",
     "td.emptyTitle": "Keine Dokumente found",
     "td.conclusion": "Fazit:",
-    "news.intro": "Produkt updates, trade fair infodermation, partner neus und impodertierenant announcements. Stay up to date mit everything around PlasmaMade.",
+    "news.intro": "Produktupdates, Messeinformationen, Partnerneuigkeiten und wichtige Ankündigungen. Bleiben Sie rund um PlasmaMade auf dem neuesten Stand.",
     "news.count": "{n} Artikel",
     "news.countOne": "1 Artikel",
     "news.emptyTitle": "Keine articles",
     "news.emptyText": "Adjust Ihre Filter.",
-    "news.back": "Back to neus",
-    "news.questions": "Fragen about this update? Kontakt us via <a href=\"mailto:marketing@plasmamade.com\" class=\"green\">marketing@plasmamade.com</a> oder see <a href=\"herunterladens.html\" class=\"green\">Herunterladens</a>.",
-    "support.intro": "Fragen about Produkte, marketing Materialien oder the design studio? We're happy to help Sie quickly.",
+    "news.back": "Zurück zu den Neuigkeiten",
+    "news.questions": "Fragen zu diesem Update? Kontaktieren Sie uns über <a href=\"mailto:marketing@plasmamade.com\" class=\"green\">marketing@plasmamade.com</a> oder besuchen Sie <a href=\"downloads.html\" class=\"green\">Downloads</a>.",
+    "support.intro": "Fragen zu Produkten, Marketingmaterialien oder dem Design Studio? Wir helfen Ihnen schnell weiter.",
     "support.mailT": "E-Mail senden",
-    "support.mailS": "Foder marketing Materialien und partner Fragen",
+    "support.mailS": "Für Marketingmaterialien und Partnerfragen",
     "support.phoneT": "Calle us",
-    "support.phoneS": "Partner Suppodert · Mon–Fri during Buro hours",
+    "support.phoneS": "Partner Support · Mo–Fr während der Bürozeiten",
     "support.webT": "Website",
-    "support.webS": "Produkt infodermation & registration",
+    "support.webS": "Produktinformationen & Registrierung",
     "support.formTitle": "Ask Ihre question",
-    "support.formSub": "Fill in the foderm — we will get back to Sie as soon as possible.",
+    "support.formSub": "Füllen Sie das Formular aus — wir melden uns so schnell wie möglich.",
     "support.name": "Name",
     "support.namePh": "Ihre name",
     "support.company": "Unternehmen",
@@ -564,33 +564,33 @@ window.PM_LOCALES.de = {
     "support.cat2": "Marketingmaterialien",
     "support.cat3": "Design Studio",
     "support.cat4": "Bestellung",
-    "support.cat5": "Technology & Installeation",
+    "support.cat5": "Technik & Installation",
     "support.cat6": "Sonstiges",
     "support.product": "Produkt (optional)",
-    "support.productNone": "Neint Produkt-related",
+    "support.productNone": "Nicht produktbezogen",
     "support.subject": "Betreff",
     "support.subjectPh": "Shodert summary of Ihre question",
     "support.message": "Nachricht",
     "support.messagePh": "Wie konnen wir helfen?",
     "support.attachment": "Anhang (optional)",
-    "support.attachmentHint": "Hinzufugen a photo oder document — foder example of the Installeation situation.",
-    "support.attachmentChosen": "{n} Datei(en) ausgewahlt",
-    "support.privacy": "I agree that PlasmaMade may verwenden my Details to answer this question.",
+    "support.attachmentHint": "Fügen Sie ein Foto oder Dokument hinzu — zum Beispiel von der Montagesituation.",
+    "support.attachmentChosen": "{n} Datei(en) ausgewählt",
+    "support.privacy": "Ich bin damit einverstanden, dass PlasmaMade meine Angaben zur Beantwortung dieser Frage verwendet.",
     "support.submit": "Nachricht senden",
-    "support.portalNotice": "Ihre Suppodert Anfrage is stodered in the Partner Center und prepared as an email to PlasmaMade Marketing. Attachments remain visible localley; add them to the email Hundbuchly when needed.",
-    "support.openMail": "Offnen as email",
-    "support.successTitle": "Suppodert Anfrage registered",
-    "support.successText": "Ihre Anfrage is listed in the Partner Center. Ihre email client has offnened mit the vollstundigd message so marketing can follow up.",
-    "support.myTickets": "My Suppodert Anfrages",
-    "support.noTickets": "Keine Suppodert Anfrages yet.",
-    "support.ticketOpen": "Offnen",
-    "support.ticketClosed": "Schliessend",
-    "support.ticketSaved": "Suppodert ticket {id} registered",
-    "support.errName": "Bitte enter Ihre name.",
-    "support.errEmail": "Bitte enter a valid email address.",
-    "support.errSubject": "Bitte enter a subject.",
-    "support.errMessage": "Bitte enter a message.",
-    "support.errPrivacy": "Bitte agree to the privacy statement to send Ihre question.",
+    "support.portalNotice": "Ihre Supportanfrage wird im Partner Center gespeichert und als E-Mail an PlasmaMade Marketing vorbereitet. Anhänge bleiben lokal sichtbar; fügen Sie sie bei Bedarf manuell zur E-Mail hinzu.",
+    "support.openMail": "Öffnen as email",
+    "support.successTitle": "Supportanfrage registriert",
+    "support.successText": "Ihre Anfrage ist im Partner Center erfasst. Ihr E-Mail-Programm wurde mit der vollständigen Nachricht geöffnet, damit Marketing sie bearbeiten kann.",
+    "support.myTickets": "Meine Supportanfragen",
+    "support.noTickets": "Noch keine Supportanfragen.",
+    "support.ticketOpen": "Öffnen",
+    "support.ticketClosed": "Schließend",
+    "support.ticketSaved": "Supportticket {id} registriert",
+    "support.errName": "Geben Sie bitte Ihren Namen ein.",
+    "support.errEmail": "Geben Sie bitte eine gültige E-Mail-Adresse ein.",
+    "support.errSubject": "Geben Sie bitte einen Betreff ein.",
+    "support.errMessage": "Geben Sie bitte eine Nachricht ein.",
+    "support.errPrivacy": "Bitte stimmen Sie der Datenschutzerklärung zu, um Ihre Frage zu senden.",
     "support.companyTitle": "PlasmaMade B.V.",
     "support.visitAddress": "Besuchsadresse",
     "support.postAddress": "Postadresse",
@@ -598,21 +598,21 @@ window.PM_LOCALES.de = {
     "support.kvkBtw": "CoC · VAT",
     "support.quickHelp": "Schnelle Hilfe",
     "support.faqTitle": "Frequently asked Fragen",
-    "admin.intro": "Insight into the verwenden of the Partner Center plus content, translation, file und template management.",
-    "admin.badge": "Administratoder view",
+    "admin.intro": "Einblick in die Nutzung des Partner Centers sowie Content-, Übersetzungs-, Datei- und Vorlagenverwaltung.",
+    "admin.badge": "Administratoransicht",
     "admin.kpiViews": "Seitenaufrufe (dieser Browser)",
-    "admin.kpiDownloads": "Herunterladens (this browser)",
+    "admin.kpiDownloads": "Downloads (this browser)",
     "admin.kpiDesigns": "Designs speichernd",
-    "admin.kpiTickets": "Suppodert tickets",
-    "admin.kpiExports": "Studio expodertierens",
+    "admin.kpiTickets": "Supporttickets",
+    "admin.kpiExports": "Studio-Exporte",
     "admin.kpiSub": "measured localley",
     "admin.activity7": "Aktivitat - letzte 7 Tage",
     "admin.actions": "{n} Aktionen",
     "admin.mostVisited": "Meistbesuchte Bereiche",
-    "admin.topDownloads": "Most popular herunterladens",
-    "admin.noData": "Keine data in this session yet. Verwenden Sie the Partner Center to see activity here.",
+    "admin.topDownloads": "Beliebteste Downloads",
+    "admin.noData": "In dieser Sitzung liegen noch keine Daten vor. Nutzen Sie das Partner Center, um hier Aktivität zu sehen.",
     "admin.inventory": "Content inventodery",
-    "admin.inventorySub": "Verwaltet uber das leichte CMS (data.js)",
+    "admin.inventorySub": "Verwaltet über das leichte CMS (data.js)",
     "admin.invProducts": "Produkte",
     "admin.invArticles": "Wissensartikel",
     "admin.invVideos": "Videos",
@@ -620,42 +620,42 @@ window.PM_LOCALES.de = {
     "admin.invCampaigns": "Kampagnen",
     "admin.invTestdocs": "Testdokumente",
     "admin.invDownloads": "Downloads",
-    "admin.invNews": "Neus articles",
+    "admin.invNews": "Newsartikel",
     "admin.templates": "Vorlagenverwaltung",
-    "admin.templatesText": "{n} Design Studio templates in Marke style. Neu templates can be added scalably.",
-    "admin.openStudio": "Offnen Design Studio",
+    "admin.templatesText": "{n} Design-Studio-Vorlagen im Markenstil. Neue Vorlagen können skalierbar ergänzt werden.",
+    "admin.openStudio": "Öffnen Design Studio",
     "admin.recent": "Letzte Aktivitat",
-    "admin.supportInbox": "Suppodert inbox",
-    "admin.supportInboxSub": "Anfrages registered through the Suppodert foderm.",
-    "admin.noTickets": "Keine Suppodert tickets yet.",
+    "admin.supportInbox": "Support-Posteingang",
+    "admin.supportInboxSub": "Anfragen, die über das Supportformular registriert wurden.",
+    "admin.noTickets": "Noch keine Supporttickets.",
     "admin.ticketMeta": "{categodery} · {date}",
     "admin.evView": "Seitenaufruf",
     "admin.evDownload": "Download",
     "admin.evSave": "Design speichernd",
     "admin.evExport": "Exportieren",
     "admin.evLang": "Sprache gewechselt",
-    "admin.evSupport": "Suppodert ticket",
+    "admin.evSupport": "Supportticket",
     "admin.justNow": "gerade eben",
     "admin.minAgo": "{n} min ago",
     "admin.hourAgo": "{n} h ago",
-    "admin.translations": "Ubersetzungsstatus pro Sprache",
-    "admin.translationsSub": "Live berechnet: Anzahl der Interface-Strings pro Sprache im Vergleich zur Quelle (Niederlandisch).",
+    "admin.translations": "Übersetzungsstatus pro Sprache",
+    "admin.translationsSub": "Live berechnet: Anzahl der Interface-Strings pro Sprache im Vergleich zur Quelle (Niederländisch).",
     "admin.trLang": "Sprache",
-    "admin.trKeys": "Schlussel",
+    "admin.trKeys": "Schlüssel",
     "admin.trStatus": "Status",
-    "admin.trComplete": "Vollstandig",
-    "admin.trIncomplete": "{n} Schlussel fehlen",
+    "admin.trComplete": "Vollständig",
+    "admin.trIncomplete": "{n} Schlüssel fehlen",
     "admin.trNotLoaded": "Nicht geladen",
     "admin.fileCheck": "Dateiprufung",
-    "admin.fileCheckSub": "Checks live whether alle registered herunterladens und test Dokumente actualley exist on the server.",
-    "admin.fileCheckRun": "Prufung starten",
+    "admin.fileCheckSub": "Prüft live, ob alle registrierten Downloads und Testdokumente tatsächlich auf dem Server vorhanden sind.",
+    "admin.fileCheckRun": "Prüfung starten",
     "admin.fileCheckBusy": "Wird gepruft... ({done}/{total})",
-    "admin.fileCheckOk": "Alle {n} files present",
+    "admin.fileCheckOk": "Alle {n} Dateien vorhanden",
     "admin.fileCheckMissing": "{n} fehlende Dateien:",
     "admin.export": "Expodertieren Analysen (JSON)",
-    "admin.exported": "Analysen expodertierened",
+    "admin.exported": "Analysen exportiert",
     "admin.partnerMgmt": "Partnerverwaltung",
-    "admin.partnerData": "Partner management shows Kontos und Suppodert Kontakts registered in this podertal environment.",
+    "admin.partnerData": "Die Partnerverwaltung zeigt Konten und Supportkontakte, die in dieser Portalumgebung registriert wurden.",
     "admin.thPartner": "Partner",
     "admin.thType": "Typ",
     "admin.thRegion": "Region",
@@ -665,19 +665,19 @@ window.PM_LOCALES.de = {
     "admin.inactive": "Inaktiv",
     "admin.agoDays": "vor {n} Tagen",
     "admin.agoToday": "heute",
-    "admin.note": "Analysen show events registered in this podertal environment: page views, herunterladens, Suppodert tickets, designs, expodertierens und language switches.",
-    "admin.governance": "Governance & Roadmap",
+    "admin.note": "Die Analysen zeigen Ereignisse, die in dieser Portalumgebung registriert wurden: Seitenaufrufe, Downloads, Supporttickets, Designs, Exporte und Sprachwechsel.",
+    "admin.governance": "Steuerung & Roadmap",
     "admin.govContent": "Content-Quelle",
-    "admin.govContentV": "data.js (leichtes CMS) · Quelle: Gesamtbroschure EU-NL 2026",
-    "admin.govOwner": "Content Owner",
+    "admin.govContentV": "data.js (leichtes CMS) · Quelle: Gesamtbroschüre EU-NL 2026",
+    "admin.govOwner": "Content-Verantwortlicher",
     "admin.govOwnerV": "PlasmaMade Marketing — marketing@plasmamade.com",
     "admin.govUpdate": "Letztes Content-Update",
-    "admin.govI18n": "Ubersetzungssystem",
-    "admin.govI18nV": "Niederlandisch, Englisch und Deutsch · zentrale Schlussel in assets/i18n/",
-    "admin.govRoadmap": "Produktion roadmap",
-    "admin.govRoadmapV": "Partner Kontos · local Suppodert registration · herunterladen library · Design Studio expodertieren · file checks",
+    "admin.govI18n": "Übersetzungssystem",
+    "admin.govI18nV": "Niederländisch, Englisch und Deutsch · zentrale Schlüssel in assets/i18n/",
+    "admin.govRoadmap": "Produktions-Roadmap",
+    "admin.govRoadmapV": "Partnerkonten · lokale Supportregistrierung · Downloadbibliothek · Design-Studio-Export · Dateiprüfung",
     "studio.new": "Neu",
-    "studio.open": "Offnen",
+    "studio.open": "Öffnen",
     "studio.preview": "Vorschau",
     "studio.save": "Speichern",
     "studio.export": "Exportieren",
@@ -685,7 +685,7 @@ window.PM_LOCALES.de = {
     "studio.nameDefault": "Unbenanntes Design",
     "studio.undo": "Ruckgangig (Ctrl+Z)",
     "studio.redo": "Wiederholen (Ctrl+Y)",
-    "studio.formatTitle": "Canvas fodermat",
+    "studio.formatTitle": "Canvas-Format",
     "studio.newTitle": "Neu design",
     "studio.exportPng": "Herunterladen as PNG",
     "studio.exportPng3x": "PNG — hohe Auflosung (3×)",
@@ -698,40 +698,40 @@ window.PM_LOCALES.de = {
     "studio.zoomIn": "Heranzoomen",
     "studio.zoomOut": "Herauszoomen",
     "studio.zoomFit": "An Fenster anpassen",
-    "studio.confirmNew": "Start a neu design? Unspeichernd changes will be lost.",
+    "studio.confirmNew": "Neues Design starten? Nicht gespeicherte Änderungen gehen verloren.",
     "studio.customW": "Breite in Pixeln (100-4000):",
-    "studio.customH": "Hohe in Pixeln (100-4000):",
+    "studio.customH": "Höhe in Pixeln (100-4000):",
     "studio.restored": "Previous session restodered",
     "studio.saved": "Design speichernd",
-    "studio.opened": "Design offnened",
-    "studio.saveFailed": "Saving failed: local stoderage is full",
-    "studio.storageFull": "Stoderage full — loschen an hochladen first",
-    "studio.imgAdded": "Bild hinzugefugt",
+    "studio.opened": "Design öffnened",
+    "studio.saveFailed": "Speichern fehlgeschlagen: Der lokale Speicher ist voll",
+    "studio.storageFull": "Stoderage full — löschen an Upload first",
+    "studio.imgAdded": "Bild hinzugefügt",
     "studio.imgReplaced": "Bild ersetzt",
-    "studio.chooseImg": "Auswahlen a neu image in the left panel",
+    "studio.chooseImg": "Wählen Sie links ein neues Bild aus",
     "studio.copiedN": "{n} Elemente kopiert",
     "studio.copiedOne": "1 Element kopiert",
     "studio.downloaded": "Herunterladened: {name}",
-    "studio.exportPrep": "Preparing expodertieren…",
-    "studio.clipUnsupported": "Kopierening is not Suppoderted in this browser",
+    "studio.exportPrep": "Export wird vorbereitet...",
+    "studio.clipUnsupported": "Kopieren wird in diesem Browser nicht unterstützt",
     "studio.clipCopied": "Bild in die Zwischenablage kopiert",
-    "studio.clipFailed": "Kopierening failed",
-    "studio.close": "Schliessen",
+    "studio.clipFailed": "Kopieren failed",
+    "studio.close": "Schließen",
     "studio.kbdUndoRedo": "Ruckgangig / wiederholen",
-    "studio.kbdCopyCutPaste": "Kopieren · cut · paste",
+    "studio.kbdCopyCutPaste": "Kopieren · Ausschneiden · Einfügen",
     "studio.kbdDuplicate": "Auswahl duplizieren",
     "studio.kbdSelectAll": "Auswahlen alle",
-    "studio.kbdDelete": "Loschen selection",
+    "studio.kbdDelete": "Löschen selection",
     "studio.kbdMove": "1 px verschieben (10 px)",
     "studio.kbdMulti": "Auswahlen multiple elements",
     "studio.kbdMultiKey": "Shift + Klick",
     "studio.kbdMarquee": "Auswahlenion box (marquee)",
     "studio.kbdMarqueeKey": "Auf leerer Arbeitsflache ziehen",
-    "studio.kbdEditText": "Bearbeiten text",
+    "studio.kbdEditText": "Text bearbeiten",
     "studio.kbdEditTextKey": "Doppelklick auf Text",
     "studio.kbdZoom": "Heran-/herauszoomen",
     "studio.kbdZoomKey": "Ctrl + Scrollen",
-    "studio.kbdLayer": "Layer foderward / backward",
+    "studio.kbdLayer": "Ebene nach vorn / hinten",
     "studio.kbdGroup": "Gruppieren / Gruppierung losen",
     "studio.kbdRotate": "15°-Schritte",
     "studio.kbdRotateKey": "Shift beim Drehen",
@@ -744,27 +744,27 @@ window.PM_LOCALES.de = {
     "studio.tabShapes": "Formen",
     "studio.tabBg": "Farbe",
     "studio.tabLayers": "Ebenen",
-    "studio.addAria": "Hinzufugen: {name}",
-    "studio.addTextGroup": "Hinzufugen text",
+    "studio.addAria": "Hinzufügen: {name}",
+    "studio.addTextGroup": "Text hinzufügen",
     "studio.addHead": "Uberschrift",
     "studio.addSub": "Untertitel",
     "studio.addBody": "Fliesstext",
     "studio.addUrl": "Website / URL",
     "studio.addDealer": "Dealer Details",
-    "studio.textHint": "Double-click text on the canvas to bearbeiten it. Drag the coderners to scale, oder rotate mit the rotation hundle.",
+    "studio.textHint": "Doppelklicken Sie auf Text im Canvas, um ihn zu bearbeiten. Ziehen Sie an den Ecken zum Skalieren oder drehen Sie mit dem Drehgriff.",
     "studio.ownImage": "Ihre own images",
-    "studio.uploadBtn": "Eigenes Bild / Handlerlogo",
-    "studio.myUploads": "My hochladens",
-    "studio.uploadDel": "Loschen hochladen",
-    "studio.uploadedN": "{n} Bilder hinzugefugt",
+    "studio.uploadBtn": "Eigenes Bild / Händlerlogo",
+    "studio.myUploads": "Meine Uploads",
+    "studio.uploadDel": "Upload löschen",
+    "studio.uploadedN": "{n} Bilder hinzugefügt",
     "studio.uploadFail": "Hochladen failed. Versuchen Sie another file.",
-    "studio.uploadHint": "Hochladens are stodered localley. The PlasmaMade Marke identity (colours, typeface, logo) remains protected.",
+    "studio.uploadHint": "Uploads werden lokal gespeichert. Die PlasmaMade-Markenidentität (Farben, Schrift, Logo) bleibt geschützt.",
     "studio.grpLogos": "Logos",
-    "studio.grpProducts": "Produkt renders",
+    "studio.grpProducts": "Produktrenderings",
     "studio.grpPhotos": "Lifestyle-Bilder",
-    "studio.grpDecor": "Decoderation",
-    "studio.shapesGroup": "Hinzufugen shapes",
-    "studio.shapePill": "Grune Pill / Badge",
+    "studio.grpDecor": "Dekoration",
+    "studio.shapesGroup": "Hinzufügen shapes",
+    "studio.shapePill": "Grüne Pill / Badge",
     "studio.shapeRect": "Rechteck / Panel",
     "studio.shapeEllipse": "Oval / Kreis",
     "studio.shapeTriangle": "Dreieck",
@@ -772,19 +772,19 @@ window.PM_LOCALES.de = {
     "studio.shapeLine": "Linie",
     "studio.fadeGroup": "Green fade (Marke style)",
     "studio.fadeBottom": "Verlauf unten -> oben",
-    "studio.fadeCorner": "Fade coderner (bottom left)",
+    "studio.fadeCorner": "Verlauf in der Ecke (unten links)",
     "studio.fadeDiagonal": "Diagonaler Verlauf",
-    "studio.shapesHint": "The green fade is PlasmaMade's signature element: green flowing smoothly into white/transparent. Place it at the bottom oder in a coderner.",
-    "studio.bgFadeGroup": "Gruner Verlauf & Gradient",
+    "studio.shapesHint": "Der grüne Verlauf ist ein typisches PlasmaMade-Element: Grün läuft weich in Weiß bzw. Transparenz aus. Platzieren Sie ihn unten oder in einer Ecke.",
+    "studio.bgFadeGroup": "Grüner Verlauf & Gradient",
     "studio.bgFadeBottom": "White mit green fade (bottom)",
-    "studio.bgFadeCorner": "White mit green fade (coderner)",
-    "studio.bgGrad": "Vollflachiger gruner Gradient",
+    "studio.bgFadeCorner": "Weiß mit grünem Verlauf (Ecke)",
+    "studio.bgGrad": "Vollflachiger grüner Gradient",
     "studio.bgSolid": "Einfarbig",
-    "studio.bgColorAria": "Hintergrundfarbe {c}",
-    "studio.bgImage": "Hintergrundbild",
-    "studio.layersEmpty": "Keine elements on this page yet.",
+    "studio.bgColorAria": "Hintergründfarbe {c}",
+    "studio.bgImage": "Hintergründbild",
+    "studio.layersEmpty": "Auf dieser Seite gibt es noch keine Elemente.",
     "studio.layersGroup": "Ebenen — oben nach unten",
-    "studio.layerUp": "Bring foderward",
+    "studio.layerUp": "Nach vorn bringen",
     "studio.layerDown": "Nach hinten senden",
     "studio.layerShow": "Anzeigen",
     "studio.layerHide": "Ausblenden",
@@ -793,17 +793,17 @@ window.PM_LOCALES.de = {
     "studio.layersHint": "Click to select — including locked oder hidden elements.",
     "studio.layerText": "Text",
     "studio.layerImage": "Bild",
-    "studio.layerUpload": "Own hochladen",
+    "studio.layerUpload": "Eigener Upload",
     "studio.layerShape": "Form",
-    "studio.propsEmpty": "Auswahlen an element to bearbeiten it, oder add something via the left panel.",
-    "studio.propsEmptyTip": "Tip: drag on an empty part of the canvas to select multiple elements. Shift+click also woderks.",
-    "studio.propsBrandNote": "The Marke identity is protected: only PlasmaMade colours, Libre Franklin und real Marke assets.",
+    "studio.propsEmpty": "Wählen Sie ein Element aus, um es zu bearbeiten, oder fügen Sie links etwas hinzu.",
+    "studio.propsEmptyTip": "Tipp: Ziehen Sie auf einer freien Stelle im Canvas, um mehrere Elemente auszuwählen. Shift+Klick funktioniert ebenfalls.",
+    "studio.propsBrandNote": "Die Markenidentität ist geschützt: nur PlasmaMade-Farben, Libre Franklin und echte Markenassets.",
     "studio.propsElements": "{n} Elemente",
     "studio.alignPage": "An Seite ausrichten",
-    "studio.propDelete": "Loschen",
+    "studio.propDelete": "Löschen",
     "studio.propPosRot": "Position & Drehung",
     "studio.propText": "Text",
-    "studio.propFontSize": "Schriftgrosse",
+    "studio.propFontSize": "Schriftgroße",
     "studio.propWeight": "Starke",
     "studio.propAlign": "Ausrichtung",
     "studio.alignLeft": "Links",
@@ -830,9 +830,9 @@ window.PM_LOCALES.de = {
     "studio.propContrast": "Kontrast",
     "studio.propSaturation": "Sattigung",
     "studio.propBlur": "Weichzeichnen",
-    "studio.propGrayscale": "Schwarz-Weiss",
-    "studio.propFilterReset": "Reset Filters",
-    "studio.propReplace": "Ersetzen image",
+    "studio.propGrayscale": "Schwarz-Weiß",
+    "studio.propFilterReset": "Filter zurücksetzen",
+    "studio.propReplace": "Bild ersetzen",
     "studio.propFadeDir": "Verlaufsrichtung",
     "studio.dirBottom": "Unten",
     "studio.dirCorner": "Coderner",
@@ -841,14 +841,14 @@ window.PM_LOCALES.de = {
     "studio.propThickness": "Dicke",
     "studio.propShapeText": "Text (optional)",
     "studio.propTextColor": "Textfarbe",
-    "studio.propTextSize": "Textgrosse",
+    "studio.propTextSize": "Textgroße",
     "studio.propCornerRadius": "Coderner rounding",
     "studio.propStroke": "Boderder",
-    "studio.propStrokeColor": "Boderder colour",
+    "studio.propStrokeColor": "Rahmenfarbe",
     "studio.propOpacity": "Deckkraft",
     "studio.propDuplicate": "Element duplizieren",
-    "studio.propFront": "Fodereground",
-    "studio.propBack": "Hintergrund",
+    "studio.propFront": "Vordergrund",
+    "studio.propBack": "Hintergründ",
     "studio.group": "Gruppieren",
     "studio.ungroup": "Gruppierung losen",
     "studio.grouped": "Elemente gruppiert",
@@ -861,37 +861,37 @@ window.PM_LOCALES.de = {
     "studio.cropApply": "Anwenden",
     "studio.cropCancel": "Abbrechen",
     "studio.cropDone": "Bild zugeschnitten",
-    "studio.cropReset": "Zuschnitt zurucksetzen",
-    "studio.bgRemove": "Entfernen background",
-    "studio.bgRedo": "Entfernen background again",
-    "studio.bgRestore": "Restodere background",
+    "studio.cropReset": "Zuschnitt zurücksetzen",
+    "studio.bgRemove": "Hintergrund entfernen",
+    "studio.bgRedo": "Hintergrund erneut entfernen",
+    "studio.bgRestore": "Hintergrund wiederherstellen",
     "studio.bgTolerance": "Kantenempfindlichkeit",
-    "studio.bgWorking": "Hintergrund wird entfernt...",
-    "studio.bgDone": "Hintergrund entfernt",
+    "studio.bgWorking": "Hintergründ wird entfernt...",
+    "studio.bgDone": "Hintergründ entfernt",
     "studio.bgRemoveFail": "Das Bild konnte nicht verarbeitet werden.",
-    "studio.storageTight": "This image is very large. Versuchen Sie a smalleer file.",
-    "studio.uploadRolled": "Hinzufugened. {n} older hochladen(s) removed automaticalley to free up space.",
+    "studio.storageTight": "Dieses Bild ist sehr groß. Versuchen Sie eine kleinere Datei.",
+    "studio.uploadRolled": "Hinzugefügt. {n} ältere Upload(s) wurden automatisch entfernt, um Speicherplatz freizugeben.",
     "studio.ctxCopy": "Kopieren",
     "studio.ctxCut": "Cut",
-    "studio.ctxPaste": "Einfugen",
-    "studio.ctxToFront": "In den Vordergrund",
-    "studio.ctxForward": "Bring foderward",
+    "studio.ctxPaste": "Einfügen",
+    "studio.ctxToFront": "In den Vordergründ",
+    "studio.ctxForward": "Nach vorn bringen",
     "studio.ctxBackward": "Nach hinten senden",
-    "studio.ctxToBack": "In den Hintergrund",
+    "studio.ctxToBack": "In den Hintergründ",
     "studio.pageLeft": "Nach links verschieben",
     "studio.pageRight": "Nach rechts verschieben",
     "studio.pageDup": "Seite duplizieren",
-    "studio.pageDel": "Loschen page",
-    "studio.pageAdd": "Hinzufugen page",
-    "studio.pageDelConfirm": "Loschen page {n}?",
+    "studio.pageDel": "Seite löschen",
+    "studio.pageAdd": "Seite hinzufügen",
+    "studio.pageDelConfirm": "Seite {n} löschen?",
     "studio.pageCount": "{n} pp.",
     "studio.page": "Seite {n}",
     "studio.rename": "Umbenennen",
-    "studio.renamePrompt": "Neu name:",
-    "studio.copySuffix": "(kopieren)",
-    "studio.delConfirm": "Loschen this design?",
-    "studio.noDesigns": "Keine speichernd designs yet",
-    "studio.noDesignsText": "Erstellen a design und click Speichern."
+    "studio.renamePrompt": "Neuer Name:",
+    "studio.copySuffix": "(Kopie)",
+    "studio.delConfirm": "Dieses Design löschen?",
+    "studio.noDesigns": "Noch keine Designs gespeichert",
+    "studio.noDesignsText": "Erstellen Sie ein Design und klicken Sie auf Speichern."
   },
   "content": {
     "categories": {
@@ -900,21 +900,21 @@ window.PM_LOCALES.de = {
       "Duurzaamheid": "Nachhaltigkeit",
       "Bewijs": "Nachweise",
       "Toepassingen": "Anwendungen",
-      "Brochure": "Brochure",
+      "Brochure": "Broschüre",
       "Productsheet": "Produktblatt",
       "Handleiding": "Handbuch",
-      "Presentatie": "Prasentation",
+      "Presentatie": "Präsentation",
       "Huisstijl": "Corporate Identity",
       "Beursmateriaal": "Messeunterlagen",
       "Social media": "Social media",
       "Digitale banners": "Digitale Banner",
-      "Brochures": "Broschuren",
-      "Leaflets": "Leaflets",
+      "Brochures": "Broschüren",
+      "Leaflets": "Faltblätter",
       "Technisch": "Technisch",
-      "Productsheets": "Produktblatter",
+      "Productsheets": "Produktblätter",
       "Productbeelden": "Produktbilder",
       "Sfeerbeelden": "Lifestyle-Bilder",
-      "Presentaties": "Prasentationen",
+      "Presentaties": "Präsentationen",
       "Persmateriaal": "Pressematerial",
       "Marketing": "Marketing",
       "Product": "Produkt",
@@ -928,22 +928,22 @@ window.PM_LOCALES.de = {
     "audiences": {
       "Consument": "Verbraucher",
       "Installateur": "Installateur",
-      "Keukenstudio / retailer": "Kuchenstudio / Handler",
+      "Keukenstudio / retailer": "Küchenstudio / Händler",
       "Zakelijk / professioneel": "Business / professionell",
       "Zorg": "Gesundheitswesen",
       "Horeca": "Gastronomie",
-      "Facility / installateur": "Facility / Installeateur",
-      "Installateur / facility": "Installeateur / facility",
+      "Facility / installateur": "Facility / Installateur",
+      "Installateur / facility": "Installateur / Facility",
       "Consument / allergie": "Consumer / alleergy",
       "Zakelijk / zorg": "Business / Gesundheitswesen",
       "Consument / retailer": "Consumer / Retailer",
       "Retailers / pers / internationaal": "Retailers / press / international",
       "Consument / B2B": "Consumer / B2B",
       "Alle doelgroepen": "Alle Zielgruppen",
-      "Consument · installateur": "Consumer · Installeateur",
+      "Consument · installateur": "Verbraucher · Installateur",
       "Zakelijk · zorg": "Business · Gesundheitswesen",
       "Merk algemeen": "Marke allgemein",
-      "Volledige lijn": "Vollstandige Linie"
+      "Volledige lijn": "Vollständige Linie"
     },
     "topics": {
       "Werking & uitleg": "Funktionsweise",
@@ -982,18 +982,18 @@ window.PM_LOCALES.de = {
       "DE": "DE"
     },
     "studioFormats": {
-      "Social vierkant · 1080×1080": "Social square · 1080×1080",
-      "Story / Reel · 1080×1920": "Stodery / Reel · 1080×1920",
-      "LinkedIn post · 1200×628": "LinkedIn post · 1200×628",
+      "Social vierkant · 1080×1080": "Social Quadrat · 1080×1080",
+      "Story / Reel · 1080×1920": "Story / Reel · 1080×1920",
+      "LinkedIn post · 1200×628": "LinkedIn-Post · 1200×628",
       "Facebook · 1200×630": "Facebook · 1200×630",
       "Flyer A4 · 794×1123": "Flyer A4 · 794×1123",
       "Poster · 1080×1350": "Poster · 1080×1350",
-      "Productkaart · 1080×1080": "Produkt card · 1080×1080",
-      "Dealer advertentie · 1080×1080": "Dealer advertisement · 1080×1080",
+      "Productkaart · 1080×1080": "Produktkarte · 1080×1080",
+      "Dealer advertentie · 1080×1080": "Händleranzeige · 1080×1080",
       "Banner · 1200×300": "Banner · 1200×300",
-      "Nieuwsbrief header · 1200×500": "Neusletter header · 1200×500",
-      "Presentatie 16:9 · 1280×720": "Prasentation 16:9 · 1280×720",
-      "Aangepast…": "Custom…"
+      "Nieuwsbrief header · 1200×500": "Newsletter-Header · 1200×500",
+      "Presentatie 16:9 · 1280×720": "Präsentation 16:9 · 1280×720",
+      "Aangepast…": "Benutzerdefiniert..."
     },
     "studioTplCats": {
       "Basis": "Basis",
@@ -1001,44 +1001,44 @@ window.PM_LOCALES.de = {
       "Print": "Drucken",
       "Sales": "Sales",
       "Digitaal": "Digital",
-      "Presentatie": "Prasentation",
+      "Presentatie": "Präsentation",
       "Campagne": "Kampagne"
     },
     "studioTemplates": {
       "Leeg canvas": "Leere Leinwand",
       "Get fresh! — social": "Get fresh! — social",
-      "Get fresh! — groene afloop": "Get fresh! — green fade",
-      "Productintroductie": "Produkteinfuhrung",
-      "Story — lifestyle": "Stodery — lifestyle",
+      "Get fresh! — groene afloop": "Get fresh! - grüner Verlauf",
+      "Productintroductie": "Produkteinführung",
+      "Story — lifestyle": "Story — lifestyle",
       "LinkedIn — B2B": "LinkedIn — B2B",
       "Flyer / cover A4": "Flyer / cover A4",
       "Productkaart": "Produktkarte",
-      "Dealer advertentie": "Handleranzeige",
+      "Dealer advertentie": "Händleranzeige",
       "Web banner": "Webbanner",
       "Nieuwsbrief header": "Newsletter-Header",
-      "Presentatie — titel": "Prasentation — title",
+      "Presentatie — titel": "Präsentation - Titel",
       "Facebook post": "Facebook post",
       "Poster": "Poster",
       "E-mailheader": "E-Mail-Header",
       "Campagnebeeld": "Kampagnenmotiv",
-      "Websitebeeld — hero": "Website visual — hero",
+      "Websitebeeld — hero": "Websitebild - Hero",
       "Plus X Award — social": "Plus X Award — social",
-      "Story — product": "Stodery — Produkt",
+      "Story — product": "Story — Produkt",
       "LinkedIn — bewijs (Interflow)": "LinkedIn — Nachweis (Interflow)",
-      "Productkaart — UltraFine": "Produkt card — UltraFine"
+      "Productkaart — UltraFine": "Produktkarte - UltraFine"
     },
     "studioAssets": {
-      "Logo wit": "Logo weiss",
-      "Logo groen": "Logo grun",
+      "Logo wit": "Logo weiß",
+      "Logo groen": "Logo grün",
       "Logo zwart": "Logo schwarz",
-      "Keuken": "Kuche",
-      "Vlinders & keuken": "Schmetterlinge & Kuche",
+      "Keuken": "Küche",
+      "Vlinders & keuken": "Schmetterlinge & Küche",
       "Integrale afzuiging": "Integrierter Abzug",
       "Kookplaat": "Kochfeld",
       "Afzuigkap": "Dunstabzugshaube",
       "E-Filter uitleg": "E-Filter erklart",
       "Lifestyle meisje": "Lifestyle girl",
-      "Kantoor": "Buro",
+      "Kantoor": "Büro",
       "School": "Schule",
       "Zorg": "Gesundheitswesen",
       "Horeca": "Gastronomie",
@@ -1054,7 +1054,7 @@ window.PM_LOCALES.de = {
       "Driehoek": "Dreieck",
       "Ster": "Stern",
       "Lijn": "Linie",
-      "Groene afloop": "Gruner Verlauf"
+      "Groene afloop": "Grüner Verlauf"
     },
     "specLabels": {
       "EAN": "EAN",
@@ -1075,7 +1075,7 @@ window.PM_LOCALES.de = {
       "Materiaal": "Material",
       "Systeem": "System",
       "Afmetingen": "Abmessungen",
-      "Geschikt voor": "Geeignet fur",
+      "Geschikt voor": "Geeignet für",
       "Luchtcapaciteit": "Luftleistung",
       "Stand 1": "Stufe 1",
       "Stand 2": "Stufe 2",
@@ -1109,19 +1109,19 @@ window.PM_LOCALES.de = {
       "ABS, zwart": "ABS, black",
       "220 × 90 mm (rechthoekig)": "220 × 90 mm (rectangular)",
       "100 cm hoog × 30 cm breed × 35 cm diep": "100 cm high × 30 cm wide × 35 cm deep",
-      "20 – 150 m² (meerdere units voor grotere ruimtes)": "20 – 150 m² (multiple units foder larger spaces)",
-      "400 m³/h standaard · max. 700 m³/h": "400 m³/h stundard · max. 700 m³/h",
-      "Afhankelijk van aantal personen in de ruimte": "Depends on the number of people in the room",
+      "20 – 150 m² (meerdere units voor grotere ruimtes)": "20–150 m² (mehrere Geräte für größere Räume)",
+      "400 m³/h standaard · max. 700 m³/h": "400 m³/h Standard · max. 700 m³/h",
+      "Afhankelijk van aantal personen in de ruimte": "Abhängig von der Anzahl der Personen im Raum",
       "Tot 85%": "Bis zu 85%",
       "Tot 98% gefilterd": "Bis zu 98% gefiltert",
-      "Vaatwasserbestendige ESP-plaatmodule": "Spulmaschinenfestes ESP-Plattenmodul",
-      "Vaatwasserbestendige plaatmodule": "Spulmaschinenfestes Plattenmodul",
+      "Vaatwasserbestendige ESP-plaatmodule": "Spülmaschinenfestes ESP-Plattenmodul",
+      "Vaatwasserbestendige plaatmodule": "Spülmaschinenfestes Plattenmodul",
       "Ionisatie + elektrostatische aantrekking": "Ionisation + elektrostatische Anziehung",
       "Geen — geen wegwerpfilters": "Neinne — keine WegwerfFilters",
       "Onderdeel van AirClean UltraFine / recirculatiesystemen": "Part of AirClean UltraFine / Umluft systems",
       "Constante luchtkwaliteit bij minimaal energieverbruik": "Constant Luftqualitat mit minimal Energieverbrauch",
       "Tafelmodel luchtzuiveraar": "Tabletop air purifier",
-      "Werkplek, balie, behandelkamer, kleine ruimte": "Woderkplace, reception desk, treatment room, smalle space",
+      "Werkplek, balie, behandelkamer, kleine ruimte": "Arbeitsplatz, Empfang, Behandlungsraum, kleiner Raum",
       "Plasma + elektrostatische zuivering": "Plasma + electrostatic purification",
       "Herbruikbare filtermodule": "Wiederverwendbares Filtermodul",
       "Volledige specs op aanvraag via marketing@plasmamade.com": "Full specifications on Anfrage via marketing@plasmamade.com",
@@ -1132,101 +1132,101 @@ window.PM_LOCALES.de = {
     "products": {
       "guc1223": {
         "type": "E-Filter · rund · Design- und Wandhauben",
-        "tagline": "Das Flaggschiff — fur Design- und Wandhauben bis 1.000 m³/h.",
-        "description": "Der GUC1223 ist der meistverkaufte PlasmaMade E-Filter und der Standard fur moderne Kuchen und Designhauben. Durch die Kombination aus Plasma, ESD-Hochspannung und keramischem Schaum wird die Luft vollstandig gereinigt und in den Raum zuruckgefuhrt — ohne Abluft nach aussen.",
+        "tagline": "Das Flaggschiff — für Design- und Wandhauben bis 1.000 m³/h.",
+        "description": "Der GUC1223 ist der meistverkaufte PlasmaMade E-Filter und der Standard für moderne Küchen und Designhauben. Durch die Kombination aus Plasma, ESD-Hochspannung und keramischem Schaum wird die Luft vollständig gereinigt und in den Raum zurückgeführt — ohne Abluft nach außen.",
         "benefits": [
-          "Entfernt Geruche, Feinstaub, Viren, Bakterien, Pollen und Allergene — bis zu 98% gefiltert",
-          "Arbeitet mit Umluft: keine Abluft nach aussen erforderlich",
+          "Entfernt Gerüche, Feinstaub, Viren, Bakterien, Pollen und Allergene — bis zu 98% gefiltert",
+          "Arbeitet mit Umluft: keine Abluft nach außen erforderlich",
           "10-15 Jahre Lebensdauer — nie wieder einen Wegwerffilter ersetzen",
           "Click-fit-Montage mit Dreh-Klemmverschluss, kein Zusatzmaterial",
-          "WiFi + Bluetooth-Steuerung uber die PlasmaMade App",
-          "97% recycelbar · patentiertes niederlandisches Produkt"
+          "WiFi + Bluetooth-Steuerung über die PlasmaMade App",
+          "97% recycelbar · patentiertes niederländisches Produkt"
         ],
         "applications": [
-          "Moderne Kuchen",
+          "Moderne Küchen",
           "Design-Dunstabzugshauben",
           "Wandhauben",
           "Inselhauben",
           "Renovierung & Neubau"
         ],
-        "installation": "Klicken Sie den GUC1223 auf den vorhandenen Anschluss der Dunstabzugshaube (Ø122/126 oder Ø147/151 mm) und sichern Sie ihn mit dem Dreh-Klemmverschluss. Schliessen Sie den 12V-Adapter an. In wenigen Minuten montiert, ohne Werkzeug oder Umbau. Der Servicetechniker steuert den Filter drahtlos uber WiFi/Bluetooth.",
-        "maintenance": "Wartungsfrei wahrend der gesamten Lebensdauer. Kein Filterwechsel erforderlich. Die Filtersensoren erkennen den Luftstrom und steuern den E-Filter automatisch. Registrieren Sie das Produkt auf plasmamade.com fur 5 Jahre Garantie.",
+        "installation": "Klicken Sie den GUC1223 auf den vorhandenen Anschluss der Dunstabzugshaube (Ø122/126 oder Ø147/151 mm) und sichern Sie ihn mit dem Dreh-Klemmverschluss. Schließen Sie den 12V-Adapter an. In wenigen Minuten montiert, ohne Werkzeug oder Umbau. Der Servicetechniker steuert den Filter drahtlos über WiFi/Bluetooth.",
+        "maintenance": "Wartungsfrei während der gesamten Lebensdauer. Kein Filterwechsel erforderlich. Die Filtersensoren erkennen den Luftstrom und steuern den E-Filter automatisch. Registrieren Sie das Produkt auf plasmamade.com für 5 Jahre Garantie.",
         "salesArguments": [
-          "Passt dank zweier Anschlussgrossen auf nahezu jede Dunstabzugshaube — auch auf Designhauben.",
+          "Passt dank zweier Anschlussgrößen auf nahezu jede Dunstabzugshaube — auch auf Designhauben.",
           "10-15 Jahre ohne Filterwechsel statt jahrlicher Austausch bei Kohlefiltern.",
-          "Kein Abluftkanal erforderlich: ideal fur Wohnungen und Renovierungen.",
-          "Premium-Anmutung mit nachweisbaren Gesundheitsvorteilen fur den Kunden."
+          "Kein Abluftkanal erforderlich: ideal für Wohnungen und Renovierungen.",
+          "Premium-Anmutung mit nachweisbaren Gesundheitsvorteilen für den Kunden."
         ],
-        "videoNote": "Produktanimation + Installationsvideo (Wandmontage) in Marketingmaterialien verfugbar."
+        "videoNote": "Produktanimation + Installationsvideo (Wandmontage) in Marketingmaterialien verfügbar."
       },
       "guc1212": {
         "type": "E-Filter · rund · kompakt",
-        "tagline": "Kompakt und rund — fur kleinere oder bestehende Dunstabzugshauben bis 600 m³/h.",
-        "description": "Der GUC1212 ist die kompakte Ausfuhrung des PlasmaMade E-Filters, entwickelt fur bestehende Kuchen mit rundem Ø100-mm-Anschluss. Dieselbe bewahrte Plasma- und ESD-Technologie im kleineren Format.",
+        "tagline": "Kompakt und rund — für kleinere oder bestehende Dunstabzugshauben bis 600 m³/h.",
+        "description": "Der GUC1212 ist die kompakte Ausführung des PlasmaMade E-Filters für bestehende kleinere Dunstabzugshauben mit rundem Ø100-mm-Anschluss. Ideal für Renovierungen, Wohnungen und kompakte Küchen, in denen Umluft gewünscht ist.",
         "benefits": [
-          "Kompakte Grosse — perfekt fur bestehende, kleinere Dunstabzugshauben",
-          "Entfernt Geruche, Feinstaub, Pollen, Bakterien und Viren",
-          "Umluft: keine Abluft nach aussen erforderlich",
+          "Kompakte Große — perfekt für bestehende, kleinere Dunstabzugshauben",
+          "Entfernt Gerüche, Feinstaub, Pollen, Bakterien und Viren",
+          "Umluft: keine Abluft nach außen erforderlich",
           "10-15 Jahre Lebensdauer",
           "Einfache Click-fit-Montage auf einem Ø100-mm-Anschluss",
           "97% recycelbar"
         ],
         "applications": [
-          "Bestehende Kuchen",
+          "Bestehende Küchen",
           "Kleinere Dunstabzugshauben",
           "Ø100-mm-Anschluss",
           "Renovierung"
         ],
-        "installation": "Klicken Sie den GUC1212 auf den runden Ø100-mm-Anschluss der bestehenden Dunstabzugshaube und schliessen Sie den 12V-Adapter an. Kein Umbau erforderlich.",
-        "maintenance": "Wartungsfrei. Kein Filterwechsel. Registrieren Sie das Produkt auf plasmamade.com fur 5 Jahre Garantie.",
+        "installation": "Wird direkt auf oder in der Dunstabzugshaube montiert. Verwenden Sie den Ø100-mm-Anschluss und sorgen Sie für freien Luftstrom. Der Filter ist plug-and-play und benötigt lediglich eine Steckdose.",
+        "maintenance": "Wartungsfrei. Kein Filterwechsel. Registrieren Sie das Produkt auf plasmamade.com für 5 Jahre Garantie.",
         "salesArguments": [
-          "Die zugangliche Losung fur Kunden mit bestehender Haube und Ø100-mm-Anschluss.",
-          "Macht jede bestehende Umlufthaube fur vollstandige Luftreinigung geeignet.",
+          "Die zugängliche Lösung für Kunden mit bestehender Haube und Ø100-mm-Anschluss.",
+          "Macht jede bestehende Umlufthaube für vollständige Luftreinigung geeignet.",
           "Dieselben Gesundheitsvorteile wie beim GUC1223, im kompakten Format."
         ]
       },
       "guc1323": {
         "type": "E-Filter · flach · Kochfeldabzug",
-        "tagline": "Flaches Format — fur Kochfelder mit integriertem Abzug bis 1.000 m³/h.",
-        "description": "Der GUC1323 ist der flache, rechteckige E-Filter fur Kochfelder mit integriertem Abzug — ohne separate Dunstabzugshaube. Ideal fur klare, offene Kuchen, in denen der Abzug unsichtbar in die Arbeitsplatte integriert ist.",
+        "tagline": "Flaches Format — für Kochfelder mit integriertem Abzug bis 1.000 m³/h.",
+        "description": "Der GUC1323 ist der flache, rechteckige E-Filter für Kochfelder mit integriertem Abzug — ohne separate Dunstabzugshaube. Ideal für klare, offene Küchen, in denen der Abzug unsichtbar in die Arbeitsplatte integriert ist.",
         "benefits": [
-          "Speziell fur Kochfelder mit integriertem Abzug",
+          "Speziell für Kochfelder mit integriertem Abzug",
           "Flaches Design — Montage unter dem Sockel oder an der Wand",
-          "Entfernt Geruche, Feinstaub, Viren, Bakterien und Allergene",
-          "Umluft: keine Abluft nach aussen erforderlich",
+          "Entfernt Gerüche, Feinstaub, Viren, Bakterien und Allergene",
+          "Umluft: keine Abluft nach außen erforderlich",
           "10-15 Jahre Lebensdauer",
-          "WiFi + Bluetooth-Steuerung uber die App"
+          "WiFi + Bluetooth-Steuerung über die App"
         ],
         "applications": [
-          "Offene Kuchen",
+          "Offene Küchen",
           "Kochfeld mit Abzug",
           "Unter dem Sockel",
           "Wandmontage",
           "Designkuchen"
         ],
-        "installation": "Schliessen Sie den GUC1323 an den rechteckigen 220 × 90-mm-Anschluss des integrierten Kochfeldabzugs an. Montage unter dem Sockel oder an der Wand, je nach Kuchenaufbau. Linienzeichnungen fur beide Montagearten stehen in Downloads bereit.",
-        "maintenance": "Wartungsfrei wahrend der gesamten Lebensdauer. Kein Filterwechsel erforderlich. Registrieren Sie das Produkt auf plasmamade.com fur 5 Jahre Garantie.",
+        "installation": "Schließen Sie den GUC1323 an den rechteckigen 220 × 90-mm-Anschluss des integrierten Kochfeldabzugs an. Montage unter dem Sockel oder an der Wand, je nach Küchenaufbau. Linienzeichnungen für beide Montagearten stehen in Downloads bereit.",
+        "maintenance": "Wartungsfrei während der gesamten Lebensdauer. Kein Filterwechsel erforderlich. Registrieren Sie das Produkt auf plasmamade.com für 5 Jahre Garantie.",
         "salesArguments": [
-          "Die Losung fur den schnell wachsenden Markt der Kochfelder mit integriertem Abzug.",
-          "Unsichtbar integriert: erhalt das klare Design der offenen Kuche.",
+          "Die Lösung für den schnell wachsenden Markt der Kochfelder mit integriertem Abzug.",
+          "Unsichtbar integriert: erhalt das klare Design der offenen Küche.",
           "Kein Abluftkanal erforderlich in Wohnungen und modernen Neubauten."
         ],
-        "videoNote": "Produktanimation + Video zur Wandmontage in Marketingmaterialien verfugbar."
+        "videoNote": "Produktanimation + Video zur Wandmontage in Marketingmaterialien verfügbar."
       },
       "airclean-ultrafine": {
         "type": "Air Cleaner · freistehend · professionell",
-        "tagline": "Luftqualitat auf hochstem Niveau in Ihrer Organisation — Reinraumqualitat ohne Reinraum.",
-        "description": "Der AirClean UltraFine kombiniert zwei Spitzentechnologien — den GUC4184 ESP-Filter und den GUC1223 E-Filter (ESD) — zum starksten Duo am Markt. Eine freistehende Einheit, die Feinstaub, Geruche, Allergene und Mikroorganismen in gewerblichen und professionellen Raumen maximal reduziert.",
+        "tagline": "Luftqualitat auf hochstem Niveau in Ihrer Organisation — Reinraumqualität ohne Reinraum.",
+        "description": "Der AirClean UltraFine kombiniert zwei Spitzentechnologien — den GUC4184 ESP-Filter und den GUC1223 E-Filter (ESD) — zum starksten Duo am Markt. Eine freistehende Einheit, die Feinstaub, Gerüche, Allergene und Mikroorganismen in gewerblichen und professionellen Räumen maximal reduziert.",
         "benefits": [
           "ESP + ESD: das starkste Duo am Markt",
           "Bis zu 85% weniger Feinstaub · bis zu 98% Viren und Bakterien",
           "Vergleichbar mit einem ISO 6/7-Reinraum (Interflow-Test 2024)",
-          "Geeignet fur Raume von 20 bis 150 m²",
+          "Geeignet für Räume von 20 bis 150 m²",
           "Drei Stufen bis max. 700 m³/h + Automatikmodus",
-          "Spulmaschinenfestes ESP-Plattenmodul — keine Wegwerffilter"
+          "Spülmaschinenfestes ESP-Plattenmodul — keine Wegwerffilter"
         ],
         "applications": [
-          "Buro",
+          "Büro",
           "Retail",
           "Sportstatte",
           "Gastronomie",
@@ -1234,15 +1234,15 @@ window.PM_LOCALES.de = {
           "Klassenzimmer",
           "Wartebereich"
         ],
-        "installation": "Plug-and-play geliefert. Stellen Sie die Einheit im Raum auf und stecken Sie sie in die Steckdose. Optional: hybrides Deckenmodell mit zusatzlicher Frischluftzufuhr, vollstandig integriert und an bestehende Kanale anschliessbar.",
-        "maintenance": "Das ESP-Plattenmodul lasst sich einfach in der Spulmaschine reinigen. Nach dem Trocknen wieder einklicken und das System ist sofort einsatzbereit. Keine Wegwerffilter, keine Degeneration — 100% Qualitat uber die gesamte Lebensdauer.",
+        "installation": "Der AirClean UltraFine kann als Plug-and-play-Gerät oder in modularen Konfigurationen eingesetzt werden. Mehrere Geräte lassen sich koppeln; außerdem sind Ausführungen ohne Gehäuse und mit zusätzlicher Frischluftzufuhr bzw. anschließbaren Kanälen möglich.",
+        "maintenance": "Das ESP-Plattenmodul lässt sich einfach in der Spülmaschine reinigen. Nach dem Trocknen wieder einklicken und das System ist sofort einsatzbereit. Keine Wegwerffilter, keine Degeneration — 100% Qualität über die gesamte Lebensdauer.",
         "salesArguments": [
-          "Unabhangig von Interflow (2024) getestet: nahezu identische Partikelreduktion wie ein HEPA-Filter (R² = 0,996).",
-          "ISO 6 ist hundertmal sauberer als ein durchschnittliches Buro — diese Sicherheit ohne Reinrauminvestition.",
-          "Keine Wegwerffilter: geringerer Energieverbrauch, weniger Gerausch, niedrigere CO2-Emissionen.",
+          "Unabhängig von Interflow (2024) getestet: nahezu identische Partikelreduktion wie ein HEPA-Filter (R² = 0,996).",
+          "ISO 6 ist hundertmal sauberer als ein durchschnittliches Büro — diese Sicherheit ohne Reinrauminvestition.",
+          "Keine Wegwerffilter: geringerer Energieverbrauch, weniger Geräusch, niedrigere CO₂-Emissionen.",
           "Fursorgepflicht & Produktivitat: ein gesundes Innenklima als Investition, nicht als Kostenblock."
         ],
-        "videoNote": "Anwendungsbilder (Buro, Schule, Gastronomie) und Interflow-Grafik in Marketingmaterialien verfugbar."
+        "videoNote": "Anwendungsbilder (Büro, Schule, Gastronomie) und Interflow-Grafik in Marketingmaterialien verfügbar."
       },
       "guc4184-esp": {
         "type": "Komponente · Teil des AirClean UltraFine",
@@ -1251,10 +1251,10 @@ window.PM_LOCALES.de = {
         "benefits": [
           "Keine dichte Faserstruktur -> minimale Luftwiderstande",
           "Geringerer Energieverbrauch: Ventilatoren benotigen weniger Leistung",
-          "Weniger Gerausch: die Luft stromt gleichmassig durch das System",
-          "Spulmaschinenfestes Plattenmodul — endlos wiederverwendbar",
-          "Niedrigere CO2-Emissionen dank effizienterem Energiemanagement",
-          "100% Qualitat ohne Degeneration"
+          "Weniger Geräusch: die Luft stromt gleichmassig durch das System",
+          "Spülmaschinenfestes Plattenmodul — endlos wiederverwendbar",
+          "Niedrigere CO₂-Emissionen dank effizienterem Energiemanagement",
+          "100% Qualität ohne Degeneration"
         ],
         "applications": [
           "Umluftsysteme",
@@ -1263,7 +1263,7 @@ window.PM_LOCALES.de = {
           "Professionelle Luftreinigung"
         ],
         "installation": "Integrierbare Komponente des AirClean UltraFine und von Umluftsystemen. Das Plattenmodul ist zur Reinigung herausnehmbar.",
-        "maintenance": "Der gesammelte Schmutz ist harmlos und leicht zu entfernen. Das Plattenmodul ist herausnehmbar und spulmaschinenfest. Nach dem Trocknen einsetzen — der ESP ist sofort wieder einsatzbereit.",
+        "maintenance": "Der gesammelte Schmutz ist harmlos und leicht zu entfernen. Das Plattenmodul ist herausnehmbar und spülmaschinenfest. Nach dem Trocknen einsetzen — der ESP ist sofort wieder einsatzbereit.",
         "salesArguments": [
           "Keine Wegwerffilter: jahrelang wiederverwendbar, weniger Abfall und niedrigere Kosten.",
           "Minimaler Luftwiderstand = geringerer Energieverbrauch in Umluftsystemen.",
@@ -1272,12 +1272,12 @@ window.PM_LOCALES.de = {
       },
       "table-air-cleaner": {
         "type": "Air Cleaner · Tischmodell · personlich",
-        "tagline": "Ihre eigene 'Clean Bubble' — zu Hause, im Buro oder unterwegs.",
-        "description": "Der Table Air Cleaner bringt bewahrte PlasmaMade-Technologie an den Schreibtisch und in kleine Raume. Ein kompaktes Tischmodell, das Geruche, Feinstaub und Mikroorganismen in der direkten Umgebung reduziert — ideal fur Empfangstheken, Behandlungsraume, Buros und Homeoffice-Arbeitsplatze.",
+        "tagline": "Ihre eigene 'Clean Bubble' — zu Hause, im Büro oder unterwegs.",
+        "description": "Der Table Air Cleaner bringt bewährte PlasmaMade-Technologie an den Schreibtisch und in kleine Räume. Ein kompaktes Tischmodell, das Gerüche, Feinstaub und Mikroorganismen in der direkten Umgebung reduziert — ideal für Empfangstheken, Behandlungsraume, Büros und Homeoffice-Arbeitsplatze.",
         "benefits": [
           "Kompaktes Tischmodell — saubere Luft direkt im personlichen Bereich",
           "Plasma- und elektrostatische Reinigungstechnologie",
-          "Leise im Einsatz, geeignet fur Buro und Homeoffice",
+          "Leise im Einsatz, geeignet für Büro und Homeoffice",
           "Einfach zu warten, wiederverwendbares Filtermodul",
           "Plug & play: sofort einsatzbereit"
         ],
@@ -1286,447 +1286,448 @@ window.PM_LOCALES.de = {
           "Empfangstheke",
           "Behandlungsraum",
           "Homeoffice",
-          "Kleine Raume"
+          "Kleine Räume"
         ],
         "installation": "Stellen Sie das Tischmodell auf Schreibtisch oder Theke und stecken Sie es in die Steckdose. Plug & play.",
         "maintenance": "Wiederverwendbares Filtermodul, einfach zu reinigen. Keine Wegwerffilter.",
         "salesArguments": [
-          "Personliche Luftreinigung fur den Arbeitsplatz — ein zugangliches Einstiegsprodukt.",
-          "Ideal fur Empfangstheken und Behandlungsraume, in denen Menschen nah zusammenkommen.",
+          "Personliche Luftreinigung für den Arbeitsplatz — ein zugängliches Einstiegsprodukt.",
+          "Ideal für Empfangstheken und Behandlungsraume, in denen Menschen nah zusammenkommen.",
           "Bringt die Marke PlasmaMade zu einer neuen Zielgruppe."
         ]
       }
     },
     "articles": {
       "binnenluchtkwaliteit": {
-        "title": "Innenluftqualitat: warum sie wichtig ist",
-        "excerpt": "Wir verbringen mehr als 90% unserer Zeit in Innenraumen. Dennoch ist Innenluft oft starker belastet als Aussenluft. Was das bedeutet und wie man es lost.",
-        "body": "<p class=\"lead\">Clean Innenluft is not a luxury but a necessity. On average we spend modere than 90% of our time indooders — at home, at the Buro, at Schule. Yet indooder Luftqualitat is often woderse than outdooders.</p><h2>Where does Innenluft pollution come from?</h2><p>Cooking, cleaning Produkte, building Materialien, furniture, pets und people themselves constantly release particles und gases into the air. In well-insulated, energy-efficient homes that pollution lingers longer becaverwenden there is less natural ventilation.</p><h3>The main pollutants</h3><ul class=\"bullets\"><li>Particulate und ultrafine matter (including combustion particles from cooking)</li><li>Volatile oderganic compounds (VOCs) und cooking Geruche</li><li>Alleergens: Pollen, dust mites, pet Alleergene</li><li>Pathogens: Viren, Bakterien und aerosols</li></ul><div class=\"calleout\"><strong>Foder comparison:</strong> in an average Buro modere than 30 million particles per cubic metre are floating around. In an ISO 6 Reinraum a maximum of 35,200.</div><h2>The PlasmaMade solution</h2><p>PlasmaMade E-Filters clean the air via Umluft: the air is passed through the Filter several times per hour und returned to the room cleaner. This measurably improves Luftqualitat — day in, day out — ohne Abluft nach aussen.</p>"
+        "title": "Innenluftqualität: warum sie wichtig ist",
+        "excerpt": "Wir verbringen mehr als 90% unserer Zeit in Innenraumen. Dennoch ist Innenluft oft starker belastet als Außenluft. Was das bedeutet und wie man es lost.",
+        "body": "<p class=\"lead\">Saubere Innenluft ist kein Luxus, sondern eine Notwendigkeit. Im Durchschnitt verbringen wir mehr als 90% unserer Zeit in Innenräumen — zu Hause, im Büro, in der Schule. Dennoch ist die Luftqualität in Innenräumen oft schlechter als draußen.</p><h2>Woher kommt Luftverschmutzung in Innenräumen?</h2><p>Kochen, Reinigungsmittel, Baumaterialien, Möbel, Haustiere und Menschen selbst geben laufend Partikel und Gase an die Luft ab. In gut isolierten, energieeffizienten Gebäuden bleiben diese Belastungen länger im Raum, weil weniger natürliche Lüftung stattfindet.</p><h3>Die wichtigsten Belastungen</h3><ul class=\"bullets\"><li>Feinstaub und ultrafeine Partikel, darunter Verbrennungspartikel beim Kochen</li><li>Flüchtige organische Verbindungen (VOCs) und Kochgerüche</li><li>Allergene: Pollen, Hausstaubmilben und Tierallergene</li><li>Krankheitserreger: Viren, Bakterien und Aerosole</li></ul><div class=\"callout\"><strong>Zum Vergleich:</strong> In einem durchschnittlichen Büro schweben mehr als 30 Millionen Partikel pro Kubikmeter Luft. In einem ISO-6-Reinraum sind maximal 35.200 erlaubt.</div><h2>Die PlasmaMade-Lösung</h2><p>PlasmaMade E-Filter reinigen die Luft über Umluftbetrieb: Die Luft wird mehrmals pro Stunde durch den Filter geführt und sauberer in den Raum zurückgeführt. Das verbessert die Luftqualität messbar — Tag für Tag — ohne Abluft nach außen.</p>"
       },
       "plasmafiltratie": {
         "title": "Wie funktioniert ein PlasmaMade E-Filter?",
-        "excerpt": "Drei aktive Schichten — Plasma, ESD-Hochspannung und keramischer Schaum — reinigen die Luft vollstandig. Eine klare Erklarung der Technologie.",
-        "body": "<p class=\"lead\">The PlasmaMade E-Filter woderks via three aktiv layers that together break down Geruche, particles und Mikrooderganismen. Sensoders detect the airflow und control the Filter automaticalley.</p><h2>The three layers</h2><h3>1. Plasma element</h3><p>High voltage is used to create plasma. This plasma neutralises Geruche und Mikrooderganismen at the molecular level.</p><h3>2. ESD Filter (Electrostatic Discharge)</h3><p>The ESD Filter uses high voltage (4 kV) to break down coarse contaminants: grease, Feinstaub, Pollen und Bakterien.</p><h3>3. Ceramic foam</h3><p>Neutralises the last substances in the air und, together mit the conical inner cup, provides a sound-dampening effect. The black appearance ensures a neat finish.</p><div class=\"calleout\"><strong>Filter sensoders</strong> detect the airflow und control the E-Filter — fully automaticalley, tuned to actual use.</div><h2>What is eliminated?</h2><ul class=\"bullets\"><li>Cooking Geruche & volatile oderganic compounds (VOCs)</li><li>Particulate matter, including microscopic combustion particles</li><li>Viruses, Bakterien und aerosols — up to 98% Filtered</li><li>Pollen, dust mites und pet Alleergene</li><li>Moulds und harmful gases</li></ul>"
+        "excerpt": "Drei aktive Schichten — Plasma, ESD-Hochspannung und keramischer Schaum — reinigen die Luft vollständig. Eine klare Erklärung der Technologie.",
+        "body": "<p class=\"lead\">Der PlasmaMade E-Filter arbeitet mit drei aktiven Schichten, die gemeinsam Gerüche, Partikel und Mikroorganismen abbauen. Sensoren erkennen den Luftstrom und steuern den Filter automatisch.</p><h2>Die drei Schichten</h2><h3>1. Plasmaelement</h3><p>Durch Hochspannung wird Plasma erzeugt. Dieses Plasma neutralisiert Gerüche und Mikroorganismen auf molekularer Ebene.</p><h3>2. ESD-Filter (Electrostatic Discharge)</h3><p>Der ESD-Filter nutzt Hochspannung (4 kV), um grobe Verunreinigungen abzubauen: Fett, Feinstaub, Pollen und Bakterien.</p><h3>3. Keramikschaum</h3><p>Neutralisiert die letzten Stoffe in der Luft und wirkt zusammen mit dem konischen Innenkelch schalldämpfend. Die schwarze Optik sorgt für eine saubere Ausführung.</p><div class=\"callout\"><strong>Filtersensoren</strong> erkennen den Luftstrom und steuern den E-Filter — vollautomatisch und passend zur tatsächlichen Nutzung.</div><h2>Was wird eliminiert?</h2><ul class=\"bullets\"><li>Kochgerüche & flüchtige organische Verbindungen (VOCs)</li><li>Feinstaub, einschließlich mikroskopischer Verbrennungspartikel</li><li>Viren, Bakterien und Aerosole — bis zu 98% gefiltert</li><li>Pollen, Hausstaubmilben und Tierallergene</li><li>Schimmel und schädliche Gase</li></ul>"
       },
       "recirculatie": {
-        "title": "Umluft: saubere Luft ohne Abluft nach aussen",
-        "excerpt": "Kein Wanddurchbruch, kein Warmeverlust. So reinigt Umlufttechnologie die Luft und fuhrt sie in den Raum zuruck.",
-        "body": "<p class=\"lead\">PlasmaMade woderks on the basis of Umluft: the Filtered air stays in the home. Keine Abluft nach aussen is needed.</p><h2>Why Umluft?</h2><p>With traditional extraction, polluted air — und the heated oder cooled Innenluft — is blown outside. That costs energy und requires an offnening in the façade. Recirculation cleans the air und returns it to the room clean.</p><ul class=\"bullets\"><li>Keine walle offnening needed — ideal foder apartments und renovation</li><li>Keine heat loss: the heated air stays inside</li><li>Weniger noise than traditional extraction systems</li><li>The air is cleaned several times per hour foder constant quality</li></ul><div class=\"calleout\"><strong>Foder Umluft systems</strong> where air continuously circulates through the Filter, PlasmaMade's low air resistance is a huge win: constant Luftqualitat mit minimal Energieverbrauch.</div>"
+        "title": "Umluft: saubere Luft ohne Abluft nach außen",
+        "excerpt": "Kein Wanddurchbruch, kein Wärmeverlust. So reinigt Umlufttechnologie die Luft und führt sie in den Raum zurück.",
+        "body": "<p class=\"lead\">PlasmaMade arbeitet auf Basis von Umluft: Die gefilterte Luft bleibt im Raum. Eine Abluft nach außen ist nicht erforderlich.</p><h2>Warum Umluft?</h2><p>Bei klassischem Abluftbetrieb wird verschmutzte Luft — und damit auch erwärmte oder gekühlte Innenluft — nach außen abgeführt. Das kostet Energie und erfordert einen Durchbruch in der Fassade. Umluft reinigt die Luft und führt sie sauber in den Raum zurück.</p><ul class=\"bullets\"><li>Kein Wanddurchbruch nötig — ideal für Wohnungen und Renovierungen</li><li>Kein Wärmeverlust: die erwärmte Luft bleibt drinnen</li><li>Weniger Geräusch als bei klassischen Abluftsystemen</li><li>Die Luft wird mehrmals pro Stunde gereinigt und bleibt konstant sauberer</li></ul><div class=\"callout\"><strong>Für Umluftsysteme</strong>, in denen Luft kontinuierlich durch den Filter zirkuliert, ist der geringe Luftwiderstand von PlasmaMade ein großer Vorteil: konstante Luftqualität bei minimalem Energieverbrauch.</div>"
       },
       "fijnstof": {
-        "title": "Feinstaub — unsichtbar, aber uberall",
+        "title": "Feinstaub — unsichtbar, aber überall",
         "excerpt": "Verbrennungspartikel, Rauch und Staub bis in den Mikrometerbereich. Was Feinstaub ist und wie PlasmaMade ihn reduziert.",
-        "body": "<p class=\"lead\">Particulate matter consists of microscopic particles that can penetrate deep into the lungs. Indooders, cooking is a majoder source.</p><h2>Sources of Feinstaub indooders</h2><ul class=\"bullets\"><li>Combustion Produkte from baking, frying und grilling</li><li>Smoke und soot</li><li>Dust from textiles, building Materialien und outdooder air</li></ul><h2>How PlasmaMade tackles Feinstaub</h2><p>The ESD Filter (4 kV high voltage) breaks down even microscopic coarse particles. In professional spaces the AirClean UltraFine achieves up to 85% less Feinstaub.</p><div class=\"calleout\"><strong>Proven:</strong> in the Interflow test (2024) the particle concentration dropped from around 115 million to fewer than 1 million particles/m³ mitin 25 minutes — virtualley identical to a HEPA Filter.</div>"
+        "body": "<p class=\"lead\">Feinstaub besteht aus mikroskopisch kleinen Partikeln, die tief in die Lunge eindringen können. In Innenräumen ist Kochen eine wichtige Quelle.</p><h2>Feinstaubquellen in Innenräumen</h2><ul class=\"bullets\"><li>Verbrennungsprodukte beim Backen, Braten und Grillen</li><li>Rauch und Ruß</li><li>Staub aus Textilien, Baumaterialien und Außenluft</li></ul><h2>Wie PlasmaMade Feinstaub reduziert</h2><p>Der ESD-Filter (4 kV Hochspannung) baut selbst mikroskopisch kleine grobe Partikel ab. In professionellen Räumen erreicht der AirClean UltraFine bis zu 85% weniger Feinstaub.</p><div class=\"callout\"><strong>Belegt:</strong> Im Interflow-Test (2024) sank die Partikelkonzentration innerhalb von 25 Minuten von rund 115 Millionen auf unter 1 Million Partikel/m³ — nahezu identisch mit einem HEPA-Filter.</div>"
       },
       "pollen-allergenen": {
         "title": "Pollen & Allergene das ganze Jahr",
         "excerpt": "Pollen, Hausstaubmilben und Tierallergene verursachen Beschwerden. Saubere Innenluft bringt Erleichterung.",
-        "body": "<p class=\"lead\">Foder people mit alleergies oder respiratodery complaints, Innenluft is crucial. Pollen, dust mites und pet Alleergene are removed from the air by PlasmaMade.</p><h2>Alleergens that are removed</h2><ul class=\"bullets\"><li>Pollen — from trees, grasses und herbaceous plants</li><li>Dust mites und their droppings</li><li>Pet Alleergene</li></ul><div class=\"calleout\"><strong>Seasonal hook:</strong> \"Filter spring outside. Breathe freely inside.\" Pollen communication woderks strongly in March–May.</div><h2>Foder whom?</h2><p>Families mit alleergic complaints, people mit asthma oder hay fever und anyone who wants to breathe freely indooders. An empathetic, Nachweis-based message woderks best mit this audience.</p>"
+        "body": "<p class=\"lead\">Für Menschen mit Allergien oder Atemwegsbeschwerden ist Innenluft entscheidend. Pollen, Hausstaubmilben und Tierallergene werden durch PlasmaMade aus der Luft entfernt.</p><h2>Allergene, die entfernt werden</h2><ul class=\"bullets\"><li>Pollen — von Bäumen, Gräsern und krautigen Pflanzen</li><li>Hausstaubmilben und deren Ausscheidungen</li><li>Tierallergene</li></ul><div class=\"callout\"><strong>Saisonaler Ansatz:</strong> „Den Frühling draußen filtern. Drinnen frei atmen.“ Pollenkommunikation wirkt besonders stark von März bis Mai.</div><h2>Für wen?</h2><p>Familien mit Allergiebeschwerden, Menschen mit Asthma oder Heuschnupfen und alle, die in Innenräumen frei atmen möchten. Eine empathische, belegte Botschaft funktioniert für diese Zielgruppe am besten.</p>"
       },
       "geuren-vos": {
-        "title": "Geruche & VOCs: kochen ohne Geruche",
-        "excerpt": "Verschiedene Geruche und fluchtige organische Verbindungen werden durch das Plasmaelement abgebaut.",
-        "body": "<p class=\"lead\">Cooking smells — breathing doesn't have to. The plasma element neutralises Geruche und volatile oderganic compounds (VOCs) at the molecular level.</p><h2>What are VOCs?</h2><p>Volatile oderganic compounds are released during cooking, but also from cleaning Produkte, paint und furniture. They caverwenden Geruch nuisance und can wodersen Luftqualitat.</p><div class=\"calleout\">\"Cook deliciously. Breathe better.\" — the Geruch-free Kuche is one of the strongest sales arguments towards consumers.</div><h2>The result</h2><p>Keine cooking Geruche lingering in the house, keine smell in curtains oder furniture. Neinticeably fresher living comfodert, day in, day out.</p>"
+        "title": "Gerüche & VOCs: kochen ohne Gerüche",
+        "excerpt": "Verschiedene Gerüche und fluchtige organische Verbindungen werden durch das Plasmaelement abgebaut.",
+        "body": "<p class=\"lead\">Kochen darf riechen — Wohnen nicht. Das Plasmaelement neutralisiert Gerüche und flüchtige organische Verbindungen (VOCs) auf molekularer Ebene.</p><h2>Was sind VOCs?</h2><p>Flüchtige organische Verbindungen entstehen beim Kochen, aber auch durch Reinigungsmittel, Farbe und Möbel. Sie verursachen Geruchsbelastung und können die Luftqualität verschlechtern.</p><div class=\"callout\">„Lecker kochen. Besser atmen.“ — die geruchsfreie Küche ist eines der stärksten Verkaufsargumente gegenüber Verbrauchern.</div><h2>Das Ergebnis</h2><p>Keine Kochgerüche, die im Haus hängen bleiben, kein Geruch in Vorhängen oder Möbeln. Spürbar frischeres Wohngefühl, Tag für Tag.</p>"
       },
       "bacterien-virussen": {
         "title": "Viren, Bakterien & Aerosole — bis zu 98% gefiltert",
-        "excerpt": "Das Plasma neutralisiert Mikroorganismen. So entfernt PlasmaMade Krankheitserreger aus der Luft.",
-        "body": "<p class=\"lead\">Viruses, Bakterien, aerosols und other Mikrooderganismen are Filtered from the air by up to 98%. The plasma element neutralises Krankheitserreger at the molecular level.</p><h2>Why this matters</h2><p>In spaces where many people gather — Buros, Schules, Gesundheitswesen institutions, Gastronomie — aerosols spread Krankheitserreger quickly. Continuous Luftreinigung significantly reduces that spread.</p><div class=\"calleout\"><strong>Using the claim coderrectly:</strong> always say \"up to 98% Filtered\", never \"kills alle Viren\".</div><h2>Anwendung in Gesundheitswesen</h2><p>In Gesundheitswesen institutions a safe indooder climate is vital. The AirClean UltraFine provides continuous purification und protects employees, patients und visitoders.</p>"
+        "excerpt": "Das Dieses Plasma neutralisiert Mikroorganismen. So entfernt PlasmaMade Krankheitserreger aus der Luft.",
+        "body": "<p class=\"lead\">Viren, Bakterien, Aerosole und andere Mikroorganismen werden bis zu 98% aus der Luft gefiltert. Das Plasmaelement neutralisiert Krankheitserreger auf molekularer Ebene.</p><h2>Warum das wichtig ist</h2><p>In Räumen, in denen viele Menschen zusammenkommen — Büros, Schulen, Gesundheitseinrichtungen, Gastronomie — verbreiten Aerosole Krankheitserreger schnell. Kontinuierliche Luftreinigung reduziert diese Verbreitung deutlich.</p><div class=\"callout\"><strong>Claim richtig verwenden:</strong> immer „bis zu 98% gefiltert“ sagen, nie „tötet alle Viren“.</div><h2>Anwendung im Gesundheitswesen</h2><p>In Gesundheitseinrichtungen ist ein sicheres Innenklima essenziell. Der AirClean UltraFine reinigt kontinuierlich und schützt Mitarbeiter, Patienten und Besucher.</p>"
       },
       "duurzaamheid": {
         "title": "97% recycelbar: Nachhaltigkeit ohne Kompromiss",
         "excerpt": "Kein Wegwerffilter, 10-15 Jahre Lebensdauer und wiederverwendbare Module. Die Nachhaltigkeitsstory von PlasmaMade.",
-        "body": "<p class=\"lead\">PlasmaMade is designed foder the long term. 97% recycelbar material, a 10 to 15 year Lebensdauer und keine WegwerfFilters.</p><h2>Sustainable in every respect</h2><ul class=\"bullets\"><li>97% recycelbar material</li><li>10–15 year Lebensdauer / ±9,000 hours — keine annual replacement</li><li>Keine WegwerfFilters — speicherns waste und costs</li><li>ESP Plattenmodul is spulmaschinenfest und reusable</li><li>Lower CO₂ emissions thanks to efficient energy management</li></ul><div class=\"calleout\"><strong>97% sustainability</strong> — the green badge that returns on technology sheets und sustainability communication.</div><h2>Versus a carbon Filter</h2><p>A traditional carbon Filter is replaced every year — disposable plastic, again und again. A PlasmaMade E-Filter lasts 10 to 15 years. \"Keine WegwerfFilter. Ever again.\"</p>"
+        "body": "<p class=\"lead\">PlasmaMade ist für eine lange Nutzungsdauer entwickelt. 97% recycelbares Material, 10 bis 15 Jahre Lebensdauer und keine Wegwerffilter.</p><h2>Nachhaltig in jeder Hinsicht</h2><ul class=\"bullets\"><li>97% recycelbares Material</li><li>10–15 Jahre Lebensdauer / ±9.000 Stunden — kein jährlicher Austausch</li><li>Keine Wegwerffilter — weniger Abfall und geringere Kosten</li><li>ESP-Plattenmodul ist spülmaschinenfest und wiederverwendbar</li><li>Niedrigere CO₂-Emissionen durch effizientes Energiemanagement</li></ul><div class=\"callout\"><strong>97% Sustainability</strong> — das grüne Badge für Technikblätter und Nachhaltigkeitskommunikation.</div><h2>Im Vergleich zum Kohlefilter</h2><p>Ein klassischer Kohlefilter wird jedes Jahr ersetzt — Wegwerfkunststoff, immer wieder. Ein PlasmaMade E-Filter hält 10 bis 15 Jahre. „Kein Wegwerffilter. Nie wieder.“</p>"
       },
       "energiebehoud": {
         "title": "Energie sparen durch geringen Luftwiderstand",
-        "excerpt": "Keine dichte Faserstruktur bedeutet weniger Widerstand, weniger Energie und weniger Gerausch.",
-        "body": "<p class=\"lead\">Unlike conventional Filter systems, the ESP has keine dense fibre structure that obstructs the airflow. As a result there is little to keine air resistance.</p><h2>The benefits</h2><ul class=\"bullets\"><li><strong>Lower Energieverbrauch:</strong> fans need to deliver less power</li><li><strong>Weniger noise:</strong> the air flows smoothly through the system</li><li><strong>Weniger replacement und waste:</strong> plates reusable foder years</li><li><strong>Lower CO₂ emissions:</strong> thanks to modere efficient energy management</li><li><strong>100% quality:</strong> ohne degradation over the Lebensdauer</li></ul><div class=\"calleout\">Mehrover, mit Umluft there is keine heat loss: the heated Innenluft stays inside instead of being extracted outside.</div>"
+        "excerpt": "Keine dichte Faserstruktur bedeutet weniger Widerstand, weniger Energie und weniger Geräusch.",
+        "body": "<p class=\"lead\">Im Gegensatz zu herkömmlichen Filtersystemen hat der ESP keine dichte Faserstruktur, die den Luftstrom behindert. Dadurch entsteht nur sehr geringer Luftwiderstand.</p><h2>Die Vorteile</h2><ul class=\"bullets\"><li><strong>Geringerer Energieverbrauch:</strong> Ventilatoren benötigen weniger Leistung</li><li><strong>Weniger Geräusch:</strong> die Luft strömt gleichmäßig durch das System</li><li><strong>Weniger Austausch und Abfall:</strong> Platten sind jahrelang wiederverwendbar</li><li><strong>Niedrigere CO₂-Emissionen:</strong> durch effizienteres Energiemanagement</li><li><strong>100% Qualität:</strong> ohne Leistungsabbau über die Lebensdauer</li></ul><div class=\"callout\">Außerdem entsteht bei Umluft kein Wärmeverlust: Die erwärmte Innenluft bleibt drinnen, statt nach außen abgeführt zu werden.</div>"
       },
       "cleanroom": {
-        "title": "Reinraumtechnologie, zuganglich gemacht",
+        "title": "Reinraumtechnologie, zugänglich gemacht",
         "excerpt": "Was ist ein ISO 6/7-Reinraum und wie erreicht der UltraFine-Filter dieses Niveau ohne komplexe Infrastruktur?",
-        "body": "<p class=\"lead\">The UltraFine Filter was developed accoderding to the same principles as an ISO 6/7 Reinraum. Where a traditional Reinraum requires full construction und HVAC integration, PlasmaMade offers a compact, flexible solution.</p><h2>What is a Reinraum?</h2><p>Accoderding to the ISO 14644-1 stundard, a Reinraum is a space in which the concentration of airboderne particles is controlled. Purity is expressed in ISO classes, from ISO 1 (extremely clean) to ISO 9 (comparable to an Buro space).</p><h3>ISO classes und Anwendungen</h3><ul class=\"bullets\"><li><strong>ISO 5</strong> — 3,520 particles/m³ — aseptic pharma, microelectronics</li><li><strong>ISO 6</strong> — 35,200 particles/m³ — medtech, precision assembly</li><li><strong>ISO 7</strong> — 352,000 particles/m³ — operating theatres, pharmaceutical Produktion</li><li><strong>ISO 8</strong> — 3,520,000 particles/m³ — general Reinraum Produktion</li></ul><div class=\"calleout\"><strong>Why ISO 6 matters:</strong> the difference between ISO 8 und ISO 6 is exponential — an ISO 6 environment is a hundred times cleaner than ISO 8. Foder comparison: in a nodermal Buro modere than 30 million particles per cubic metre are floating around.</div><h2>The UltraFine brings that certainty to any space</h2><p>Without the investment of a full Reinraum Installeation. Compact, flexible und plug-und-play.</p>"
+        "body": "<p class=\"lead\">Der UltraFine-Filter wurde nach denselben Prinzipien entwickelt wie ein ISO-6/7-Reinraum. Wo ein klassischer Reinraum komplette bauliche und lufttechnische Integration erfordert, bietet PlasmaMade eine kompakte, flexible Lösung.</p><h2>Was ist ein Reinraum?</h2><p>Nach ISO 14644-1 ist ein Reinraum ein Raum, in dem die Konzentration luftgetragener Partikel kontrolliert wird. Die Reinheit wird in ISO-Klassen angegeben, von ISO 1 (extrem sauber) bis ISO 9 (vergleichbar mit einem Büroraum).</p><h3>ISO-Klassen und Anwendungen</h3><ul class=\"bullets\"><li><strong>ISO 5</strong> — 3.520 Partikel/m³ — aseptische Pharma, Mikroelektronik</li><li><strong>ISO 6</strong> — 35.200 Partikel/m³ — Medizintechnik, Präzisionsmontage</li><li><strong>ISO 7</strong> — 352.000 Partikel/m³ — Operationssäle, pharmazeutische Produktion</li><li><strong>ISO 8</strong> — 3.520.000 Partikel/m³ — allgemeine Reinraumproduktion</li></ul><div class=\"callout\"><strong>Warum ISO 6 relevant ist:</strong> Der Unterschied zwischen ISO 8 und ISO 6 ist exponentiell — eine ISO-6-Umgebung ist hundertmal sauberer als ISO 8. Zum Vergleich: In einem normalen Büro schweben mehr als 30 Millionen Partikel pro Kubikmeter.</div><h2>Der UltraFine bringt diese Sicherheit in jeden Raum</h2><p>Ohne Investition in eine vollständige Reinraumanlage. Kompakt, flexibel und plug-and-play.</p>"
       },
       "interflow": {
         "title": "Getestet von Interflow (2024): so gut wie HEPA",
-        "excerpt": "Unabhangige Forschung zeigt eine nahezu identische Partikelreduktion im Vergleich zu einem HEPA-Filter.",
-        "body": "<p class=\"lead\">In collaboderation mit Interflow BV — specialist in Luftreinigung und Reinraum validation — the AirClean UltraFine was extensively tested in a controlled environment of 24.4 m³ mit 8 air changes per hour.</p><h2>The setup</h2><p>Goal: determine the particle reduction capacity compared to a HEPA Filter unit under identical conditions. A controlled quantity of particles (cigarette smoke) was introduced into the room, after which the concentration of particles larger than 0.5 µm was measured every minute.</p><h2>The Ergebnisse</h2><ul class=\"bullets\"><li>HEPA Filter: 23 minutes to reduce the concentration by a factoder of 100</li><li>AirClean UltraFine: 24 minutes foder the same reduction</li><li>The concentration dropped from ±115 million to <1 million particles/m³ mitin 25 minutes</li></ul><div class=\"calleout\"><strong>Coderrelation coefficient (R²): 0.996.</strong> The measurement series coderrespond almost perfectly linearly. The difference of one minute is geometricalley negligible.</div><p>Conclusion: the AirClean UltraFine perfoderms comparably to a HEPA Filter — ohne WegwerfFilter und mit lower Energieverbrauch.</p>"
+        "excerpt": "Unabhängige Forschung zeigt eine nahezu identische Partikelreduktion im Vergleich zu einem HEPA-Filter.",
+        "body": "<p class=\"lead\">In Zusammenarbeit mit Interflow BV — Spezialist für Luftreinigung und Reinraumvalidierung — wurde der AirClean UltraFine in einer kontrollierten Umgebung von 24,4 m³ mit 8 Luftwechseln pro Stunde umfassend getestet.</p><h2>Der Versuchsaufbau</h2><p>Ziel war es, die Partikelreduktionsleistung unter identischen Bedingungen mit einer HEPA-Filtereinheit zu vergleichen. Eine kontrollierte Partikelmenge (Zigarettenrauch) wurde in den Raum eingebracht; anschließend wurde jede Minute die Konzentration von Partikeln größer als 0,5 µm gemessen.</p><h2>Die Ergebnisse</h2><ul class=\"bullets\"><li>HEPA-Filter: 23 Minuten, um die Konzentration um Faktor 100 zu reduzieren</li><li>AirClean UltraFine: 24 Minuten für dieselbe Reduktion</li><li>Die Konzentration sank innerhalb von 25 Minuten von ±115 Millionen auf <1 Million Partikel/m³</li></ul><div class=\"callout\"><strong>Korrelationskoeffizient (R²): 0,996.</strong> Die Messreihen stimmen nahezu perfekt linear überein. Der Unterschied von einer Minute ist geometrisch vernachlässigbar.</div><p>Fazit: Der AirClean UltraFine arbeitet vergleichbar mit einem HEPA-Filter — ohne Wegwerffilter und mit geringerem Energieverbrauch.</p>"
       },
       "certificeringen": {
         "title": "Zertifizierungen: CE, UKCA, ROHS, RED",
         "excerpt": "Weltweit zugelassen und doppelt im eigenen Testlabor gepruft. Was die Zertifizierungen bedeuten.",
-        "body": "<p class=\"lead\">PlasmaMade Produkte are certified und genehmigt woderldwide. The GUC1223 und GUC1323 carry CE, UKCA, ROHS und RED.</p><h2>The certifications</h2><ul class=\"bullets\"><li><strong>CE</strong> — complies mit EU directives foder safety und health</li><li><strong>UKCA</strong> — approval foder the British market</li><li><strong>ROHS</strong> — restriction of hazardous substances</li><li><strong>RED</strong> — Radio Equipment Directive (foder the WiFi/Bluetooth functionality)</li></ul><div class=\"calleout\"><strong>Double quality control:</strong> after Produktion, every Produkt is double-checked in PlasmaMade's own test lab.</div><h2>A patentiertes niederlundisches Produkt</h2><p>PlasmaMade is a patentiertes niederlundisches Produkt — a strong argument towards Retailers und international Partner.</p>"
+        "body": "<p class=\"lead\">PlasmaMade-Produkte sind zertifiziert und weltweit zugelassen. GUC1223 und GUC1323 tragen CE, UKCA, ROHS und RED.</p><h2>Die Zertifizierungen</h2><ul class=\"bullets\"><li><strong>CE</strong> — erfüllt EU-Richtlinien für Sicherheit und Gesundheit</li><li><strong>UKCA</strong> — Zulassung für den britischen Markt</li><li><strong>ROHS</strong> — Beschränkung gefährlicher Stoffe</li><li><strong>RED</strong> — Funkanlagenrichtlinie für WiFi-/Bluetooth-Funktionalität</li></ul><div class=\"callout\"><strong>Doppelte Qualitätskontrolle:</strong> Nach der Produktion wird jedes Produkt im eigenen PlasmaMade-Testlabor doppelt geprüft.</div><h2>Ein patentiertes niederländisches Produkt</h2><p>PlasmaMade ist ein patentiertes niederländisches Produkt — ein starkes Argument gegenüber Händlern und internationalen Partnern.</p>"
       },
       "toepassingen": {
-        "title": "Anwendungen: von der Kuche bis zur Gesundheitseinrichtung",
-        "excerpt": "Wo PlasmaMade den Unterschied macht — Kuchen, Buros, Schulen, Gesundheitswesen, Gastronomie und offentliche Gebaude.",
-        "body": "<p class=\"lead\">PlasmaMade technology can be used widely. The message differs per environment, but the result is the same everywhere: noticeably cleaner air.</p><h2>Home & Kuche</h2><p>Cooking ohne Geruche, healthy air foder the family. GUC1223 foder most hoods, GUC1323 foder hobs mit integriertem Abzug.</p><h2>Buro</h2><p>A safe Buro makes it possible foder employees to woderk on site every day again. The AirClean UltraFine ensures a healthy indooder climate.</p><h2>Retail</h2><p>A sectoder where many people gather. The UltraFine makes it possible to receive large numbers of Kunden safely.</p><h2>Spoderts facility</h2><p>Intensive exertion produces many aerosols. The plasma technology renders them harmless.</p><h2>Gastronomie</h2><p>A perfect indooder climate foder guests, so the focus can be on Gastronomie und experience.</p><h2>Gesundheitswesen institution</h2><p>A healthy und safe indooder climate is vital. Continuous purification protects employees, patients und visitoders.</p>"
+        "title": "Anwendungen: von der Küche bis zur Gesundheitseinrichtung",
+        "excerpt": "Wo PlasmaMade den Unterschied macht — Küchen, Büros, Schulen, Gesundheitswesen, Gastronomie und öffentliche Gebäude.",
+        "body": "<p class=\"lead\">PlasmaMade-Technologie lässt sich breit einsetzen. Die Botschaft unterscheidet sich je nach Umgebung, das Ergebnis ist überall gleich: spürbar sauberere Luft.</p><h2>Zuhause & Küche</h2><p>Kochen ohne Gerüche, gesündere Luft für die Familie. GUC1223 für die meisten Hauben, GUC1323 für Kochfelder mit integriertem Abzug.</p><h2>Büro</h2><p>Ein sicheres Büro ermöglicht Mitarbeitern, wieder komfortabel vor Ort zu arbeiten. Der AirClean UltraFine sorgt kontinuierlich für ein gesundes Innenklima.</p><h2>Retail</h2><p>Ein Bereich, in dem viele Menschen zusammenkommen. Der UltraFine hilft, große Kundenzahlen sicher zu empfangen.</p><h2>Sportstätte</h2><p>Intensive Anstrengung erzeugt viele Aerosole. Die Plasmatechnologie macht sie unschädlich.</p><h2>Gastronomie</h2><p>Ein perfektes Innenklima für Gäste, damit der Fokus auf Gastfreundschaft und Erlebnis liegen kann.</p><h2>Gesundheitseinrichtung</h2><p>Ein gesundes und sicheres Innenklima ist essenziell. Kontinuierliche Reinigung schützt Mitarbeiter, Patienten und Besucher.</p>"
       },
       "app-bediening": {
         "title": "Smarte Steuerung: WiFi, Bluetooth & die PlasmaMade App",
         "excerpt": "Der E-Filter kann drahtlos gesteuert werden. So arbeiten App und Servicetechniker zusammen.",
-        "body": "<p class=\"lead\">PlasmaMade E-Filters are equipped mit WiFi und Bluetooth. Einstellungen are managed wirelessly via the PlasmaMade app — including remotely by the service engineer.</p><h2>What can the app do?</h2><ul class=\"bullets\"><li>Lesen the status und operation of the E-Filter</li><li>Connect via Bluetooth oder WiFi</li><li>Adjust Einstellungen, reset the timer, change mode</li><li>Wireless control by the service engineer</li></ul><div class=\"calleout\">\"Bluetooth. WiFi. 10–15 years ohne replacing a Filter.\" — a strong tech hook foder smart-home und Installeateur communication.</div>"
+        "body": "<p class=\"lead\">PlasmaMade E-Filter sind mit WiFi und Bluetooth ausgestattet. Einstellungen werden drahtlos über die PlasmaMade App verwaltet — auch aus der Ferne durch den Servicetechniker.</p><h2>Was kann die App?</h2><ul class=\"bullets\"><li>Status und Betrieb des E-Filters auslesen</li><li>Verbindung per Bluetooth oder WiFi herstellen</li><li>Einstellungen anpassen, Timer zurücksetzen, Modus ändern</li><li>Drahtlose Steuerung durch den Servicetechniker</li></ul><div class=\"callout\">„Bluetooth. WiFi. 10–15 Jahre ohne Filterwechsel.“ — ein starker Tech-Hook für Smart-Home- und Installateurkommunikation.</div>"
       }
     },
     "campaigns": {
       "get-fresh": {
         "title": "Get fresh!",
-        "core": "Frisch, direkt und positiv: saubere Luft als naturlicher Teil eines gesunden Lebens.",
-        "description": "Get fresh! ist die ubergreifende Verbraucherkampagne von PlasmaMade. Der rote Faden in Social Media, Anzeigen und Broschuren. Immer verbunden mit dem Pay-off breathe better, live better.",
-        "goal": "Markenbekanntheit und Praferenz bei Verbrauchern mit einer konsistenten, positiven Botschaft rund um saubere Luft aufbauen.",
+        "core": "Frisch, direkt und positiv: saubere Luft als natürlicher Teil eines gesunden Lebens.",
+        "description": "Get fresh! ist die übergreifende Verbraucherkampagne von PlasmaMade. Der rote Faden in Social Media, Anzeigen und Broschüren. Immer verbunden mit dem Pay-off breathe better, live better.",
+        "goal": "Markenbekanntheit und Präferenz bei Verbrauchern mit einer konsistenten, positiven Botschaft rund um saubere Luft aufbauen.",
         "captions": [
-          "Cooking ohne the Geruche. Living mit saubere Luft. ✓\n\nKeine Filterwechsel, foder 10 to 15 years.\n→ plasmamade.com\n\n#GetFresh #PlasmaMade #CleanAir #AirQuality",
-          "Get fresh! 🌿 Viruses, Pollen, Feinstaub — gone.\nBreathe the difference, day in, day out.\n→ plasmamade.com\n\n#GetFresh #BreatheBetter #PlasmaMade"
+          "Kochen ohne Gerüche. Leben mit sauberer Luft. ✓\n\nKein Filterwechsel — 10 bis 15 Jahre lang.\n→ plasmamade.com\n\n#GetFresh #PlasmaMade #CleanAir #AirQuality",
+          "Get fresh! 🌿 Viren, Pollen, Feinstaub — raus aus der Luft.\nAtmen Sie den Unterschied, Tag für Tag.\n→ plasmamade.com\n\n#GetFresh #BreatheBetter #PlasmaMade"
         ],
         "planning": [
-          "Can be used alle year round",
-          "Amplify around seasonal hooks",
-          "Foundation foder alle Marke communication"
+          "Ganzjährig einsetzbar",
+          "Rund um saisonale Anlässe verstärken",
+          "Basis für die gesamte Markenkommunikation"
         ]
       },
       "plus-x-award": {
         "title": "Plus X Award 2025",
-        "core": "Internationalley awarded: the PlasmaMade E-Filter won the Plus X Award 2025 in five categoderies.",
-        "description": "Verwenden Sie the Plus X Award 2025 as the Nachweis of quality und innovation. The PlasmaMade E-Filter was honoured in five categoderies at once: Innovation, High Quality, Functionality, Ergonomics und Ecology. A strong, internationalley recognised seal of approval that immediately strengthens Ihre sales stodery.",
-        "goal": "Verwenden Sie the Plus X Award 2025 as internationalley recognised Nachweis of quality in every sales und marketing communication.",
+        "core": "International ausgezeichnet: Der PlasmaMade E-Filter gewann den Plus X Award 2025 in fünf Kategorien.",
+        "description": "Nutzen Sie den Plus X Award 2025 als Qualitäts- und Innovationsnachweis. Der PlasmaMade E-Filter wurde gleich in fünf Kategorien ausgezeichnet: Innovation, High Quality, Funktionalität, Ergonomie und Ökologie. Ein starkes, international anerkanntes Qualitätssiegel, das Ihre Verkaufsstory sofort stärkt.",
+        "goal": "Den Plus X Award 2025 als international anerkannten Qualitätsnachweis in jeder Vertriebs- und Marketingkommunikation einsetzen.",
         "captions": [
-          "Awarded! 🏆 The PlasmaMade E-Filter wins the Plus X Award 2025 — in five categoderies at once:\nInnovation · High Quality · Functionality · Ergonomics · Ecology.\n\nGet fresh! → plasmamade.com\n\n#PlusXAward #PlasmaMade #GetFresh #Innovation #CleanAir",
-          "Awarded five times, one goal: saubere Luft. 🌿\nThe PlasmaMade E-Filter is a winner of the Plus X Award 2025.\n→ plasmamade.com\n\n#PlusXAward #PlasmaMade #Sustainable"
+          "Ausgezeichnet! 🏆 Der PlasmaMade E-Filter gewinnt den Plus X Award 2025 — gleich in fünf Kategorien:\nInnovation · High Quality · Funktionalität · Ergonomie · Ökologie.\n\nGet fresh! → plasmamade.com\n\n#PlusXAward #PlasmaMade #GetFresh #Innovation #CleanAir",
+          "Fünffach ausgezeichnet, ein Ziel: saubere Luft. 🌿\nDer PlasmaMade E-Filter ist Gewinner des Plus X Award 2025.\n→ plasmamade.com\n\n#PlusXAward #PlasmaMade #Sustainable"
         ],
         "planning": [
-          "Leseny to verwenden immediately",
-          "Hinzufugen to email signature",
-          "Display in the showroom",
-          "Link to quotes"
+          "Sofort einsatzbereit",
+          "In die E-Mail-Signatur aufnehmen",
+          "Im Showroom einsetzen",
+          "Mit Zitaten und Nachweisen verlinken"
         ]
       },
       "filter-de-lente": {
-        "title": "Den Fruhling draussen filtern",
-        "core": "Pollen draussen, frei atmen drinnen. Eine empathische, belegbare Botschaft fur Allergiker.",
-        "description": "Seasonal Kampagne around the Pollen season. Targets Familien und people mit hay fever oder respiratodery complaints. Empathetic tone, mit Nachweis: Pollen und Alleergene are removed from the air.",
-        "goal": "Erstellen demund among alleergy-sensitive consumers during the Pollen season (March–May).",
+        "title": "Den Frühling draußen filtern",
+        "core": "Pollen draußen, frei atmen drinnen. Eine empathische, belegbare Botschaft für Allergiker.",
+        "description": "Saisonkampagne rund um die Pollensaison. Richtet sich an Familien und Menschen mit Heuschnupfen oder Atemwegsbeschwerden. Empathischer Ton, mit Nachweis: Pollen und Allergene werden aus der Luft entfernt.",
+        "goal": "Nachfrage bei allergieempfindlichen Verbrauchern während der Pollensaison (März–Mai) schaffen.",
         "captions": [
-          "Filter spring outside. Breathe freely inside. 🌸\n\nPollen, dust mites und Alleergene — out of Ihre air.\n→ plasmamade.com\n\n#GetFresh #Pollen #Alleergens #CleanAir",
-          "Hay fever? Sie don't have to suffer from it indooders.\nPlasmaMade removes Pollen from the air. 🌿\n→ plasmamade.com\n\n#PlasmaMade #HealthyLiving #Alleergy"
+          "Den Frühling draußen filtern. Drinnen frei atmen. 🌸\n\nPollen, Hausstaubmilben und Allergene - raus aus Ihrer Luft.\n→ plasmamade.com\n\n#GetFresh #Pollen #Allergene #CleanAir",
+          "Heuschnupfen? Drinnen müssen Sie darunter nicht leiden.\nPlasmaMade entfernt Pollen aus der Luft. 🌿\n→ plasmamade.com\n\n#PlasmaMade #HealthyLiving #Allergy"
         ],
         "planning": [
-          "Start: early March (first Pollen)",
-          "Peak: April",
-          "Phase out: end of May"
+          "Start: Anfang März (erste Pollen)",
+          "Höhepunkt: April",
+          "Auslaufen: Ende Mai"
         ]
       },
       "cleanroom-zonder-cleanroom": {
-        "title": "Reinraumqualitat. Ohne Reinraum.",
+        "title": "Reinraumqualität. Ohne Reinraum.",
         "core": "Der AirClean UltraFine bringt ISO 6/7-Lufthygiene in jeden professionellen Raum — belegt durch Interflow.",
-        "description": "B2B Kampagne foder the AirClean UltraFine, aimed at Buros, Gesundheitswesen, Gastronomie, Retail und spoderts. Nachweis-driven: Interflow test, ISO comparison, ROI und duty of care.",
-        "goal": "Generate leads among geschaftlich decision-makers mit Nachweis-driven communication around the AirClean UltraFine.",
+        "description": "B2B-Kampagne für den AirClean UltraFine, ausgerichtet auf Büros, Gesundheitswesen, Gastronomie, Retail und Sport. Beweisorientiert: Interflow-Test, ISO-Vergleich, ROI und Fürsorgepflicht.",
+        "goal": "Leads bei geschäftlichen Entscheidern mit belegter Kommunikation rund um den AirClean UltraFine generieren.",
         "captions": [
-          "The Luftqualitat in Ihre Unternehmen determines Ihre team's Produktivity.\n\nPlasmaMade AirClean UltraFine removes up to 98% of Viren und Bakterien from the air — comparable to an ISO 6/7 Reinraum.\n\nWant to know modere? → plasmamade.com\n\n#IndooderAirQuality #CleanAir #Innovation",
-          "An ISO 6 environment is a hundred times cleaner than an average Buro.\n\nWith the AirClean UltraFine Sie bring that certainty to any space — ohne a Reinraum investment.\n\nHerunterladen the Produktblatt → plasmamade.com\n\n#Cleantech #Gesundheitswesen #AirQuality"
+          "Die Luftqualität in Ihrem Unternehmen beeinflusst die Produktivität Ihres Teams.\n\nPlasmaMade AirClean UltraFine entfernt bis zu 98% der Viren und Bakterien aus der Luft — vergleichbar mit einem ISO-6/7-Reinraum.\n\nMehr erfahren? → plasmamade.com\n\n#IndoorAirQuality #CleanAir #Innovation",
+          "Eine ISO-6-Umgebung ist hundertmal sauberer als ein durchschnittliches Büro.\n\nMit dem AirClean UltraFine bringen Sie diese Sicherheit in jeden Raum — ohne Reinrauminvestition.\n\nProduktblatt herunterladen → plasmamade.com\n\n#Cleantech #Healthcare #AirQuality"
         ],
         "planning": [
           "Laufend",
-          "Link to sectoder-specific events",
-          "Deploy during quotation processes"
+          "Mit branchenspezifischen Events verknüpfen",
+          "In Angebotsprozessen einsetzen"
         ]
       },
       "showroommateriaal": {
-        "title": "Showroom-Materialien fur Partner",
-        "core": "Klare Produkterklarung fur Kuchenstudios, Installateure und Handler.",
-        "description": "Always-on Materialien foder showrooms, sales conversations und local communication. The focus is aktuell PlasmaMade Produkt infodermation, coderrect claims und genehmigt assets.",
-        "goal": "Help Partner present PlasmaMade coderrectly, calmly und professionalley in the showroom.",
+        "title": "Showroom-Materialien für Partner",
+        "core": "Klare Produkterklärung für Küchenstudios, Installateure und Händler.",
+        "description": "Always-on-Materialien für Showrooms, Verkaufsgespräche und lokale Kommunikation. Im Mittelpunkt stehen aktuelle PlasmaMade-Produktinformationen, korrekte Claims und freigegebene Assets.",
+        "goal": "Partnern helfen, PlasmaMade korrekt, ruhig und professionell im Showroom zu präsentieren.",
         "captions": [
-          "Meet PlasmaMade: smart Umluft, long-lasting perfodermance und saubere Luft in the Kuche.\n\nAsk Ihre dealer foder the right PlasmaMade solution.\n→ plasmamade.com\n\n#PlasmaMade #GetFresh #CleanAir"
+          "Lernen Sie PlasmaMade kennen: smarte Umluft, langlebige Leistung und saubere Luft in der Küche.\n\nFragen Sie Ihren Händler nach der passenden PlasmaMade-Lösung.\n→ plasmamade.com\n\n#PlasmaMade #GetFresh #CleanAir"
         ],
         "planning": [
-          "Always verfugbar",
-          "Connect to Produkt advice",
-          "Verwenden Sie genehmigt PlasmaMade assets only"
+          "Immer verfügbar",
+          "Mit Produktberatung verbinden",
+          "Nur freigegebene PlasmaMade-Assets verwenden"
         ]
       },
       "eventmateriaal": {
         "title": "Messe- und Eventmaterialien",
-        "core": "Present PlasmaMade professionalley mit Produkt images, concise Nachweis und consistent Marke identity.",
-        "description": "Materialien foder dealer meetings, showroom days und international events. Verwenden Sie them as a basis foder invitations, LinkedIn posts und Prasentations.",
-        "goal": "Provide Partner mit premium material foder trade fairs, events und showroom days.",
+        "core": "PlasmaMade professionell präsentieren: mit Produktbildern, prägnantem Nachweis und konsistenter Markenidentität.",
+        "description": "Materialien für Händlertreffen, Showroom-Tage und internationale Events. Nutzen Sie sie als Basis für Einladungen, LinkedIn-Posts und Präsentationen.",
+        "goal": "Partnern hochwertiges Material für Messen, Events und Showroom-Tage bereitstellen.",
         "captions": [
-          "Discover PlasmaMade live: Clean Air Technology foder Kuches und professional spaces.\n\nWant to know modere? → plasmamade.com\n\n#PlasmaMade #GetFresh #CleanAirTechnology"
+          "PlasmaMade live erleben: Clean Air Technology für Küchen und professionelle Räume.\n\nMehr erfahren? → plasmamade.com\n\n#PlasmaMade #GetFresh #CleanAirTechnology"
         ],
         "planning": [
-          "Prepare per event",
-          "Verwenden Sie aktuell Produkt content",
-          "Follow up leads und Fragen via marketing"
+          "Pro Event vorbereiten",
+          "Aktuelle Produktinhalte verwenden",
+          "Leads und Fragen über Marketing nachfassen"
         ]
       },
       "geen-wegwerpfilter": {
         "title": "Kein Wegwerffilter. Nie wieder.",
-        "core": "97% recycelbar, 10-15 Jahre Lebensdauer. Nachhaltigkeit als Kaufargument gegenuber Wegwerf-Kohlefiltern.",
-        "description": "Thematic sustainability Kampagne. Sets the Lebensdauer und recyclability against annualley replaced carbon Filters. Strong in combination mit the green Sustainability badge.",
-        "goal": "Position sustainability as the decisive buying argument versus annualley replaced carbon Filters.",
+        "core": "97% recycelbar, 10-15 Jahre Lebensdauer. Nachhaltigkeit als Kaufargument gegenüber Wegwerf-Kohlefiltern.",
+        "description": "Thematische Nachhaltigkeitskampagne. Stellt Lebensdauer und Recycelbarkeit jährlich zu ersetzenden Kohlefiltern gegenüber. Stark in Kombination mit dem grünen Sustainability-Badge.",
+        "goal": "Nachhaltigkeit als entscheidendes Kaufargument gegenüber jährlich ersetzten Kohlefiltern positionieren.",
         "captions": [
-          "A neu Filter every year? Neint anymodere. ♻️\n\nA PlasmaMade E-Filter lasts 10 to 15 years. 97% recycelbar.\n→ plasmamade.com\n\n#Sustainable #GetFresh #PlasmaMade #CleanAir"
+          "Jedes Jahr ein neuer Filter? Nicht mehr. ♻️\n\nEin PlasmaMade E-Filter hält 10 bis 15 Jahre und ist zu 97% recycelbar.\n→ plasmamade.com\n\n#Nachhaltig #GetFresh #PlasmaMade #CleanAir"
         ],
         "planning": [
           "Laufend",
-          "Amplify around sustainability moments",
-          "Link to certification communication"
+          "Rund um Nachhaltigkeitsmomente verstärken",
+          "Mit Zertifizierungskommunikation verknüpfen"
         ]
       }
     },
     "news": {
       "totaalbrochure-2026": {
-        "title": "Gesamtbroschure 2026 jetzt verfugbar",
-        "excerpt": "Die aktualisierte Gesamtbroschure (EU-NL, EN, DE) steht in Downloads bereit — inklusive AirClean UltraFine-Serie.",
-        "body": "Die Gesamtbroschure 2026 wurde mit der vollstandigen Produktlinie, den neuesten Spezifikationen und der AirClean UltraFine-Serie aktualisiert. Verfugbar auf Niederlandisch, Englisch und Deutsch (.com- und .de-Varianten). Laden Sie die Version in Ihrer Sprache uber die Downloads-Seite herunter."
+        "title": "Gesamtbroschüre 2026 jetzt verfügbar",
+        "excerpt": "Die aktualisierte Gesamtbroschüre (EU-NL, EN, DE) steht in Downloads bereit — inklusive AirClean UltraFine-Serie.",
+        "body": "Die Gesamtbroschüre 2026 wurde mit der vollständigen Produktlinie, den neuesten Spezifikationen und der AirClean UltraFine-Serie aktualisiert. Verfügbar auf Niederländisch, Englisch und Deutsch (.com- und .de-Varianten). Laden Sie die Version in Ihrer Sprache über die Downloads-Seite herunter."
       },
       "interflow-test": {
-        "title": "Interflow-Testergebnisse veroffentlicht",
-        "excerpt": "Unabhangige Forschung bestatigt: Der AirClean UltraFine leistet vergleichbar mit einem HEPA-Filter (R² = 0,996).",
-        "body": "Der AirClean UltraFine wurde umfangreich von Interflow BV getestet. Die Ergebnisse zeigen eine nahezu identische Partikelreduktion im Vergleich zu einem HEPA-Filter mit einem Korrelationskoeffizienten von 0,996. Nutzen Sie diese Ergebnisse in B2B-Gesprachen und Angeboten — Grafik und Erklarung finden Sie in der Wissensdatenbank."
+        "title": "Interflow-Testergebnisse veröffentlicht",
+        "excerpt": "Unabhängige Forschung bestätigt: Der AirClean UltraFine arbeitet vergleichbar mit einem HEPA-Filter (R² = 0,996).",
+        "body": "Der AirClean UltraFine wurde umfangreich von Interflow BV getestet. Die Ergebnisse zeigen eine nahezu identische Partikelreduktion im Vergleich zu einem HEPA-Filter mit einem Korrelationskoeffizienten von 0,996. Nutzen Sie diese Ergebnisse in B2B-Gesprächen und Angeboten - Grafik und Erklärung finden Sie in der Wissensdatenbank."
       },
       "esp-heat-exchanger": {
         "title": "Neu: hybrides Deckenmodell mit ESP Heat Exchanger",
-        "excerpt": "Eine optionale Erweiterung mit zusatzlicher Frischluftzufuhr fur Umgebungen, in denen Luftqualitat besondere Aufmerksamkeit erfordert.",
-        "body": "Foder professional environments PlasmaMade introduces a hybrid solution: the ceiling model mit a second supply foder fresh outdooder air. Both airflows are mixed in a controlled way und efficiently Filtered mitin one integrated system. Independent measurements mit GRIMM equipment demonstrate additional reduction of Feinstaub. The leaflet is in Herunterladens."
+        "excerpt": "Eine optionale Erweiterung mit zusätzlicher Frischluftzufuhr für Umgebungen, in denen Luftqualität besondere Aufmerksamkeit erfordert.",
+        "body": "Für professionelle Umgebungen führt PlasmaMade eine hybride Lösung ein: das Deckenmodell mit einer zweiten Zufuhr für frische Außenluft. Beide Luftströme werden kontrolliert gemischt und effizient in einem integrierten System gefiltert. Unabhängige Messungen mit GRIMM-Geräten zeigen eine zusätzliche Feinstaubreduktion. Das Dokument steht in Downloads bereit."
       },
       "kiwa-handleidingen": {
-        "title": "Neue KIWA-Handbucher (GUC1223 & GUC1323)",
-        "excerpt": "The updated user Hundbuchs accoderding to KIWA guidelines are verfugbar foder the EU und Neinrth America.",
-        "body": "The user Hundbuchs foder the GUC1223 und GUC1323 have been reneued accoderding to the KIWA guidelines (September 2025). Verfugbar foder both the European und Neinrth American markets, multilingual. Herunterladen the Hundbuchs via the Herunterladens-Seite oder the relevant Produkt page."
+        "title": "Neue KIWA-Handbücher (GUC1223 & GUC1323)",
+        "excerpt": "Die aktualisierten Benutzerhandbücher nach KIWA-Richtlinien sind für Europa und Nordamerika verfügbar.",
+        "body": "Die Benutzerhandbücher für GUC1223 und GUC1323 wurden nach den KIWA-Richtlinien (September 2025) erneuert. Verfügbar für den europäischen und nordamerikanischen Markt, mehrsprachig. Laden Sie die Handbücher über die Downloads-Seite oder die jeweilige Produktseite herunter."
       },
       "plus-x-award": {
         "title": "PlasmaMade gewinnt den Plus X Award 2025",
-        "excerpt": "The PlasmaMade E-Filter has been honoured in five categoderies at once: Innovation, High Quality, Functionality, Ergonomics und Ecology.",
-        "body": "Big neus: the PlasmaMade E-Filter has been awarded the Plus X Award 2025 — in five categoderies at once: Innovation, High Quality, Functionality, Ergonomics und Ecology. A powerful und internationalley recognised quality mark that Sie can verwenden immediately in Ihre sales stodery. Verwenden Sie the award visual in social posts, email signatures, quotes und showroom Materialien to underline PlasmaMade's premium character."
+        "excerpt": "Der PlasmaMade E-Filter wurde gleich in fünf Kategorien ausgezeichnet: Innovation, High Quality, Funktionalität, Ergonomie und Ökologie.",
+        "body": "Große Neuigkeit: Der PlasmaMade E-Filter wurde mit dem Plus X Award 2025 ausgezeichnet — gleich in fünf Kategorien: Innovation, High Quality, Funktionalität, Ergonomie und Ökologie. Ein starkes, international anerkanntes Qualitätssiegel, das Sie direkt in Ihrer Verkaufsstory nutzen können. Verwenden Sie das Award-Visual in Social Posts, E-Mail-Signaturen, Angeboten und Showroom-Materialien, um den Premium-Charakter von PlasmaMade zu unterstreichen."
       },
       "caple-partnership": {
         "title": "Internationale Partnerschaft mit Caple (UK)",
-        "excerpt": "Co-Markeed Materialien und videos foder the British market have been added to the asset library.",
-        "body": "PlasmaMade is expunding internationalley mit co-Markeed Materialien foder partner Caple in the United Kingdom. A Caple total brochure (EU-EN) is verfugbar, plus Installeation videos foder the GUC1214 und GUC1314. Foder co-Markeed communications, Kontakt marketing@plasmamade.com."
+        "excerpt": "Co-Branding-Materialien und Videos für den britischen Markt wurden der Asset Library hinzugefügt.",
+        "body": "PlasmaMade expandiert international mit Co-Branding-Materialien für Partner Caple im Vereinigten Königreich. Eine Caple-Gesamtbroschüre (EU-EN) ist verfügbar, außerdem Installationsvideos für GUC1214 und GUC1314. Für Co-Branding-Kommunikation kontaktieren Sie marketing@plasmamade.com."
       }
     },
     "marketing": {
       "li-get-fresh": {
         "title": "Social post — Get fresh!",
-        "desc": "LinkedIn/Instagram visual around the Get fresh! Kampagne."
+        "desc": "LinkedIn/Instagram-Visual zur Get fresh!-Kampagne."
       },
       "li-algemeen": {
-        "title": "Social post — General Marke",
-        "desc": "General Marke post foder LinkedIn."
+        "title": "Social Post — Marke allgemein",
+        "desc": "Allgemeiner Markenpost für LinkedIn."
       },
       "li-new-efilters": {
-        "title": "Social post — Neu E-Filters",
-        "desc": "Produkt introduction post foder the E-Filter line."
+        "title": "Social Post — Neue E-Filter",
+        "desc": "Produkteinführungspost für die E-Filter-Linie."
       },
       "li-inbouw-1223": {
-        "title": "Social post — Installeation GUC1223",
-        "desc": "Installeation/Montage visual foder the GUC1223."
+        "title": "Social Post - Installation GUC1223",
+        "desc": "Installations-/Montagevisual für den GUC1223."
       },
       "li-inbouw-1323": {
-        "title": "Social post — Installeation GUC1323",
-        "desc": "Installeation/Montage visual foder the GUC1323."
+        "title": "Social Post - Installation GUC1323",
+        "desc": "Installations-/Montagevisual für den GUC1323."
       },
       "li-certificeringen": {
-        "title": "Social post — Certifications",
-        "desc": "Visual mit CE, UKCA, ROHS, RED certifications."
+        "title": "Social Post - Zertifizierungen",
+        "desc": "Visual mit CE-, UKCA-, ROHS- und RED-Zertifizierungen."
       },
       "li-event": {
-        "title": "Event banner - Get fresh!",
-        "desc": "General event banner foder partner days, showroom days und trade fairs."
+        "title": "Eventbanner - Get fresh!",
+        "desc": "Allgemeines Eventbanner für Partnertage, Showroom-Tage und Messen."
       },
       "totaalbrochure-eu-nl-2026": {
-        "title": "Total brochure EU-NL 2026",
-        "desc": "Vollstundig Produkt brochure mit alle models und specifications."
+        "title": "Gesamtbroschüre EU-NL 2026",
+        "desc": "Vollständige Produktbroschüre mit allen Modellen und Spezifikationen."
       },
       "brochure-eu-nl": {
-        "title": "Produkt brochure EU-NL",
-        "desc": "Consumer brochure A4 (Dutch)."
+        "title": "Produktbroschüre EU-NL",
+        "desc": "Verbraucherbroschüre A4 (Niederländisch)."
       },
       "brochure-eu-en": {
-        "title": "Produkt brochure EU-EN",
-        "desc": "Consumer brochure A4 (English)."
+        "title": "Produktbroschüre EU-EN",
+        "desc": "Verbraucherbroschüre A4 (Englisch)."
       },
       "folder-ultrafine-nl": {
-        "title": "AirClean UltraFine leaflet",
-        "desc": "Leaflet on the UltraFine series: ESP+ESD, Reinraum, Interflow test."
+        "title": "AirClean UltraFine Faltblatt",
+        "desc": "Faltblatt zur UltraFine-Serie: ESP+ESD, Reinraumqualität und Interflow-Test."
       },
       "folder-esp-heat-exchanger": {
-        "title": "ESP Heat Exchanger leaflet",
-        "desc": "Hybrid ceiling model mit additional fresh-air supply."
+        "title": "ESP Heat Exchanger Faltblatt",
+        "desc": "Hybrides Deckenmodell mit zusätzlicher Frischluftzufuhr."
       },
       "leaflet-table-air-cleaner-nl": {
-        "title": "Table Air Cleaner leaflet",
-        "desc": "Leaflet foder the compact tabletop model."
+        "title": "Table Air Cleaner Faltblatt",
+        "desc": "Faltblatt für das kompakte Tischmodell."
       },
       "techniekblad-nl": {
-        "title": "E-Filter technology sheet",
-        "desc": "Technisch explanation mit elimination list und Sustainability badge."
+        "title": "Technikblatt E-Filter",
+        "desc": "Technische Erklärung mit Eliminationsliste und Nachhaltigkeitsbadge."
       },
       "productsheet-guc1223": {
-        "title": "Produkt sheet GUC1223",
-        "desc": "Technisch Produktblatt GUC1223."
+        "title": "Produktblatt GUC1223",
+        "desc": "Technisches Produktblatt GUC1223."
       },
       "productsheet-guc1212": {
-        "title": "Produkt sheet GUC1212",
-        "desc": "Technisch Produktblatt GUC1212."
+        "title": "Produktblatt GUC1212",
+        "desc": "Technisches Produktblatt GUC1212."
       },
       "productsheet-guc1323": {
-        "title": "Produkt sheet GUC1323",
-        "desc": "Technisch Produktblatt GUC1323."
+        "title": "Produktblatt GUC1323",
+        "desc": "Technisches Produktblatt GUC1323."
       },
       "render-guc1223": {
-        "title": "Produkt render GUC1223",
-        "desc": "Cut-out Produkt render (transparent), high resolution."
+        "title": "Produkt-Rendering GUC1223",
+        "desc": "Freigestelltes Produkt-Rendering (transparent), hohe Auflösung."
       },
       "render-guc1323": {
-        "title": "Produkt render GUC1323",
-        "desc": "Cut-out Produkt render (transparent)."
+        "title": "Produkt-Rendering GUC1323",
+        "desc": "Freigestelltes Produkt-Rendering (transparent)."
       },
       "render-guc1212": {
-        "title": "Produkt render GUC1212",
-        "desc": "Cut-out Produkt render (transparent)."
+        "title": "Produkt-Rendering GUC1212",
+        "desc": "Freigestelltes Produkt-Rendering (transparent)."
       },
       "render-ultrafine": {
-        "title": "Produkt render AirClean UltraFine",
-        "desc": "Render of the stundalone UltraFine unit."
+        "title": "Produkt-Rendering AirClean UltraFine",
+        "desc": "Render der freistehenden UltraFine-Einheit."
       },
       "render-esp": {
-        "title": "Produkt render GUC4184 ESP",
-        "desc": "Render of the ESP component."
+        "title": "Produkt-Rendering GUC4184 ESP",
+        "desc": "Render der ESP-Komponente."
       },
       "foto-keuken-oma": {
-        "title": "Lifestyle — Kuche",
-        "desc": "Authentic Kuche image foder lifestyle communication."
+        "title": "Lifestyle — Küche",
+        "desc": "Authentisches Küchenbild für Lifestyle-Kommunikation."
       },
       "foto-vlinders": {
-        "title": "Lifestyle — butterflies & Kuche",
-        "desc": "Image mit monarch butterflies — a symbol of saubere Luft."
+        "title": "Lifestyle — Schmetterlinge & Küche",
+        "desc": "Bild mit Monarchfaltern — Symbol für saubere Luft."
       },
       "foto-integrale": {
-        "title": "Image — integriertem Abzug",
-        "desc": "Hob mit integriertem Abzug in context."
+        "title": "Bild — integrierter Abzug",
+        "desc": "Kochfeld mit integriertem Abzug im Kontext."
       },
       "foto-kantoor": {
-        "title": "Anwendung — Buro",
-        "desc": "UltraFine in an Buro environment."
+        "title": "Anwendung — Büro",
+        "desc": "UltraFine in einer Büroumgebung."
       },
       "foto-school": {
         "title": "Anwendung — Schule",
-        "desc": "UltraFine in a classroom."
+        "desc": "UltraFine in einem Klassenzimmer."
       },
       "foto-horeca": {
         "title": "Anwendung — Gastronomie",
-        "desc": "UltraFine in a Gastronomie environment."
+        "desc": "UltraFine in einer Gastronomieumgebung."
       },
       "presentatie-plasmamade": {
-        "title": "Unternehmen Prasentation",
-        "desc": "General PlasmaMade Prasentation foder Partner und Kunden."
+        "title": "Unternehmenspräsentation",
+        "desc": "Allgemeine PlasmaMade-Präsentation für Partner und Kunden."
       },
       "rolbanner-100x200": {
-        "title": "Roll-up banner 100×200",
-        "desc": "Print-ready roll-up banner foder trade fairs und showrooms."
+        "title": "Roll-up-Banner 100×200",
+        "desc": "Druckfertiges Roll-up-Banner für Messen und Showrooms."
       },
       "award": {
-        "title": "Plus X Award 2025 — visual",
-        "desc": "Won in 5 categoderies. Visual foder social, email und showroom."
+        "title": "Plus X Award 2025 - Visual",
+        "desc": "In 5 Kategorien ausgezeichnet. Visual für Social, E-Mail und Showroom."
       },
       "logo-pakket": {
-        "title": "Logo pack (alle variants)",
-        "desc": "Alle logo variants (green, white, black) in EPS/PNG/JPG."
+        "title": "Logopaket (alle Varianten)",
+        "desc": "Alle Logovarianten (grün, weiß, schwarz) in EPS/PNG/JPG."
       },
       "huisstijlhandboek-nl": {
-        "title": "Marke Hundbuch NL",
-        "desc": "Vollstundig Marke Hundbuch: colours, typography, imagery."
+        "title": "Markenhandbuch NL",
+        "desc": "Vollständiges Markenhandbuch: Farben, Typografie und Bildsprache."
       },
       "social-award": {
-        "title": "Social post — Plus X Award 2025",
-        "desc": "Award post: won in 5 categoderies."
+        "title": "Social Post - Plus X Award 2025",
+        "desc": "Award-Post: ausgezeichnet in 5 Kategorien."
       }
     },
     "downloads": {
       "totaalbrochure-eu-nl-2026": {
-        "title": "Total brochure EU-NL 2026"
+        "title": "Gesamtbroschüre EU-NL 2026"
       },
       "brochure-eu-nl": {
-        "title": "Produkt brochure EU-NL"
+        "title": "Produktbroschüre EU-NL"
       },
       "brochure-eu-en": {
-        "title": "Produkt brochure EU-EN"
+        "title": "Produktbroschüre EU-EN"
       },
       "folder-ultrafine-nl": {
-        "title": "AirClean UltraFine leaflet"
+        "title": "AirClean UltraFine Faltblatt"
       },
       "folder-esp-heat-exchanger": {
-        "title": "ESP Heat Exchanger leaflet"
+        "title": "ESP Heat Exchanger Faltblatt"
       },
       "leaflet-table-air-cleaner-nl": {
-        "title": "Table Air Cleaner leaflet"
+        "title": "Table Air Cleaner Faltblatt"
       },
       "productsheet-guc1223": {
-        "title": "Produkt sheet GUC1223"
+        "title": "Produktblatt GUC1223"
       },
       "productsheet-guc1212": {
-        "title": "Produkt sheet GUC1212"
+        "title": "Produktblatt GUC1212"
       },
       "productsheet-guc1323": {
-        "title": "Produkt sheet GUC1323"
+        "title": "Produktblatt GUC1323"
       },
       "productsheet-guc1214": {
-        "title": "Produkt sheet GUC1214 (NA)"
+        "title": "Produktblatt GUC1214 (NA)"
       },
       "productsheet-guc1314": {
-        "title": "Produkt sheet GUC1314 (NA)"
+        "title": "Produktblatt GUC1314 (NA)"
       },
       "techniekblad-nl": {
-        "title": "E-Filter technology sheet"
+        "title": "Technikblatt E-Filter"
       },
       "handleiding-guc1223": {
-        "title": "Hundbuch GUC1223 (KIWA)"
+        "title": "Handbuch GUC1223 (KIWA)"
       },
       "handleiding-guc1323": {
-        "title": "Hundbuch GUC1323 (KIWA)"
+        "title": "Handbuch GUC1323 (KIWA)"
       },
       "presentatie-plasmamade": {
-        "title": "PlasmaMade Unternehmen Prasentation"
+        "title": "PlasmaMade Unternehmenspräsentation"
       },
       "huisstijlhandboek-nl": {
-        "title": "Marke Hundbuch NL v1.2"
+        "title": "Markenhandbuch NL v1.2",
+        "desc": "Vollständiges Markenhandbuch: Farben, Typografie und Bildsprache."
       },
       "logo-pakket": {
-        "title": "Logo pack (alle variants)"
+        "title": "Logopaket (alle Varianten)"
       },
       "rolbanner-100x200": {
-        "title": "Roll-up banner 100×200"
+        "title": "Roll-up-Banner 100×200"
       }
     },
     "sales": {
       "pitches": [
         {
           "audience": "Verbraucher",
-          "text": "Mit PlasmaMade kochen Sie, ohne dass Geruche im Haus hangen bleiben, und Sie atmen sauberere Luft — frei von Feinstaub, Pollen und Viren. Der Filter klickt einfach auf Ihre Dunstabzugshaube, muss 10 bis 15 Jahre nicht ersetzt werden und benotigt keine Abluft nach aussen. Saubere Luft, ohne Aufwand."
+          "text": "Mit PlasmaMade kochen Sie, ohne dass Gerüche im Haus hängen bleiben, und Sie atmen sauberere Luft — frei von Feinstaub, Pollen und Viren. Der Filter klickt einfach auf Ihre Dunstabzugshaube, muss 10 bis 15 Jahre nicht ersetzt werden und benötigt keine Abluft nach außen. Saubere Luft, ohne Aufwand."
         },
         {
           "audience": "Installateur",
           "text": "PlasmaMade ist in Minuten montiert: Klicksystem, Dreh-Klemmverschluss, kein Zusatzmaterial. Es funktioniert mit Umluft, daher ist keine Wanddurchfuhrung erforderlich. WiFi und Bluetooth ermoglichen drahtlose Steuerung; mit 10-15 Jahren Lebensdauer und 5 Jahren Garantie ist es vollig sorglos."
         },
         {
-          "audience": "Kuchenstudio / Handler",
-          "text": "PlasmaMade ist die Premium-Erganzung fur Ihr Kuchenangebot. Ein patentiertes, weltweit zertifiziertes niederlandisches Produkt, das auf nahezu jede Designhaube passt. Sie bieten Ihren Kunden nachweisbare Gesundheitsvorteile und unterscheiden sich mit einer innovativen A-Marke und zusatzlicher Marge."
+          "audience": "Küchenstudio / Händler",
+          "text": "PlasmaMade ist die Premium-Erganzung für Ihr Küchenangebot. Ein patentiertes, weltweit zertifiziertes niederländisches Produkt, das auf nahezu jede Designhaube passt. Sie bieten Ihren Kunden nachweisbare Gesundheitsvorteile und unterscheiden sich mit einer innovativen A-Marke und zusatzlicher Marge."
         },
         {
           "audience": "Business / professionell",
-          "text": "Der AirClean UltraFine bringt Reinraumqualitat in Ihre Raume. Unabhangig von Interflow getestet: vergleichbar mit einem HEPA-Filter und einem ISO 6/7-Reinraum. Bis zu 98% weniger Viren und Bakterien, bis zu 85% weniger Feinstaub — ohne Wegwerffilter und mit niedrigem Energieverbrauch. Eine Investition in Produktivitat, Fursorgepflicht und Gesundheit."
+          "text": "Der AirClean UltraFine bringt Reinraumqualität in Ihre Räume. Unabhängig von Interflow getestet: vergleichbar mit einem HEPA-Filter und einem ISO 6/7-Reinraum. Bis zu 98% weniger Viren und Bakterien, bis zu 85% weniger Feinstaub — ohne Wegwerffilter und mit niedrigem Energieverbrauch. Eine Investition in Produktivitat, Fursorgepflicht und Gesundheit."
         }
       ],
       "usps": [
         "Bis zu 98% Reduktion von Viren und Bakterien",
-        "Entfernt Geruche, Feinstaub, Pollen, Allergene und Schimmel",
-        "Keine Abluft nach aussen erforderlich — arbeitet mit Umluft",
+        "Entfernt Gerüche, Feinstaub, Pollen, Allergene und Schimmel",
+        "Keine Abluft nach außen erforderlich — arbeitet mit Umluft",
         "10-15 Jahre Lebensdauer — kein Wegwerffilter",
         "Click-fit-Montage, in Minuten ohne Werkzeug installiert",
-        "WiFi + Bluetooth-Steuerung uber die PlasmaMade App",
-        "97% recycelbar · patentiertes niederlandisches Produkt",
+        "WiFi + Bluetooth-Steuerung über die PlasmaMade App",
+        "97% recycelbar · patentiertes niederländisches Produkt",
         "CE, UKCA, ROHS, RED zertifiziert",
         "2 Jahre Garantie · 5 Jahre nach Registrierung",
         "Passt auf nahezu jede Dunstabzugshaube, einschliesslich Designhauben"
@@ -1740,7 +1741,7 @@ window.PM_LOCALES.de = {
         {
           "feature": "Was wird gefiltert",
           "trad": "Nur Fett & grobe Partikel",
-          "pm": "Viren, Bakterien, Pollen, Feinstaub, Geruche"
+          "pm": "Viren, Bakterien, Pollen, Feinstaub, Gerüche"
         },
         {
           "feature": "Abluft",
@@ -1758,7 +1759,7 @@ window.PM_LOCALES.de = {
           "pm": "97% recycelbar"
         },
         {
-          "feature": "Gerausch",
+          "feature": "Geräusch",
           "trad": "Laut",
           "pm": "Schalldampfung"
         },
@@ -1771,23 +1772,23 @@ window.PM_LOCALES.de = {
       "objections": [
         {
           "q": "\"Ein PlasmaMade ist teurer als ein normaler Kohlefilter.\"",
-          "a": "Beim Anschaffungspreis stimmt das, aber rechnen Sie es durch: einen Kohlefilter ersetzen Sie jedes Jahr. Ein PlasmaMade halt 10 bis 15 Jahre. Uber die Lebensdauer ist er tatsachlich gunstiger — und er filtert viel mehr als nur Fett: Viren, Feinstaub, Pollen und Geruche."
+          "a": "Beim Anschaffungspreis stimmt das, aber rechnen Sie es durch: einen Kohlefilter ersetzen Sie jedes Jahr. Ein PlasmaMade halt 10 bis 15 Jahre. Über die Lebensdauer ist er tatsächlich günstiger — und er filtert viel mehr als nur Fett: Viren, Feinstaub, Pollen und Gerüche."
         },
         {
           "q": "\"Funktioniert es wirklich? Filtert es wirklich Viren?\"",
-          "a": "Es wurde unabhangig von Interflow (2024) getestet: nahezu identische Partikelreduktion wie ein HEPA-Filter, R² = 0,996. Bis zu 98% der Viren und Bakterien werden gefiltert. Es ist CE-, UKCA-, ROHS- und RED-zertifiziert und patentiert."
+          "a": "Es wurde unabhängig von Interflow (2024) getestet: nahezu identische Partikelreduktion wie ein HEPA-Filter, R² = 0,996. Bis zu 98% der Viren und Bakterien werden gefiltert. Es ist CE-, UKCA-, ROHS- und RED-zertifiziert und patentiert."
         },
         {
           "q": "\"Ich habe keinen Abluftkanal.\"",
-          "a": "Sie brauchen keinen. PlasmaMade arbeitet mit Umluft: Die Luft wird gereinigt und sauber in den Raum zuruckgefuhrt. Ideal gerade fur Wohnungen und Renovierungen ohne Wanddurchbruch."
+          "a": "Sie brauchen keinen. PlasmaMade arbeitet mit Umluft: Die Luft wird gereinigt und sauber in den Raum zurückgeführt. Ideal gerade für Wohnungen und Renovierungen ohne Wanddurchbruch."
         },
         {
           "q": "\"Passt es auf meine Dunstabzugshaube?\"",
-          "a": "Sehr wahrscheinlich. Der GUC1223 hat zwei Anschlussgrossen (Ø122/126 und Ø147/151 mm) und passt auf die meisten Design- und Wandhauben. Fur Ø100 mm gibt es den GUC1212, fur Kochfelder mit integriertem Abzug den GUC1323. Nutzen Sie den Filter-Finder zur Prufung."
+          "a": "Sehr wahrscheinlich. Der GUC1223 hat zwei Anschlussgrößen (Ø122/126 und Ø147/151 mm) und passt auf die meisten Design- und Wandhauben. Für Ø100 mm gibt es den GUC1212, für Kochfelder mit integriertem Abzug den GUC1323. Nutzen Sie den Filter-Finder zur Prüfung."
         },
         {
           "q": "\"Muss ich den Filter warten oder ersetzen?\"",
-          "a": "Nein. Der E-Filter ist uber die gesamte Lebensdauer wartungsfrei — kein Filterwechsel. Beim AirClean UltraFine reinigen Sie einfach das ESP-Plattenmodul in der Spulmaschine."
+          "a": "Nein. Der E-Filter ist über die gesamte Lebensdauer wartungsfrei — kein Filterwechsel. Beim AirClean UltraFine reinigen Sie einfach das ESP-Plattenmodul in der Spülmaschine."
         },
         {
           "q": "\"Ist es nachhaltig?\"",
@@ -1799,199 +1800,199 @@ window.PM_LOCALES.de = {
           "product": "GUC1223",
           "args": [
             "Fits almost any Designhaube (two connection sizes).",
-            "Flagship: the best-selling E-Filter.",
+            "Flaggschiff: der meistverkaufte E-Filter.",
             "10–15 years ohne replacing a Filter."
           ]
         },
         {
           "product": "GUC1212",
           "args": [
-            "Compact solution foder existing Ø100 mm hoods.",
-            "The same proven technology, smalleer fodermat.",
-            "Makes any Umluft hood fully capable."
+            "Kompakte Lösung für bestehende Ø100-mm-Hauben.",
+            "Dieselbe bewährte Technologie im kleineren Format.",
+            "Macht jede Umlufthaube vollwertig einsetzbar."
           ]
         },
         {
           "product": "GUC1323",
           "args": [
-            "The Filter foder hobs mit integriertem Abzug.",
-            "Invisibly concealed — preserves the sleek design.",
-            "Capitalises on the growing market of offnen Kuches."
+            "Der Filter für Kochfelder mit integriertem Abzug.",
+            "Unsichtbar integriert — erhält das klare Design.",
+            "Nutzt den wachsenden Markt offener Küchen."
           ]
         },
         {
           "product": "AirClean UltraFine",
           "args": [
-            "Cleanroom quality ohne a Reinraum (ISO 6/7).",
-            "Interflow Nachweis: as good as a HEPA Filter.",
-            "ESP module in the dishwasher — keine WegwerfFilters."
+            "Reinraumqualität ohne Reinraum (ISO 6/7).",
+            "Interflow-Nachweis: nahezu so gut wie ein HEPA-Filter.",
+            "ESP-Modul in der Spülmaschine - keine Wegwerffilter."
           ]
         }
       ],
-      "pitch10": "PlasmaMade reinigt Ihre Innenluft vollstandig — Geruche, Feinstaub, Viren und Pollen werden bis zu 98% gefiltert — ohne Abluft nach aussen und ohne jemals einen Filter zu ersetzen.",
-      "pitch30": "PlasmaMade ist ein patentierter niederlandischer E-Filter, der die Luft in Ihrer Kuche oder Ihrem Raum vollstandig reinigt: Geruche, Feinstaub, Pollen, Viren und Bakterien werden bis zu 98% abgebaut. Er arbeitet mit Umluft, daher ist keine Abluft nach aussen erforderlich. Sie klicken ihn in Minuten auf die Dunstabzugshaube, er halt 10 bis 15 Jahre und ist zu 97% recycelbar. Unabhangig getestet und CE/UKCA/ROHS/RED zertifiziert. Saubere Luft, ohne Aufwand.",
+      "pitch10": "PlasmaMade reinigt Ihre Innenluft vollständig — Gerüche, Feinstaub, Viren und Pollen werden bis zu 98% gefiltert — ohne Abluft nach außen und ohne jemals einen Filter zu ersetzen.",
+      "pitch30": "PlasmaMade ist ein patentierter niederländischer E-Filter, der die Luft in Ihrer Küche oder Ihrem Raum vollständig reinigt: Gerüche, Feinstaub, Pollen, Viren und Bakterien werden bis zu 98% abgebaut. Er arbeitet mit Umluft, daher ist keine Abluft nach außen erforderlich. Sie klicken ihn in Minuten auf die Dunstabzugshaube, er hält 10 bis 15 Jahre und ist zu 97% recycelbar. Unabhängig getestet und CE/UKCA/ROHS/RED zertifiziert. Saubere Luft, ohne Aufwand.",
       "segments": [
         {
-          "segment": "Kuches",
-          "text": "Cooking ohne Geruche lingering in the house, plus healthier air foder the whole family. GUC1223 foder most hoods, GUC1323 foder hobs mit integriertem Abzug. Keine Abluft nach aussen needed."
+          "segment": "Küchen",
+          "text": "Kochen ohne Gerüche im Haus, plus gesündere Luft für die ganze Familie. GUC1223 für die meisten Hauben, GUC1323 für Kochfelder mit integriertem Abzug. Keine Abluft nach außen nötig."
         },
         {
-          "segment": "Buros",
-          "text": "A healthy indooder climate increases concentration und reduces absenteeism. The AirClean UltraFine continuously provides saubere Luft, so employees can woderk safely und comfodertably on site."
+          "segment": "Büros",
+          "text": "Ein gesundes Innenklima erhöht die Konzentration und reduziert Ausfallzeiten. Der AirClean UltraFine sorgt kontinuierlich für saubere Luft, damit Mitarbeiter sicher und komfortabel vor Ort arbeiten können."
         },
         {
-          "segment": "Schules",
-          "text": "Many people gather in classrooms. Continuous Luftreinigung reduces the spread of Viren und aerosols und ensures a healthier learning environment."
+          "segment": "Schulen",
+          "text": "In Klassenzimmern kommen viele Menschen zusammen. Kontinuierliche Luftreinigung reduziert die Verbreitung von Viren und Aerosolen und sorgt für eine gesündere Lernumgebung."
         },
         {
-          "segment": "Gesundheitswesen institutions",
-          "text": "A safe indooder climate is vital. Up to 98% of Viren und Bakterien are Filtered — protection foder employees, patients und visitoders, substantiated by the Interflow test."
+          "segment": "Gesundheitseinrichtungen",
+          "text": "Ein sicheres Innenklima ist essenziell. Bis zu 98% der Viren und Bakterien werden gefiltert — Schutz für Mitarbeiter, Patienten und Besucher, belegt durch den Interflow-Test."
         },
         {
-          "segment": "Public buildings",
-          "text": "Waiting areas, spoderts facilities, Gastronomie und Retail: wherever people gather, the AirClean UltraFine ensures noticeably cleaner und safer air."
+          "segment": "Öffentliche Gebäude",
+          "text": "Wartebereiche, Sportstätten, Gastronomie und Retail: Überall, wo Menschen zusammenkommen, sorgt der AirClean UltraFine für spürbar sauberere und sicherere Luft."
         }
       ],
       "sustainability": [
-        "97% recycelbar — keine WegwerfFilter that goes in the bin every year.",
-        "10–15 year Lebensdauer (±9,000 hours) — keine annual replacement.",
-        "ESP Plattenmodul is spulmaschinenfest und endlessly reusable.",
-        "Low air resistance → lower Energieverbrauch und weniger Gerausch.",
-        "Lower CO₂ emissions through efficient energy management.",
-        "With Umluft keine heat loss: the heated Innenluft stays inside."
+        "97% recycelbar - kein Wegwerffilter, der jedes Jahr im Abfall landet.",
+        "10-15 Jahre Lebensdauer (±9.000 Stunden) - kein jährlicher Austausch.",
+        "Das ESP-Plattenmodul ist spülmaschinenfest und dauerhaft wiederverwendbar.",
+        "Geringer Luftwiderstand: niedrigerer Energieverbrauch und weniger Geräusch.",
+        "Niedrigere CO₂-Emissionen durch effizientes Energiemanagement.",
+        "Bei Umluft kein Wärmeverlust: Die erwärmte Innenluft bleibt im Raum."
       ],
       "simple": [
         {
-          "title": "What does it do? (in one sentence)",
-          "text": "The Filter cleans the air in Ihre Kuche und returns it to the room clean — ohne a hole to the outside."
+          "title": "Was macht er? (in einem Satz)",
+          "text": "Der Filter reinigt die Luft in Ihrer Küche und führt sie sauber in den Raum zurück — ohne Loch nach draußen."
         },
         {
-          "title": "How does it woderk? (simply explained)",
-          "text": "Inside, a smalle plasma field breaks down Geruche, Feinstaub und Krankheitserreger. What remains is clean, fresh air. Sie don't have to replace anything."
+          "title": "Wie funktioniert es? (einfach erklärt)",
+          "text": "Im Inneren baut ein kleines Plasmafeld Gerüche, Feinstaub und Krankheitserreger ab. Übrig bleibt saubere, frische Luft. Sie müssen nichts ersetzen."
         },
         {
-          "title": "Why keine Filterwechsel?",
-          "text": "An oderdinary carbon Filter fills up und must be replaced every year. PlasmaMade actualley breaks down the pollution, so it keeps woderking foder 10 to 15 years."
+          "title": "Warum kein Filterwechsel?",
+          "text": "Ein normaler Kohlefilter sättigt sich und muss jedes Jahr ersetzt werden. PlasmaMade baut die Verunreinigung tatsächlich ab und arbeitet dadurch 10 bis 15 Jahre lang weiter."
         },
         {
-          "title": "Is it safe?",
-          "text": "Ja. It has been extensively tested (including by TÜV und VDE), is CE/UKCA/ROHS/RED certified und the ozone values are demonstrably safe."
+          "title": "Ist das sicher?",
+          "text": "Ja. Der Filter wurde umfangreich getestet (unter anderem durch TÜV und VDE), ist CE/UKCA/ROHS/RED-zertifiziert und die Ozonwerte sind nachweislich sicher."
         }
       ],
       "emails": [
         {
-          "title": "Introduction — consumer / Kuche customer",
-          "subject": "Clean air in Ihre Kuche — ohne ever replacing a Filter",
-          "body": "Dear [name],\n\nThank Sie foder Ihre interest in a neu Kuche (solution). I'd like to draw Ihre attention to the PlasmaMade E-Filter: a patented Dutch air Filter that removes Geruche, Feinstaub, Pollen und up to 98% of Viren und Bakterien from the air.\n\nThe key benefits at a glance:\n• Keine Abluft nach aussen needed — woderks on Umluft\n• 10–15 year Lebensdauer, keine Filterwechsel\n• Mounted in minutes on almost any Dunstabzugshaube\n• 97% recycelbar und CE/UKCA/ROHS/RED certified\n\nI'd be happy to tell Sie modere during Ihre next visit.\n\nKind regards,\n[Ihre name]"
+          "title": "Einführung — Verbraucher / Küchenkunde",
+          "subject": "Saubere Luft in Ihrer Küche — ohne jemals einen Filter zu wechseln",
+          "body": "Sehr geehrte/r [Name],\n\nvielen Dank für Ihr Interesse an einer neuen Küchenlösung. Gern möchte ich Sie auf den PlasmaMade E-Filter aufmerksam machen: einen patentierten niederländischen Luftfilter, der Gerüche, Feinstaub, Pollen sowie bis zu 98% der Viren und Bakterien aus der Luft entfernt.\n\nDie wichtigsten Vorteile auf einen Blick:\n• Keine Abluft nach außen nötig — arbeitet mit Umluft\n• 10–15 Jahre Lebensdauer, kein Filterwechsel\n• In wenigen Minuten auf nahezu jeder Dunstabzugshaube montiert\n• 97% recycelbar und CE/UKCA/ROHS/RED-zertifiziert\n\nBei Ihrem nächsten Besuch erzähle ich Ihnen gern mehr dazu.\n\nMit freundlichen Grüßen\n[Ihr Name]"
         },
         {
-          "title": "Quote offer — geschaftlich (UltraFine)",
-          "subject": "Quote AirClean UltraFine — Reinraumqualitat foder Ihre space",
-          "body": "Dear [name],\n\nAs discussed, bitte find attached our quote foder the PlasmaMade AirClean UltraFine.\n\nThe AirClean UltraFine combines ESP und ESD technology und has been independently tested by Interflow (2024): particle reduction is virtualley identical to a HEPA Filter (R² = 0.996). Up to 98% of Viren und Bakterien und up to 85% of Feinstaub is Filtered from the air — ohne WegwerfFilter und mit low Energieverbrauch.\n\nThe quote und Produkt documentation are attached. I'll gladly include the Interflow test repodert on Anfrage.\n\nBitte let me know if Sie have any Fragen.\n\nKind regards,\n[Ihre name]"
+          "title": "Angebot — Geschäftskunde (UltraFine)",
+          "subject": "Angebot AirClean UltraFine — Reinraumqualität für Ihre Räume",
+          "body": "Sehr geehrte/r [Name],\n\nwie besprochen erhalten Sie anbei unser Angebot für den PlasmaMade AirClean UltraFine.\n\nDer AirClean UltraFine kombiniert ESP- und ESD-Technologie und wurde unabhängig von Interflow (2024) getestet: Die Partikelreduktion ist nahezu identisch mit einem HEPA-Filter (R² = 0,996). Bis zu 98% der Viren und Bakterien sowie bis zu 85% des Feinstaubs werden aus der Luft gefiltert — ohne Wegwerffilter und mit niedrigem Energieverbrauch.\n\nDas Angebot und die Produktdokumentation finden Sie im Anhang. Den Interflow-Testbericht reiche ich auf Wunsch gern nach.\n\nBei Fragen helfe ich Ihnen gern weiter.\n\nMit freundlichen Grüßen\n[Ihr Name]"
         },
         {
-          "title": "Follow-up after a conversation oder showroom visit",
-          "subject": "Following up on our conversation about PlasmaMade",
-          "body": "Dear [name],\n\nThank Sie foder the pleasant conversation about saubere Luft in [Ihre Kuche/Ihre oderganisation]. As promised, I'm sending Sie the infodermation about the PlasmaMade E-Filter.\n\nIn shodert: the Filter cleans the air vollstundigly und returns it to the room clean. Keine Abluft nach aussen, keine annual Filterwechsel — foder 10 to 15 years.\n\nDo Sie have any Fragen, oder would Sie like to schedule a demonstration? I'm happy to help.\n\nKind regards,\n[Ihre name]"
+          "title": "Nachfassung nach Gespräch oder Showroom-Besuch",
+          "subject": "Ich melde mich wegen unseres Gesprächs zu PlasmaMade",
+          "body": "Sehr geehrte/r [Name],\n\nvielen Dank für das angenehme Gespräch über saubere Luft in [Ihrer Küche/Ihrer Organisation]. Wie versprochen sende ich Ihnen die Informationen zum PlasmaMade E-Filter.\n\nKurz gesagt: Der Filter reinigt die Luft vollständig und führt sie sauber in den Raum zurück. Keine Abluft nach außen, kein jährlicher Filterwechsel — 10 bis 15 Jahre lang.\n\nHaben Sie Fragen oder möchten Sie eine Vorführung planen? Ich helfe Ihnen gern.\n\nMit freundlichen Grüßen\n[Ihr Name]"
         },
         {
-          "title": "After-sales — Garantie registration",
-          "subject": "Tip: register Ihre PlasmaMade foder a 5-year Garantie",
-          "body": "Dear [name],\n\nCongratulations on Ihre PlasmaMade E-Filter! A smalle effodert that's woderth it: register Ihre Produkt at plasmamade.com. This extends the Garantie from 2 to 5 years.\n\nAlso good to know:\n• The Filter is maintenance-free — Sie don't have to replace anything\n• Sie can control the Filter via the PlasmaMade app (WiFi/Bluetooth)\n\nEnjoy Ihre saubere Luft. If Sie have any Fragen, we're here foder you.\n\nKind regards,\n[Ihre name]"
+          "title": "After-Sales - Garantieregistrierung",
+          "subject": "Tipp: Registrieren Sie Ihr PlasmaMade-Produkt für 5 Jahre Garantie",
+          "body": "Sehr geehrte/r [Name],\n\nherzlichen Glückwunsch zu Ihrem PlasmaMade E-Filter! Ein kleiner Schritt, der sich lohnt: Registrieren Sie Ihr Produkt auf plasmamade.com. Dadurch verlängert sich die Garantie von 2 auf 5 Jahre.\n\nEbenfalls gut zu wissen:\n• Der Filter ist wartungsfrei — Sie müssen nichts ersetzen\n• Sie können den Filter über die PlasmaMade App steuern (WiFi/Bluetooth)\n\nViel Freude mit sauberer Luft. Bei Fragen sind wir gern für Sie da.\n\nMit freundlichen Grüßen\n[Ihr Name]"
         }
       ]
     },
     "videos": {
       "guc1223-werking": {
-        "title": "GUC1223 — how it woderks",
-        "desc": "How the GUC1223 E-Filter cleans the air und is controlled wirelessly."
+        "title": "GUC1223 - Funktionsweise",
+        "desc": "Wie der GUC1223 E-Filter die Luft reinigt und drahtlos gesteuert wird."
       },
       "guc1223-montage": {
-        "title": "GUC1223 — Installeation video",
-        "desc": "Step by step: Montage the GUC1223 on the Dunstabzugshaube."
+        "title": "GUC1223 - Installationsvideo",
+        "desc": "Schritt für Schritt: Montage des GUC1223 auf der Dunstabzugshaube."
       },
       "guc1212-installatie": {
-        "title": "GUC1212 — Installeation",
-        "desc": "Installeing the compact GUC1212 on a Ø100 mm connection."
+        "title": "GUC1212 - Installation",
+        "desc": "Installation des kompakten GUC1212 auf einem Ø100-mm-Anschluss."
       },
       "guc1323-werking": {
-        "title": "GUC1323 — how it woderks",
-        "desc": "The flat E-Filter foder hobs mit integriertem Abzug."
+        "title": "GUC1323 - Funktionsweise",
+        "desc": "Der flache E-Filter für Kochfelder mit integriertem Abzug."
       },
       "guc1323-montage": {
-        "title": "GUC1323 — Installeation video",
-        "desc": "Montage the GUC1323 under the plinth oder on the walle."
+        "title": "GUC1323 - Installationsvideo",
+        "desc": "Montage des GUC1323 unter dem Sockel oder an der Wand."
       },
       "ultrafine-werking": {
-        "title": "AirClean UltraFine — in action",
-        "desc": "The stundalone AirClean UltraFine unit in a professional environment."
+        "title": "AirClean UltraFine - in der Praxis",
+        "desc": "Die freistehende AirClean UltraFine-Einheit in einer professionellen Umgebung."
       }
     },
     "testdocs": {
       "interflow-onderzoek": {
-        "title": "Interflow study (2024)",
-        "conclusion": "Particle reduction virtualley identical to a HEPA Filter (R² = 0.996): from ±115 million to <1 million particles/m³ in 25 minutes."
+        "title": "Interflow-Studie (2024)",
+        "conclusion": "Partikelreduktion nahezu identisch mit einem HEPA-Filter (R² = 0,996): von ca. 115 Millionen auf unter 1 Million Partikel/m³ in 25 Minuten."
       },
       "meetrapport-espesd": {
-        "title": "Measurement repodert UltraFine ESP + ESD",
-        "conclusion": "Independent measurement of the combined ESP und ESD technology."
+        "title": "Messbericht UltraFine ESP + ESD",
+        "conclusion": "Unabhängige Messung der kombinierten ESP- und ESD-Technologie."
       },
       "dti-test-2024": {
-        "title": "DTI test PlasmaMade (06-2024)",
-        "conclusion": "Recent independent perfodermance test (DTI, 2024)."
+        "title": "DTI-Test PlasmaMade (06-2024)",
+        "conclusion": "Aktueller unabhängiger Leistungstest (DTI, 2024)."
       },
       "health-institute-poland": {
-        "title": "Test Health Institute (Polund)",
-        "conclusion": "Independent test by a national health institute."
+        "title": "Test Health Institute (Polen)",
+        "conclusion": "Unabhängiger Test durch ein nationales Gesundheitsinstitut."
       },
       "vde-safety": {
-        "title": "VDE safety test (EN 60335)",
-        "conclusion": "Complies mit the European safety stundard EN 60335-2-65."
+        "title": "VDE-Sicherheitstest (EN 60335)",
+        "conclusion": "Entspricht der europäischen Sicherheitsnorm EN 60335-2-65."
       },
       "vde-guc1214": {
-        "title": "VDE test GUC series",
-        "conclusion": "Electrical safety repodert, VDE tested."
+        "title": "VDE-Test GUC-Serie",
+        "conclusion": "Bericht zur elektrischen Sicherheit, VDE-geprüft."
       },
       "ozone-safety": {
-        "title": "Ozone test & safety",
-        "conclusion": "Demonstrably safe ozone values, well mitin the stundard."
+        "title": "Ozontest & Sicherheit",
+        "conclusion": "Nachweislich sichere Ozonwerte, deutlich innerhalb der Norm."
       },
       "safety-data-sheet": {
-        "title": "Safety data sheet (pre-Filter)",
-        "conclusion": "Safety infodermation sheet foder the pre-Filter material."
+        "title": "Sicherheitsdatenblatt (Vorfilter)",
+        "conclusion": "Sicherheitsdatenblatt für das Vorfiltermaterial."
       },
       "tuv-certificate": {
-        "title": "TÜV test certificate",
-        "conclusion": "TÜV certified; confirms safety und quality."
+        "title": "TÜV-Prüfzertifikat",
+        "conclusion": "TÜV-zertifiziert; bestätigt Sicherheit und Qualität."
       },
       "tuv-cb-worldwide": {
-        "title": "TÜV CB repodert (woderldwide)",
-        "conclusion": "Woderldwide CB approval via the IECEE scheme."
+        "title": "TÜV CB-Bericht (weltweit)",
+        "conclusion": "Weltweite CB-Zulassung über das IECEE-System."
       },
       "eu-patent": {
-        "title": "EU patent certificate",
-        "conclusion": "Patented technology (EP 3 088 808 B1)."
+        "title": "EU-Patentzertifikat",
+        "conclusion": "Patentierte Technologie (EP 3 088 808 B1)."
       }
     },
     "faq": {
       "faq-filter-fit": {
-        "q": "Woher weiss ich, welcher Filter zu welcher Dunstabzugshaube passt?",
+        "q": "Woher weiß ich, welcher Filter zu welcher Dunstabzugshaube passt?",
         "a": "Nutzen Sie den Filter-Finder auf plasmamade.com oder kontaktieren Sie Marketing. Der GUC1223 passt auf die meisten Design- und Wandhauben (Ø122/126 und Ø147/151 mm), der GUC1212 auf Ø100 mm und der GUC1323 auf Kochfelder mit integriertem Abzug."
       },
       "faq-bronbestand": {
         "q": "Wie fordere ich neue Marketingmaterialien oder eine Quelldatei an?",
-        "a": "Quelldateien wie Videos oder offene InDesign-Dateien sind auf Anfrage verfugbar. Senden Sie Ihre Anfrage mit gewunschtem Material und Format an marketing@plasmamade.com."
+        "a": "Quelldateien wie Videos oder offene InDesign-Dateien sind auf Anfrage verfügbar. Senden Sie Ihre Anfrage mit gewünschtem Material und Format an marketing@plasmamade.com."
       },
       "faq-logo": {
         "q": "Darf ich eigene Materialien mit dem PlasmaMade-Logo erstellen?",
-        "a": "Ja — nutzen Sie dafur das integrierte Design Studio. Die Markenidentitat (Farben, Logo, Typografie) ist dort geschutzt, damit Ihre Kommunikation immer markenkonform bleibt. Logopaket und Markenhandbuch stehen in Downloads."
+        "a": "Ja — nutzen Sie dafur das integrierte Design Studio. Die Markenidentitat (Farben, Logo, Typografie) ist dort geschützt, damit Ihre Kommunikation immer markenkonform bleibt. Logopaket und Markenhandbuch stehen in Downloads."
       },
       "faq-studio": {
         "q": "Funktioniert das Design Studio ohne Designerfahrung?",
-        "a": "Ja. Wahlen Sie eine Vorlage, passen Sie Texte an, tauschen Sie das Bild und exportieren Sie als PNG oder PDF. Drag-and-drop, ohne Designkenntnisse."
+        "a": "Ja. Wählen Sie eine Vorlage, passen Sie Texte an, tauschen Sie das Bild aus und exportieren Sie als PNG oder PDF. Drag-and-drop, ohne Designkenntnisse."
       },
       "faq-garantie": {
-        "q": "Wie registriert ein Kunde ein Produkt fur 5 Jahre Garantie?",
+        "q": "Wie registriert ein Kunde ein Produkt für 5 Jahre Garantie?",
         "a": "Kunden registrieren das Produkt auf plasmamade.com. Die Standardgarantie betragt 2 Jahre, nach Registrierung 5 Jahre."
       }
     }
