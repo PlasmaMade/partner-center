@@ -1132,6 +1132,7 @@ window.PM_LOCALES["en-us"] = {
     },
     "products": {
       "guc1223": {
+        "name": "GUC1225",
         "type": "E-Filter · round · designer & wall-mounted hoods",
         "tagline": "The flagship — for designer and wall-mounted cooker hoods up to 1,000 m³/h.",
         "description": "The GUC1225 is the best-selling PlasmaMade E-Filter and the standard for modern kitchens and designer hoods. Thanks to the combination of plasma, ESD high voltage and ceramic foam, the air is fully cleaned and returned to the room — without external extraction.",
@@ -1187,6 +1188,7 @@ window.PM_LOCALES["en-us"] = {
         ]
       },
       "guc1323": {
+        "name": "GUC1325",
         "type": "E-Filter · flat · downdraft extraction",
         "tagline": "Flat format — for hobs with integrated extraction up to 1,000 m³/h.",
         "description": "The GUC1325 is the flat, rectangular E-Filter for hobs with integrated extraction — without a separate cooker hood. Ideal for sleek, open kitchens where the extraction is invisibly integrated into the worktop.",

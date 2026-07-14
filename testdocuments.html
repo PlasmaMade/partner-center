@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <meta name="description" content="Testrapporten, certificeringen en onafhankelijk bewijs van PlasmaMade.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260714-na-english-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260714-na-product-names-2">
 </head>
 <body data-page="testdocs">
 <div class="layout">
@@ -49,17 +49,19 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260714-na-english-1"></script>
-<script src="assets/js/data.js?v=20260714-na-english-1"></script>
+<script src="assets/js/i18n.js?v=20260714-na-product-names-2"></script>
+<script src="assets/js/data.js?v=20260714-na-product-names-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, T = D.testdocs, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  function productName(value) { return window.PM_productName ? window.PM_productName(value) : value; }
+  function productText(value) { return window.PM_productText ? window.PM_productText(value) : value; }
   document.title = t("nav.testdocs") + " - PlasmaMade Partner Center";
   document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("td.searchPh")) + '" aria-label="' + esc(t("td.searchPh")) + '">';
   function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
   var cats = uniq(T.map(function (td) { return td.category; }));
   var current = window.__tdCat || "*";
-  document.getElementById("f-prod").innerHTML = '<option value="">' + esc(t("td.allProducts")) + '</option>' + uniq(T.map(function (td) { return td.product; })).map(function (p) { return '<option value="' + esc(p) + '">' + esc(PM_dict("audiences", p)) + '</option>'; }).join("");
+  document.getElementById("f-prod").innerHTML = '<option value="">' + esc(t("td.allProducts")) + '</option>' + uniq(T.map(function (td) { return td.product; })).map(function (p) { return '<option value="' + esc(p) + '">' + esc(PM_dict("audiences", productName(p))) + '</option>'; }).join("");
   document.getElementById("f-use").innerHTML = '<option value="">' + esc(t("td.useAll")) + '</option>' + ["Technisch", "Commercieel", "Beide"].map(function (u) { return '<option value="' + u + '">' + esc(PM_dict("usages", u)) + '</option>'; }).join("");
   document.getElementById("f-prod").setAttribute("aria-label", t("td.allProducts"));
   document.getElementById("f-use").setAttribute("aria-label", t("td.useAll"));
@@ -82,7 +84,7 @@ window.PM_PAGE_INIT = function () {
     var list = T.filter(function (td) {
       var title = lc("testdocs", td.id, "title", td.title), con = lc("testdocs", td.id, "conclusion", td.conclusion);
       return (current === "*" || td.category === current) &&
-             (!q || (td.title + " " + title + " " + td.product + " " + con + " " + td.conclusion).toLowerCase().indexOf(q) > -1) &&
+             (!q || (td.title + " " + title + " " + productName(td.product) + " " + td.product + " " + con + " " + productText(td.conclusion || "") + " " + td.conclusion).toLowerCase().indexOf(q) > -1) &&
              (!fp || td.product === fp) && (!fu || td.usage === fu);
     });
     document.getElementById("rc").textContent = list.length === 1 ? t("td.countOne") : t("td.count", { n: PM_fmtNum(list.length) });
@@ -96,11 +98,11 @@ window.PM_PAGE_INIT = function () {
         html += '<div class="card card--hover" id="t-' + td.id + '"><div class="card__body" style="display:flex;gap:14px">' +
           '<span style="width:44px;height:44px;border-radius:11px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON("shieldCheck") + '</span>' +
           '<div style="flex:1;min-width:0">' +
-            '<div class="flex items-center gap wrap" style="margin-bottom:4px"><span class="badge ' + (useColor[td.usage] || "badge--grey") + '">' + esc(PM_dict("usages", td.usage)) + '</span><span class="tag-static">' + esc(PM_dict("audiences", td.product)) + '</span></div>' +
+            '<div class="flex items-center gap wrap" style="margin-bottom:4px"><span class="badge ' + (useColor[td.usage] || "badge--grey") + '">' + esc(PM_dict("usages", td.usage)) + '</span><span class="tag-static">' + esc(PM_dict("audiences", productName(td.product))) + '</span></div>' +
             '<h4 style="font-size:15.5px;margin-bottom:6px">' + esc(lc("testdocs", td.id, "title", td.title)) + '</h4>' +
             '<p class="muted" style="font-size:13px;margin-bottom:12px"><b style="color:var(--ink)">' + esc(t("td.conclusion")) + '</b> ' + esc(lc("testdocs", td.id, "conclusion", td.conclusion)) + '</p>' +
             '<div class="flex items-center between gap wrap">' +
-              '<span class="asset__meta"><span>' + PM_ICON("fileText") + 'PDF · ' + esc(PM_fmtSize(td.size)) + '</span><span title="' + esc(t("common.docLang")) + '">' + PM_ICON("globe") + esc(PM_dict("langLabels", td.lang)) + '</span></span>' +
+              '<span class="asset__meta"><span>' + PM_ICON("fileText") + 'PDF Â· ' + esc(PM_fmtSize(td.size)) + '</span><span title="' + esc(t("common.docLang")) + '">' + PM_ICON("globe") + esc(PM_dict("langLabels", td.lang)) + '</span></span>' +
               '<a class="btn btn--ghost btn--sm" href="assets/testdocs/' + td.file + '.pdf" download>' + PM_ICON("download") + esc(t("common.download")) + '</a>' +
             '</div>' +
           '</div></div></div>';
@@ -119,7 +121,7 @@ window.PM_PAGE_INIT = function () {
   chips(); render();
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260714-na-english-1"></script>
-<script src="assets/js/app.js?v=20260714-na-english-1"></script>
+<script src="assets/js/sync-config.js?v=20260714-na-product-names-2"></script>
+<script src="assets/js/app.js?v=20260714-na-product-names-2"></script>
 </body>
 </html>

@@ -61,6 +61,64 @@
     });
   }
 
+  function productText(value) {
+    if (value == null || active !== "en-us") return value;
+    return String(value)
+      .replace(/\bGUC1223\b/g, "GUC1225")
+      .replace(/\bGUC1323\b/g, "GUC1325");
+  }
+
+  function productValue(value) {
+    if (typeof value === "string") return productText(value);
+    if (Array.isArray(value)) return value.map(productValue);
+    if (value && typeof value === "object") {
+      var out = {};
+      Object.keys(value).forEach(function (key) { out[key] = productValue(value[key]); });
+      return out;
+    }
+    return value;
+  }
+
+  function applyProductAliases(root) {
+    if (active !== "en-us") return;
+    var scope = root || document.body || document;
+    var skip = /^(SCRIPT|STYLE|NOSCRIPT|TEXTAREA)$/i;
+    try { document.title = productText(document.title); } catch (e) {}
+    try {
+      var walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          var parent = node.parentNode;
+          return parent && !skip.test(parent.nodeName || "") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      var nodes = [], node;
+      while ((node = walker.nextNode())) nodes.push(node);
+      nodes.forEach(function (textNode) {
+        var next = productText(textNode.nodeValue);
+        if (next !== textNode.nodeValue) textNode.nodeValue = next;
+      });
+      var attrs = ["alt", "title", "aria-label", "placeholder"];
+      scope.querySelectorAll("[alt],[title],[aria-label],[placeholder]").forEach(function (el) {
+        attrs.forEach(function (attr) {
+          if (!el.hasAttribute(attr)) return;
+          var current = el.getAttribute(attr);
+          var next = productText(current);
+          if (next !== current) el.setAttribute(attr, next);
+        });
+      });
+    } catch (e) {}
+  }
+
+  var aliasQueued = false;
+  function scheduleProductAliases(root) {
+    if (active !== "en-us" || aliasQueued) return;
+    aliasQueued = true;
+    setTimeout(function () {
+      aliasQueued = false;
+      applyProductAliases(root);
+    }, 0);
+  }
+
   /* UI-string: actieve taal → nl → key zelf. */
   function t(key, vars) {
     var loc = localeOf(active), base = localeOf(DEFAULT);
@@ -71,7 +129,7 @@
       if (window.console && active !== DEFAULT) console.warn("[i18n] ontbrekende sleutel:", key, "(" + active + ")");
       v = (base && base.ui && base.ui[key] != null) ? base.ui[key] : key;
     }
-    return interpolate(v, vars);
+    return productText(interpolate(v, vars));
   }
 
   /* Content-overlay: vertaalde dynamische content (data.js blijft NL-bron).
@@ -81,9 +139,9 @@
     var loc = localeOf(active);
     if (loc && loc.content && loc.content[section]) {
       var entry = (id == null) ? loc.content[section] : loc.content[section][id];
-      if (entry && entry[field] != null) return entry[field];
+      if (entry && entry[field] != null) return productValue(entry[field]);
     }
-    return fallback;
+    return productValue(fallback);
   }
 
   /* Vertaal een spec-label of spec-waarde via globale woordenlijsten. */
@@ -91,9 +149,9 @@
     if (value == null) return value;
     var loc = localeOf(active);
     if (loc && loc.content && loc.content[listName] && loc.content[listName][value] != null) {
-      return loc.content[listName][value];
+      return productText(loc.content[listName][value]);
     }
-    return value;
+    return productText(value);
   }
 
   /* ---------------- Intl-formattering ---------------- */
@@ -152,6 +210,7 @@
     scope.querySelectorAll("[data-i18n-al]").forEach(function (el) { el.setAttribute("aria-label", t(el.getAttribute("data-i18n-al"))); });
     scope.querySelectorAll("[data-i18n-title]").forEach(function (el) { el.setAttribute("title", t(el.getAttribute("data-i18n-title"))); });
     scope.querySelectorAll("[data-i18n-alt]").forEach(function (el) { el.setAttribute("alt", t(el.getAttribute("data-i18n-alt"))); });
+    applyProductAliases(scope);
   }
 
   function rerender() {
@@ -162,6 +221,7 @@
       try { window.PM_PAGE_INIT(); } catch (e) { if (window.console) console.error("Pagina-herrender na taalwissel mislukt:", e); }
     }
     if (window.PM_PAGE_EDITS && typeof window.PM_PAGE_EDITS.apply === "function") window.PM_PAGE_EDITS.apply();
+    applyProductAliases();
     try { document.dispatchEvent(new CustomEvent("pm:langchange", { detail: { lang: active } })); } catch (e) {}
   }
 
@@ -191,6 +251,10 @@
   window.PM_t = t;
   window.PM_lc = lc;
   window.PM_dict = dict;
+  window.PM_productName = productText;
+  window.PM_productText = productText;
+  window.PM_productValue = productValue;
+  window.PM_applyProductAliases = applyProductAliases;
   window.PM_lang = function () { return active; };
   window.PM_setLang = setLang;
   window.PM_applyI18n = applyI18n;
@@ -205,4 +269,8 @@
   /* eslint-disable no-document-write */
   document.write('<script src="assets/i18n/nl.js"><\/script>');
   if (active !== DEFAULT) document.write('<script src="assets/i18n/' + active + '.js"><\/script>');
+  try {
+    new MutationObserver(function () { scheduleProductAliases(document.body || document); })
+      .observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  } catch (e) {}
 })();

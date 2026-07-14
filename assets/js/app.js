@@ -1,5 +1,5 @@
-/* ============================================================
-   PlasmaMade Partner Center — App shell & runtime
+﻿/* ============================================================
+   PlasmaMade Partner Center â€” App shell & runtime
    - Injecteert sidebar / topbar / footer op elke pagina
    - Login-guard (GitHub Pages/localStorage + optionele externe sync)
    - Globale zoekfunctie over alle content (PM_DATA), meertalig
@@ -96,6 +96,8 @@
   /* ---------------- HELPERS ---------------- */
   window.PM_escape = function (s) { const d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; };
   var esc = window.PM_escape;
+  function productName(value) { return window.PM_productName ? window.PM_productName(value) : value; }
+  function productText(value) { return window.PM_productText ? window.PM_productText(value) : value; }
 
   window.PM_param = function (k) {
     try { return new URLSearchParams(location.search).get(k); } catch (e) { return null; }
@@ -210,7 +212,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260714-na-english-1";
+  const PORTAL_BUILD_VERSION = "20260714-na-product-names-2";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -1551,11 +1553,11 @@
         groups: []
       }, row));
     }
-    (D.products || []).forEach(function (p) { add({ id: "media-product-" + p.id, title: p.name + " productbeeld", category: "Productfoto's", type: "PNG/JPG", productCategory: p.name, url: p.image }); });
-    (D.marketing || []).forEach(function (m) { add({ id: "media-marketing-" + m.id, title: m.title, category: m.category || "Campagnemateriaal", type: m.type || "Afbeelding", productCategory: m.product || "Merk algemeen", url: m.img || m.file || "" }); });
-    (D.downloads || []).forEach(function (d) { add({ id: "media-download-" + d.id, title: d.title, category: d.cat || "Brochures", type: d.type || "PDF", productCategory: d.product || "Merk algemeen", lang: d.lang || "NL", url: "assets/downloads/" + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") }); });
-    (D.testdocs || []).forEach(function (td) { add({ id: "media-test-" + td.id, title: td.title, category: "Testdocumenten", type: "PDF", productCategory: td.product || "Merk algemeen", lang: td.lang || "NL", url: "assets/testdocs/" + td.file + ".pdf" }); });
-    (D.videos || []).forEach(function (v) { add({ id: "media-video-" + v.id, title: v.title, category: "Video's", type: v.source === "local" ? "MP4" : "YouTube", productCategory: v.product || "Merk algemeen", url: v.file || ("https://youtu.be/" + (v.yt || "")), downloadable: v.source === "local" }); });
+    (D.products || []).forEach(function (p) { add({ id: "media-product-" + p.id, title: productName(p.name) + " productbeeld", category: "Productfoto's", type: "PNG/JPG", productCategory: productName(p.name), url: p.image }); });
+    (D.marketing || []).forEach(function (m) { add({ id: "media-marketing-" + m.id, title: productText(m.title), category: m.category || "Campagnemateriaal", type: m.type || "Afbeelding", productCategory: productName(m.product || "Merk algemeen"), url: m.img || m.file || "" }); });
+    (D.downloads || []).forEach(function (d) { add({ id: "media-download-" + d.id, title: productText(d.title), category: d.cat || "Brochures", type: d.type || "PDF", productCategory: productName(d.product || "Merk algemeen"), lang: d.lang || "NL", url: "assets/downloads/" + d.file + (d.type === "ZIP" ? ".zip" : ".pdf") }); });
+    (D.testdocs || []).forEach(function (td) { add({ id: "media-test-" + td.id, title: productText(td.title), category: "Testdocumenten", type: "PDF", productCategory: productName(td.product || "Merk algemeen"), lang: td.lang || "NL", url: "assets/testdocs/" + td.file + ".pdf" }); });
+    (D.videos || []).forEach(function (v) { add({ id: "media-video-" + v.id, title: productText(v.title), category: "Video's", type: v.source === "local" ? "MP4" : "YouTube", productCategory: productName(v.product || "Merk algemeen"), url: v.file || ("https://youtu.be/" + (v.yt || "")), downloadable: v.source === "local" }); });
     return out;
   }
   function mediaRows() {
@@ -2653,7 +2655,7 @@
     ov.className = "pm-cms-edit-ov";
     ov.innerHTML =
       '<div class="pm-cms-edit" role="dialog" aria-modal="true" aria-labelledby="pm-cms-edit-title">' +
-        '<div class="pm-cms-edit__head"><div><h3 id="pm-cms-edit-title">' + esc(titleLabel) + ' bewerken</h3><p>' + esc(collectionLabel(collection)) + ' · ' + esc(contentTitle(row)) + '</p></div><button type="button" class="icon-btn" data-cms-close aria-label="Sluiten">' + icon("x") + '</button></div>' +
+        '<div class="pm-cms-edit__head"><div><h3 id="pm-cms-edit-title">' + esc(titleLabel) + ' bewerken</h3><p>' + esc(collectionLabel(collection)) + ' Â· ' + esc(contentTitle(row)) + '</p></div><button type="button" class="icon-btn" data-cms-close aria-label="Sluiten">' + icon("x") + '</button></div>' +
         '<div class="pm-cms-edit__body">' +
           (preview ? '<div class="pm-cms-preview"><img src="' + esc(preview) + '" alt="" data-cms-preview></div>' : '<div class="pm-cms-preview pm-cms-preview--empty"><span data-cms-preview-empty>' + icon("fileText") + '</span><img src="" alt="" data-cms-preview hidden></div>') +
           '<form class="pm-cms-form">' + defs.map(function (def) { return renderContentField(row, def); }).join("") +
@@ -3073,7 +3075,9 @@
     var q = String(command || "").toLowerCase();
     var products = (window.PM_DATA && PM_DATA.products) || [];
     return products.find(function (p) {
-      return q.indexOf(String(p.id || "").toLowerCase()) > -1 || q.indexOf(String(p.name || "").toLowerCase()) > -1;
+      var name = String(p.name || "").toLowerCase();
+      var alias = String(productName(p.name || "") || "").toLowerCase();
+      return q.indexOf(String(p.id || "").toLowerCase()) > -1 || q.indexOf(name) > -1 || q.indexOf(alias) > -1;
     }) || null;
   }
   function aiHumanPage() {
@@ -3132,10 +3136,10 @@
       text: aiText(lastEditableTarget.textContent || lastEditableTarget.alt || "", 900)
     } : null;
     function productRow(p) {
-      return { id: p.id, name: p.name, family: p.family, type: p.type, tagline: aiText(p.tagline || p.description, 220), image: p.image };
+      return { id: p.id, name: productName(p.name), family: p.family, type: productText(p.type), tagline: aiText(productText(p.tagline || p.description), 220), image: p.image };
     }
     function mediaRow(m) {
-      return { id: m.id, title: m.title, category: m.category, product: m.productCategory || m.product, type: m.type, url: m.url };
+      return { id: m.id, title: productText(m.title), category: m.category, product: productName(m.productCategory || m.product), type: m.type, url: m.url };
     }
     return {
       language: window.PM_lang ? PM_lang() : "nl",
@@ -3161,7 +3165,7 @@
           "97% recyclebaar materiaal.",
           "Tot 98% reductie van virussen en bacterien wanneer de context dit ondersteunt.",
           "Geen afvoer naar buiten nodig door recirculatie.",
-          "GUC1223 en GUC1323: CE, UKCA, ROHS, RED.",
+          productText("GUC1223 en GUC1323: CE, UKCA, ROHS, RED."),
           "AirClean UltraFine: Interflow-test, vergelijkbare deeltjesreductie met HEPA en ISO 6/7-context."
         ],
         rules: [
@@ -3247,7 +3251,8 @@
     if (/dealer|retail|showroom/i.test(q)) fallbackTitle = "Dealerondersteuning";
     if (isInstaller) fallbackTitle = "Technische ondersteuning";
     if (isDistributor) fallbackTitle = "Distributeur Center";
-    var title = product ? product.name : fallbackTitle;
+    var displayName = product ? productName(product.name) : "";
+    var title = product ? displayName : fallbackTitle;
     var body = product
       ? aiSentence(product.tagline || product.description, "")
       : (isDistributor
@@ -3256,9 +3261,9 @@
           ? "Een praktisch blok met montage-informatie, downloads en support voor installateurs en technische partners."
           : "Een helder PlasmaMade-blok dat partners helpt om klanten technisch sterk en commercieel zorgvuldig te adviseren.");
     if (/linkedin|caption|social/i.test(q)) {
-      title = product ? product.name + " LinkedIn-copy" : "LinkedIn-copy";
+      title = product ? displayName + " LinkedIn-copy" : "LinkedIn-copy";
       body = product
-        ? product.name + " helpt partners om recirculatie en luchtkwaliteit helder uit te leggen met bewezen PlasmaMade-technologie."
+        ? displayName + " helpt partners om recirculatie en luchtkwaliteit helder uit te leggen met bewezen PlasmaMade-technologie."
         : "Schone lucht begint met duidelijk advies. PlasmaMade ondersteunt partners met bewezen technologie, actuele documentatie en sterke verkoopmaterialen.";
     }
     return {
@@ -4129,7 +4134,7 @@
       ft.className = "site-footer";
       ft.innerHTML =
         '<div style="border-top:1px solid var(--line);background:var(--surface);padding:22px 34px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;color:var(--muted);font-size:12.5px">' +
-          '<div style="display:flex;align-items:center;gap:12px"><img src="assets/img/logo/logo-green.png" alt="PlasmaMade" style="height:22px" width="103" height="22"><span>© ' + (new Date().getFullYear()) + ' PlasmaMade B.V. — Partner Center</span></div>' +
+          '<div style="display:flex;align-items:center;gap:12px"><img src="assets/img/logo/logo-green.png" alt="PlasmaMade" style="height:22px" width="103" height="22"><span>Â© ' + (new Date().getFullYear()) + ' PlasmaMade B.V. â€” Partner Center</span></div>' +
           '<div style="display:flex;gap:18px;flex-wrap:wrap"><span><i>breathe better, live better.</i></span><a href="mailto:marketing@plasmamade.com" class="green">marketing@plasmamade.com</a><a href="https://plasmamade.com" target="_blank" rel="noopener noreferrer" class="green">plasmamade.com</a></div>' +
         '</div>';
     }
@@ -4137,7 +4142,7 @@
     wireShell();
   }
 
-  /* Rol → vertaalsleutel (rollen worden als code opgeslagen bij login) */
+  /* Rol â†’ vertaalsleutel (rollen worden als code opgeslagen bij login) */
   function roleKey(role) {
     var map = { dealer: "role.dealer", distributor: "role.distributor", installer: "role.installer", studio: "role.studio", retailpartner: "role.retailpartner", international: "role.international", marketing: "role.marketing", agent: "role.agent", partner: "role.partner", support: "role.support", internal: "role.internal", admin: "role.internal" };
     return map[role] || "";
@@ -4237,51 +4242,61 @@
 
   function fold(s) {
     s = (s == null ? "" : String(s)).toLowerCase();
-    try { s = s.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
+    try { s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
     return s;
   }
 
   function buildIndex() {
+    return buildIndexLocalized();
+  }
+
+  function buildIndexLocalized() {
     var lang = window.PM_lang();
     if (searchIndex && searchIndexLang === lang) return searchIndex;
     const D = window.PM_DATA, idx = [], lc = window.PM_lc;
     if (!D) return [];
-    D.products.forEach(p => {
-      var type = lc("products", p.id, "type", p.type), tag = lc("products", p.id, "tagline", p.tagline);
-      idx.push({ t: p.name, s: type, g: t("nav.products"), href: "product.html?id=" + p.id, ic: "box", kw: fold(p.name + " " + p.type + " " + type + " " + tag + " " + p.tagline) });
+    D.products.forEach(function (p) {
+      var type = lc("products", p.id, "type", p.type);
+      var tag = lc("products", p.id, "tagline", p.tagline);
+      var displayName = productName(p.name);
+      idx.push({ t: displayName, s: type, g: t("nav.products"), href: "product.html?id=" + p.id, ic: "box", kw: fold(displayName + " " + p.name + " " + p.type + " " + type + " " + tag + " " + p.tagline) });
     });
-    D.articles.forEach(a => {
+    D.articles.forEach(function (a) {
       var title = lc("articles", a.id, "title", a.title), cat = window.PM_dict("categories", a.category);
       idx.push({ t: title, s: cat, g: t("nav.knowledge"), href: "article.html?id=" + a.id, ic: "book", kw: fold(title + " " + a.title + " " + cat + " " + a.excerpt + " " + lc("articles", a.id, "excerpt", "")) });
     });
-    D.campaigns.forEach(c => {
+    D.campaigns.forEach(function (c) {
       var title = lc("campaigns", c.id, "title", c.title);
       idx.push({ t: title, s: window.PM_dict("audiences", c.audience), g: t("nav.campaigns"), href: "campaign.html?id=" + c.id, ic: "megaphone", kw: fold(title + " " + c.title + " " + c.core + " " + c.audience) });
     });
-    D.marketing.forEach(m => {
+    D.marketing.forEach(function (m) {
       var title = lc("marketing", m.id, "title", m.title);
-      idx.push({ t: title, s: window.PM_dict("categories", m.category), g: t("nav.marketing"), href: "marketing.html?focus=" + m.id, ic: "image", kw: fold(title + " " + m.title + " " + m.category + " " + m.product + " " + (m.desc || "")) });
+      var product = productName(m.product);
+      idx.push({ t: title, s: window.PM_dict("categories", m.category), g: t("nav.marketing"), href: "marketing.html?focus=" + m.id, ic: "image", kw: fold(title + " " + m.title + " " + m.category + " " + product + " " + m.product + " " + productText(m.desc || "") + " " + (m.desc || "")) });
     });
-    D.downloads.forEach(d => {
+    D.downloads.forEach(function (d) {
       var title = lc("downloads", d.id, "title", d.title);
-      idx.push({ t: title, s: window.PM_dict("categories", d.cat) + " · " + d.type, g: t("nav.downloads"), href: "downloads.html?focus=" + d.id, ic: "download", kw: fold(title + " " + d.title + " " + d.cat + " " + d.product) });
+      var product = productName(d.product);
+      idx.push({ t: title, s: window.PM_dict("categories", d.cat) + " - " + d.type, g: t("nav.downloads"), href: "downloads.html?focus=" + d.id, ic: "download", kw: fold(title + " " + d.title + " " + d.cat + " " + product + " " + d.product) });
     });
-    D.news.forEach(n => {
+    D.news.forEach(function (n) {
       var title = lc("news", n.id, "title", n.title);
       idx.push({ t: title, s: window.PM_dict("categories", n.category), g: t("nav.news"), href: "news.html?id=" + n.id, ic: "newspaper", kw: fold(title + " " + n.title + " " + n.excerpt) });
     });
-    (D.videos || []).forEach(v => {
+    (D.videos || []).forEach(function (v) {
       var title = lc("videos", v.id, "title", v.title);
-      idx.push({ t: title, s: window.PM_dict("topics", v.topic) + " · " + v.product, g: t("nav.videos"), href: "videos.html?focus=" + v.id, ic: "play", kw: fold(title + " " + v.title + " " + v.product + " " + v.topic + " " + v.desc) });
+      var product = productName(v.product);
+      idx.push({ t: title, s: window.PM_dict("topics", v.topic) + " - " + product, g: t("nav.videos"), href: "videos.html?focus=" + v.id, ic: "play", kw: fold(title + " " + v.title + " " + product + " " + v.product + " " + v.topic + " " + productText(v.desc || "") + " " + v.desc) });
     });
-    (D.testdocs || []).forEach(td => {
+    (D.testdocs || []).forEach(function (td) {
       var title = lc("testdocs", td.id, "title", td.title);
-      idx.push({ t: title, s: window.PM_dict("categories", td.category) + " · " + td.product, g: t("nav.testdocs"), href: "testdocuments.html?focus=" + td.id, ic: "shieldCheck", kw: fold(title + " " + td.title + " " + td.product + " " + td.category + " " + td.conclusion) });
+      var product = productName(td.product);
+      idx.push({ t: title, s: window.PM_dict("categories", td.category) + " - " + product, g: t("nav.testdocs"), href: "testdocuments.html?focus=" + td.id, ic: "shieldCheck", kw: fold(title + " " + td.title + " " + product + " " + td.product + " " + td.category + " " + productText(td.conclusion || "") + " " + td.conclusion) });
     });
     idx.push({ t: t("nav.brand"), s: "Logo, kleurgebruik, tone of voice, claims", g: t("grp.fb"), href: "brand-guidelines.html", ic: "shieldCheck", kw: fold("brand guidelines huisstijl logo kleur typografie tone of voice claims PlasmaMade") });
     if (window.PM_PHRASES) {
       PM_PHRASES.active().forEach(function (p) {
-        idx.push({ t: p.text, s: (p.category || "Standaardzin") + " - " + (p.product || "Merk algemeen"), g: t("nav.studio"), href: "studio.html", ic: "type", kw: fold(p.text + " " + p.category + " " + p.product + " standaardzin tekstblok") });
+        idx.push({ t: productText(p.text), s: (p.category || "Standaardzin") + " - " + productName(p.product || "Merk algemeen"), g: t("nav.studio"), href: "studio.html", ic: "type", kw: fold(productText(p.text) + " " + p.text + " " + p.category + " " + productName(p.product) + " " + p.product + " standaardzin tekstblok") });
       });
     }
     idx.push({ t: t("nav.designs"), s: "Opgeslagen ontwerpen, status, feedback en goedkeuring", g: t("grp.ms"), href: "designs.html", ic: "palette", kw: fold("mijn opgeslagen ontwerpen design status feedback goedkeuring afgewezen aanpassing nodig") });
@@ -4321,7 +4336,7 @@
     var fq = fold((q || "").trim());
     let hits = fq ? idx.filter(x => fq.split(/\s+/).every(term => x.kw.indexOf(term) > -1)) : idx.slice(0, 8);
     if (!hits.length) {
-      res.innerHTML = '<div class="search-empty">' + esc(t("ui.noResults")) + ' “' + esc(q) + '”.<br><span class="muted" style="font-size:12.5px">' + esc(t("ui.noResultsHint")) + '</span></div>';
+      res.innerHTML = '<div class="search-empty">' + esc(t("ui.noResults")) + ' â€œ' + esc(q) + 'â€.<br><span class="muted" style="font-size:12.5px">' + esc(t("ui.noResultsHint")) + '</span></div>';
       return;
     }
     const groups = {};
@@ -4404,6 +4419,7 @@
       if (e.key === "Escape") { closeSearch(); closeDialog(); }
     });
     if (window.PM_PAGE_INIT) try { window.PM_PAGE_INIT(); } catch (e) { console.error("Page init error:", e); }
+    if (window.PM_applyProductAliases) PM_applyProductAliases();
     if (window.PM_SYNC && page !== "login" && PM_SYNC.flushDirty) PM_SYNC.flushDirty();
     if (page !== "login") initPageEditor();
     if (page !== "login") {
@@ -4428,6 +4444,7 @@
           try { window.PM_PAGE_INIT(); } catch (e) { console.error("Page refresh error:", e); }
         }
         if (window.PM_PAGE_EDITS && PM_PAGE_EDITS.apply) PM_PAGE_EDITS.apply();
+        if (window.PM_applyProductAliases) PM_applyProductAliases();
       });
     }
     if (window.PM_SYNC && page !== "login") PM_SYNC.startAutoRefresh();

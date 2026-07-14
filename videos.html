@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <meta name="description" content="Video-uitleg en montagevideo's van PlasmaMade voor partners.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260714-na-english-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260714-na-product-names-2">
 <style>
 .video-thumb{position:relative;aspect-ratio:16/9;background:#0d1117;border:none;padding:0;width:100%;cursor:pointer;overflow:hidden;display:block}
 .video-thumb img{width:100%;height:100%;object-fit:cover;opacity:.94;transition:opacity .2s}
@@ -54,15 +54,17 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260714-na-english-1"></script>
-<script src="assets/js/data.js?v=20260714-na-english-1"></script>
+<script src="assets/js/i18n.js?v=20260714-na-product-names-2"></script>
+<script src="assets/js/data.js?v=20260714-na-product-names-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, V = D.videos, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  function productName(value) { return window.PM_productName ? window.PM_productName(value) : value; }
+  function productText(value) { return window.PM_productText ? window.PM_productText(value) : value; }
   document.title = t("nav.videos") + " - PlasmaMade Partner Center";
   document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("videos.searchPh")) + '" aria-label="' + esc(t("videos.searchPh")) + '">';
   function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
-  document.getElementById("f-prod").innerHTML = '<option value="">' + esc(t("videos.allProducts")) + '</option>' + uniq(V.map(function (v) { return v.product; })).map(function (p) { return '<option value="' + esc(p) + '">' + esc(p) + '</option>'; }).join("");
+  document.getElementById("f-prod").innerHTML = '<option value="">' + esc(t("videos.allProducts")) + '</option>' + uniq(V.map(function (v) { return v.product; })).map(function (p) { return '<option value="' + esc(p) + '">' + esc(productName(p)) + '</option>'; }).join("");
   document.getElementById("f-topic").innerHTML = '<option value="">' + esc(t("videos.allTopics")) + '</option>' + uniq(V.map(function (v) { return v.topic; })).map(function (tp) { return '<option value="' + esc(tp) + '">' + esc(PM_dict("topics", tp)) + '</option>'; }).join("");
   document.getElementById("f-prod").setAttribute("aria-label", t("videos.allProducts"));
   document.getElementById("f-topic").setAttribute("aria-label", t("videos.allTopics"));
@@ -91,7 +93,7 @@ window.PM_PAGE_INIT = function () {
     var fp = document.getElementById("f-prod").value, ft = document.getElementById("f-topic").value;
     var list = V.filter(function (v) {
       var title = lc("videos", v.id, "title", v.title), desc = lc("videos", v.id, "desc", v.desc);
-      return (!q || (v.title + " " + title + " " + v.product + " " + v.topic + " " + desc + " " + v.desc).toLowerCase().indexOf(q) > -1) &&
+      return (!q || (v.title + " " + title + " " + productName(v.product) + " " + v.product + " " + v.topic + " " + desc + " " + productText(v.desc || "") + " " + v.desc).toLowerCase().indexOf(q) > -1) &&
              (!fp || v.product === fp) && (!ft || v.topic === ft);
     });
     document.getElementById("rc").textContent = list.length === 1 ? t("videos.countOne") : t("videos.count", { n: PM_fmtNum(list.length) });
@@ -101,7 +103,7 @@ window.PM_PAGE_INIT = function () {
         '<button class="video-thumb" type="button" data-id="' + v.id + '" aria-label="' + esc(t("videos.playAria", { title: title })) + '"><img src="' + esc(poster(v)) + '" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'assets/img/ultrafine/ultrafine-space.jpg\'"><span class="type-tag">' + typeLabel(v) + '</span><span class="play">' + PM_ICON("play") + '</span></button>' +
         '<div class="asset__body"><span class="asset__cat">' + esc(PM_dict("topics", v.topic)) + '</span><h4>' + esc(title) + '</h4>' +
         '<p>' + esc(lc("videos", v.id, "desc", v.desc)) + '</p>' +
-        '<div class="asset__meta"><span>' + PM_ICON("box") + esc(v.product) + '</span><span>' + PM_ICON("user") + esc(PM_dict("audiences", v.audience)) + '</span></div>' +
+        '<div class="asset__meta"><span>' + PM_ICON("box") + esc(productName(v.product)) + '</span><span>' + PM_ICON("user") + esc(PM_dict("audiences", v.audience)) + '</span></div>' +
         '<span class="vid-subs">' + esc(isLocalVideo(v) ? t("videos.subsNone") : "Bronlink beschikbaar") + '</span>' +
         '<div class="flex items-center gap wrap" style="margin-top:8px;gap:8px">' +
           (v.shareable ? '<span class="share-tag">' + PM_ICON("check") + esc(t("videos.shareable")) + '</span>' : '') +
@@ -148,7 +150,7 @@ window.PM_PAGE_INIT = function () {
   render();
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260714-na-english-1"></script>
-<script src="assets/js/app.js?v=20260714-na-english-1"></script>
+<script src="assets/js/sync-config.js?v=20260714-na-product-names-2"></script>
+<script src="assets/js/app.js?v=20260714-na-product-names-2"></script>
 </body>
 </html>

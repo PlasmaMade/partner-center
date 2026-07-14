@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <meta name="description" content="Download brochures, productsheets, handleidingen en logo's van PlasmaMade.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260714-na-english-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260714-na-product-names-2">
 </head>
 <body data-page="downloads">
 <div class="layout">
@@ -40,11 +40,12 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260714-na-english-1"></script>
-<script src="assets/js/data.js?v=20260714-na-english-1"></script>
+<script src="assets/js/i18n.js?v=20260714-na-product-names-2"></script>
+<script src="assets/js/data.js?v=20260714-na-product-names-2"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, DL = D.downloads, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
+  function productName(value) { return window.PM_productName ? window.PM_productName(value) : value; }
   document.title = t("nav.downloads") + " - PlasmaMade Partner Center";
   document.getElementById("sb").innerHTML = PM_ICON("search") + '<input type="text" id="q" placeholder="' + esc(t("dl.searchPh")) + '" aria-label="' + esc(t("dl.searchPh")) + '">';
 
@@ -57,7 +58,7 @@ window.PM_PAGE_INIT = function () {
     el.innerHTML = '<option value="">' + esc(label) + '</option>' + pairs.map(function (v) { return '<option value="' + esc(v[0]) + '">' + esc(v[1]) + '</option>'; }).join("");
     el.setAttribute("aria-label", label);
   }
-  fill("f-prod", t("dl.allProducts"), uniq(DL.map(function (d) { return d.product; })).sort().map(function (v) { return [v, PM_dict("audiences", v)]; }));
+  fill("f-prod", t("dl.allProducts"), uniq(DL.map(function (d) { return d.product; })).sort().map(function (v) { return [v, PM_dict("audiences", productName(v))]; }));
   fill("f-type", t("dl.allTypes"), uniq(DL.map(function (d) { return d.type; })).map(function (v) { return [v, v]; }));
   fill("f-lang", t("dl.allLangs"), uniq(DL.map(function (d) { return d.lang; })).filter(function (l) { return l !== "-"; }).map(function (v) { return [v, PM_dict("langLabels", v)]; }));
   document.getElementById("f-sort").innerHTML =
@@ -93,7 +94,7 @@ window.PM_PAGE_INIT = function () {
       '<span class="flex items-center gap" style="min-width:0">' +
         '<span style="width:42px;height:42px;border-radius:10px;background:var(--green-100);color:var(--green-700);display:grid;place-items:center;flex-shrink:0">' + PM_ICON(d.type === "ZIP" ? "layers" : "fileText") + '</span>' +
         '<span style="min-width:0"><span style="font-weight:600;font-size:14.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(lc("downloads", d.id, "title", d.title)) + '</span>' +
-        '<span class="asset__meta" style="margin-top:3px"><span>' + PM_ICON("box") + esc(PM_dict("audiences", d.product)) + '</span><span class="badge ' + (typeColor[d.type] || "badge--grey") + '" style="font-size:10px;padding:2px 8px">' + esc(d.type) + '</span><span>' + esc(PM_fmtSize(d.size)) + '</span>' + (d.lang !== "-" ? '<span title="' + esc(t("common.docLang")) + '">' + PM_ICON("globe") + esc(PM_dict("langLabels", d.lang)) + '</span>' : '') + '</span></span>' +
+        '<span class="asset__meta" style="margin-top:3px"><span>' + PM_ICON("box") + esc(PM_dict("audiences", productName(d.product))) + '</span><span class="badge ' + (typeColor[d.type] || "badge--grey") + '" style="font-size:10px;padding:2px 8px">' + esc(d.type) + '</span><span>' + esc(PM_fmtSize(d.size)) + '</span>' + (d.lang !== "-" ? '<span title="' + esc(t("common.docLang")) + '">' + PM_ICON("globe") + esc(PM_dict("langLabels", d.lang)) + '</span>' : '') + '</span></span>' +
       '</span>' +
       '<span class="btn btn--ghost btn--sm">' + PM_ICON("download") + esc(t("common.download")) + '</span></a>';
   }
@@ -105,7 +106,7 @@ window.PM_PAGE_INIT = function () {
     var list = DL.filter(function (d) {
       var title = lc("downloads", d.id, "title", d.title);
       return (current === "*" || d.cat === current) &&
-             (!q || (d.title + " " + title + " " + d.product + " " + d.cat).toLowerCase().indexOf(q) > -1) &&
+             (!q || (d.title + " " + title + " " + productName(d.product) + " " + d.product + " " + d.cat).toLowerCase().indexOf(q) > -1) &&
              (!fp || d.product === fp) && (!ft || d.type === ft) && (!fl || d.lang === fl);
     });
     document.getElementById("rc").textContent = list.length === 1 ? t("dl.countOne") : t("dl.count", { n: PM_fmtNum(list.length) });
@@ -148,7 +149,7 @@ window.PM_PAGE_INIT = function () {
   chips(); render();
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260714-na-english-1"></script>
-<script src="assets/js/app.js?v=20260714-na-english-1"></script>
+<script src="assets/js/sync-config.js?v=20260714-na-product-names-2"></script>
+<script src="assets/js/app.js?v=20260714-na-product-names-2"></script>
 </body>
 </html>

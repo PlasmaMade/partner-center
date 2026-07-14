@@ -13,6 +13,7 @@ var PMStudio = (function () {
      Valt terug op de NL-bron wanneer i18n (nog) niet geladen is. */
   function T(key, vars) { return window.PM_t ? window.PM_t(key, vars) : key; }
   function DL(list, value) { return window.PM_dict ? window.PM_dict(list, value) : value; }
+  function PT(value) { return window.PM_productText ? window.PM_productText(value) : value; }
 
   /* ================= Brand palette (PROTECTED) ================= */
   var COLORS = ["#13A538", "#0c7026", "#0d1117", "#1c2530", "#5c6873", "#ececec", "#f4f6f8", "#ffffff", "#e7f6ec", "#f2fbf5"];
@@ -390,7 +391,7 @@ var PMStudio = (function () {
     ctx.font = fontStr(el);
     try { ctx.letterSpacing = (el.ls || 0) + "px"; } catch (e) {}
     var out = [];
-    String(el.text || "").split("\n").forEach(function (para) {
+    String(PT(el.text) || "").split("\n").forEach(function (para) {
       var words = para.split(" "), line = "";
       words.forEach(function (w) {
         var test = line ? line + " " + w : w;
@@ -705,7 +706,7 @@ var PMStudio = (function () {
       node.style.lineHeight = String(el.lh || 1.18);
       node.style.letterSpacing = (el.ls || 0) + "px";
       if (el.shadow) node.style.textShadow = "0 2px 8px rgba(0,0,0,.35)";
-      node.textContent = el.text;
+      node.textContent = PT(el.text);
     } else if (el.type === "image") {
       node.style.height = el.h + "px";
       var im = document.createElement("img");
@@ -746,7 +747,7 @@ var PMStudio = (function () {
           node.style.display = "flex"; node.style.alignItems = "center"; node.style.justifyContent = "center";
           node.style.color = el.textColor; node.style.fontWeight = "700"; node.style.fontSize = el.size + "px";
           node.style.fontFamily = "'Libre Franklin',sans-serif";
-          node.textContent = el.text;
+          node.textContent = PT(el.text);
         }
       }
     }
@@ -1695,7 +1696,7 @@ var PMStudio = (function () {
       } else {
         html = '<div class="st-grouplbl">' + T("studio.layersGroup") + '</div><div class="st-layerlist">';
         list.slice().reverse().forEach(function (el) {
-          var name = el.type === "text" ? (el.text || T("studio.layerText")).split("\n")[0].slice(0, 22)
+        var name = el.type === "text" ? (PT(el.text || T("studio.layerText"))).split("\n")[0].slice(0, 22)
             : el.type === "image" ? (DL("studioAssets", ASSET_LABELS[el.src]) || (el.src.indexOf("data:") === 0 ? T("studio.layerUpload") : T("studio.layerImage")))
             : (DL("studioShapes", SHAPE_NAMES[el.shape]) || T("studio.layerShape"));
           var ic = el.type === "text" ? "text" : el.type === "image" ? "image" : (el.shape === "fade" ? "droplet" : "shape");
@@ -1985,7 +1986,7 @@ var PMStudio = (function () {
     h += field(T("studio.alignPage"), alignRow());
 
     if (el.type === "text") {
-      h += field(T("studio.propText"), '<textarea id="p-text" rows="3">' + PM_escape(el.text) + '</textarea>');
+      h += field(T("studio.propText"), '<textarea id="p-text" rows="3">' + PM_escape(PT(el.text)) + '</textarea>');
       h += field(T("studio.propFontSize"), slider("p-size", 8, 200, el.size, "px"));
       h += field(T("studio.propWeight"), dropdown("p-weight", [["400", "Regular"], ["500", "Medium"], ["600", "Semibold"], ["700", "Bold"], ["800", "Extrabold"]], String(el.weight)));
       h += field(T("studio.propAlign"), '<div class="st-seg" id="p-align">' + ["left", "center", "right"].map(function (a) { return '<button data-a="' + a + '" class="' + (el.align === a ? "active" : "") + '">' + T(a === "left" ? "studio.alignLeft" : a === "center" ? "studio.alignCenter" : "studio.alignRight") + '</button>'; }).join("") + '</div>');
@@ -2025,7 +2026,7 @@ var PMStudio = (function () {
     } else {
       h += field(T("studio.propColor"), swatches("p-color", el.color));
       if (el.shape === "pill" || el.shape === "rect" || el.shape === "ellipse") {
-        h += field(T("studio.propShapeText"), '<input type="text" id="p-stext" value="' + PM_escape(el.text || "") + '">');
+        h += field(T("studio.propShapeText"), '<input type="text" id="p-stext" value="' + PM_escape(PT(el.text || "")) + '">');
         if (el.text) {
           h += field(T("studio.propTextColor"), swatches("p-textcolor", el.textColor || "#ffffff"));
           h += field(T("studio.propTextSize"), slider("p-ssize", 10, 120, el.size || 28, "px"));
@@ -2520,7 +2521,7 @@ var PMStudio = (function () {
             if (el.text) {
               ctx.fillStyle = el.textColor; ctx.font = "700 " + el.size + "px 'Libre Franklin', sans-serif";
               ctx.textBaseline = "middle"; ctx.textAlign = "center";
-              ctx.fillText(el.text, 0, 2);
+              ctx.fillText(PT(el.text), 0, 2);
             }
           }
           ctx.restore();
