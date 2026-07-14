@@ -1,6 +1,6 @@
 /* ============================================================
    PlasmaMade Partner Center — i18n runtime
-   - 3 interfacetalen, Nederlands (nl) is bron- en fallbacktaal
+   - 4 interfacetalen, Nederlands (nl) is bron- en fallbacktaal
    - Woordenboeken staan in assets/i18n/<code>.js en registreren
      zichzelf op window.PM_LOCALES[<code>] = { name, ui, content }
    - Taalkeuze: ?lang= → localStorage("pm_lang") → nl
@@ -13,6 +13,7 @@
   var LANGS = [
     { code: "nl", name: "Nederlands", intl: "nl-NL" },
     { code: "en", name: "English", intl: "en-GB" },
+    { code: "en-us", name: "North America English", intl: "en-US" },
     { code: "de", name: "Deutsch", intl: "de-DE" }
   ];
   var DEFAULT = "nl";
@@ -29,8 +30,8 @@
     var q = null;
     try { q = new URLSearchParams(location.search).get("lang"); } catch (e) {}
     if (q) {
-      q = String(q).toLowerCase().slice(0, 5);
-      if (q === "us") q = "en"; // legacy code uit eerdere versie
+      q = String(q).toLowerCase().replace("_", "-").slice(0, 5);
+      if (q === "us") q = "en-us"; // legacy code uit eerdere versie
       if (isValid(q)) {
         try { localStorage.setItem(STORE_KEY, q); } catch (e) {}
         return q;
@@ -38,7 +39,7 @@
     }
     var s = null;
     try { s = localStorage.getItem(STORE_KEY); } catch (e) {}
-    if (s === "us") s = "en";
+    if (s === "us") s = "en-us";
     return isValid(s) ? s : DEFAULT;
   }
 

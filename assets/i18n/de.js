@@ -52,7 +52,7 @@ window.PM_LOCALES.de = {
     "ui.helpLink": "Kontakt & Support",
     "ui.skip": "Zum Inhalt springen",
     "ui.lang": "Sprache",
-    "ui.langNote": "Benutzeroberfläche auf Niederländisch, Englisch und Deutsch. Dokumente bleiben in der jeweils angegebenen Dokumentsprache verfügbar.",
+    "ui.langNote": "Benutzeroberfläche auf Niederländisch, Englisch, North America English und Deutsch. Dokumente bleiben in der jeweils angegebenen Dokumentsprache verfügbar.",
     "ui.langLoadError": "Die Sprache konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
     "ui.noResults": "Keine Ergebnisse für",
     "ui.noResultsHint": "Versuchen Sie einen anderen Suchbegriff, zum Beispiel einen Produktnamen oder ein Thema.",

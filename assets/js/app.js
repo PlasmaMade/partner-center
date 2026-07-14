@@ -3,7 +3,7 @@
    - Injecteert sidebar / topbar / footer op elke pagina
    - Login-guard (GitHub Pages/localStorage + optionele externe sync)
    - Globale zoekfunctie over alle content (PM_DATA), meertalig
-   - Taalmenu (NL/EN/DE, via PM_I18N in assets/js/i18n.js)
+   - Taalmenu (NL/EN/EN-US/DE, via PM_I18N in assets/js/i18n.js)
    - Iconen, toasts, dialogen, favorieten, recent bekeken
    ============================================================ */
 (function () {
@@ -210,7 +210,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260714-german-copy-3";
+  const PORTAL_BUILD_VERSION = "20260714-na-english-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";

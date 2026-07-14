@@ -59,7 +59,7 @@ window.PM_LOCALES.nl = {
     "ui.helpLink": "Contact & support",
     "ui.skip": "Direct naar inhoud",
     "ui.lang": "Taal",
-    "ui.langNote": "Interface in Nederlands, Engels en Duits. Documenten blijven beschikbaar in de aangegeven documenttaal.",
+    "ui.langNote": "Interface in Nederlands, Engels, North America English en Duits. Documenten blijven beschikbaar in de aangegeven documenttaal.",
     "ui.langLoadError": "Taal kon niet geladen worden. Probeer het opnieuw.",
     "ui.noResults": "Geen resultaten voor",
     "ui.noResultsHint": "Probeer een andere zoekterm, bijvoorbeeld een productnaam of onderwerp.",
