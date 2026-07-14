@@ -56,7 +56,7 @@ window.PM_LOCALES.en = {
     "ui.helpLink": "Contact & support",
     "ui.skip": "Skip to content",
     "ui.lang": "Language",
-    "ui.langNote": "Interface in Dutch and English. Documents remain available in the language indicated per document.",
+    "ui.langNote": "Interface in Dutch, English and German. Documents remain available in the language indicated per document.",
     "ui.langLoadError": "The language could not be loaded. Please try again.",
     "ui.noResults": "No results for",
     "ui.noResultsHint": "Try a different search term, for example a product name or topic.",
@@ -709,7 +709,7 @@ window.PM_LOCALES.en = {
     "admin.govOwnerV": "PlasmaMade Marketing — marketing@plasmamade.com",
     "admin.govUpdate": "Latest content update",
     "admin.govI18n": "Translation system",
-    "admin.govI18nV": "Dutch and English · central keys in assets/i18n/",
+    "admin.govI18nV": "Dutch, English and German · central keys in assets/i18n/",
     "admin.govRoadmap": "Production roadmap",
     "admin.govRoadmapV": "Partner accounts · local support registration · download library · Design Studio export · file checks",
 

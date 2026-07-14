@@ -59,7 +59,7 @@ window.PM_LOCALES.nl = {
     "ui.helpLink": "Contact & support",
     "ui.skip": "Direct naar inhoud",
     "ui.lang": "Taal",
-    "ui.langNote": "Interface in Nederlands en Engels. Documenten blijven beschikbaar in de aangegeven documenttaal.",
+    "ui.langNote": "Interface in Nederlands, Engels en Duits. Documenten blijven beschikbaar in de aangegeven documenttaal.",
     "ui.langLoadError": "Taal kon niet geladen worden. Probeer het opnieuw.",
     "ui.noResults": "Geen resultaten voor",
     "ui.noResultsHint": "Probeer een andere zoekterm, bijvoorbeeld een productnaam of onderwerp.",
@@ -712,7 +712,7 @@ window.PM_LOCALES.nl = {
     "admin.govOwnerV": "PlasmaMade Marketing — marketing@plasmamade.com",
     "admin.govUpdate": "Laatste contentupdate",
     "admin.govI18n": "Vertaalsysteem",
-    "admin.govI18nV": "Nederlands en Engels · centrale sleutels in assets/i18n/",
+    "admin.govI18nV": "Nederlands, Engels en Duits · centrale sleutels in assets/i18n/",
     "admin.govRoadmap": "Productie-roadmap",
     "admin.govRoadmapV": "Partneraccounts · lokale supportregistratie · downloadbibliotheek · Design Studio-export · bestandscontrole",
 
