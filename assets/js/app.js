@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   PlasmaMade Partner Center â€” App shell & runtime
+   PlasmaMade Partner Center - App shell & runtime
    - Injecteert sidebar / topbar / footer op elke pagina
    - Login-guard (GitHub Pages/localStorage + optionele externe sync)
    - Globale zoekfunctie over alle content (PM_DATA), meertalig
@@ -212,7 +212,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260714-na-product-names-2";
+  const PORTAL_BUILD_VERSION = "20260714-bibet-identity-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -757,12 +757,14 @@
   } catch (e) {}
 
   function normEmail(email) { return String(email || "").trim().toLowerCase(); }
+  const BJONKEREN_ADMIN_EMAIL = "bjonkeren@plasmamade.com";
+  const BJONKEREN_DISPLAY_NAME = "Bibet";
   const BOOTSTRAP_ADMIN_ROWS = [
     {
-      email: "bjonkeren@plasmamade.com",
-      name: "Bjonkeren",
-      firstName: "",
-      lastName: "Bjonkeren",
+      email: BJONKEREN_ADMIN_EMAIL,
+      name: BJONKEREN_DISPLAY_NAME,
+      firstName: BJONKEREN_DISPLAY_NAME,
+      lastName: "",
       company: "PlasmaMade",
       passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
       passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
@@ -788,14 +790,14 @@
     return BOOTSTRAP_ADMIN_ROWS.find(function (admin) { return admin.email === e; }) || null;
   }
   function isLegacyBjonkerenName(email, value) {
-    return normEmail(email) === "bjonkeren@plasmamade.com" && /^bjorn(?:\s+jonkeren)?$/i.test(String(value || "").trim());
+    return normEmail(email) === BJONKEREN_ADMIN_EMAIL && /^(bjorn(?:\s+jonkeren)?|bjonkeren)$/i.test(String(value || "").trim());
   }
   function safeDisplayName(row, email, fallback) {
     row = row || {};
     email = email || row.email;
     var full = ((row.firstName || "") + " " + (row.lastName || "")).trim();
     var name = full || row.name || row.company || email || fallback || "Partner";
-    if (isLegacyBjonkerenName(email, name)) return "Bjonkeren";
+    if (isLegacyBjonkerenName(email, name)) return BJONKEREN_DISPLAY_NAME;
     return name;
   }
   window.PM_displayName = safeDisplayName;
@@ -805,7 +807,18 @@
     return admin.name;
   }
   function sanitizeBootstrapUserName(user) {
-    if (user && isLegacyBjonkerenName(user.email, user.name)) user.name = "Bjonkeren";
+    if (!user) return user;
+    var full = ((user.firstName || "") + " " + (user.lastName || "")).trim();
+    if (
+      isLegacyBjonkerenName(user.email, user.name) ||
+      isLegacyBjonkerenName(user.email, full) ||
+      isLegacyBjonkerenName(user.email, user.firstName) ||
+      isLegacyBjonkerenName(user.email, user.lastName)
+    ) {
+      user.name = BJONKEREN_DISPLAY_NAME;
+      user.firstName = BJONKEREN_DISPLAY_NAME;
+      user.lastName = "";
+    }
     return user;
   }
   function isBootstrapAdminEmailValue(email) { return !!bootstrapAdminForEmail(email); }
@@ -881,7 +894,7 @@
       var e = normEmail(email);
       if (!e) return null;
       meta = Object.assign({}, meta || {});
-      if (isLegacyBjonkerenName(e, meta.name)) meta.name = "Bjonkeren";
+      if (isLegacyBjonkerenName(e, meta.name)) meta.name = BJONKEREN_DISPLAY_NAME;
       var rows = this.list();
       var hit = rows.find(function (a) { return normEmail(a.email) === e; });
       var now = new Date().toISOString();
@@ -986,7 +999,7 @@
   function requestName(r) {
     var name = ((r && r.firstName || "") + " " + (r && r.lastName || "")).trim() || (r && (r.name || r.email)) || "Partner";
     var admin = bootstrapAdminForEmail(r && r.email);
-    if (isLegacyBjonkerenName(r && r.email, name)) return (admin && admin.name) || "Bjonkeren";
+    if (isLegacyBjonkerenName(r && r.email, name)) return (admin && admin.name) || BJONKEREN_DISPLAY_NAME;
     return name;
   }
   function requestStatusRank(status) {
@@ -1001,6 +1014,7 @@
     var noEmail = [];
     (Array.isArray(rows) ? rows : []).forEach(function (row) {
       if (!row) return;
+      row = sanitizeBootstrapUserName(Object.assign({}, row));
       var email = normEmail(row.email);
       if (!email) { noEmail.push(row); return; }
       var current = byEmail[email];
@@ -1014,7 +1028,12 @@
       .sort(function (a, b) { return requestStamp(b).localeCompare(requestStamp(a)); });
   }
   window.PM_REQUESTS = {
-    list: function () { return normalizeRequestRows(readStore(REQUEST_KEY, [])); },
+    list: function () {
+      var raw = readStore(REQUEST_KEY, []);
+      var rows = normalizeRequestRows(raw);
+      if (!sameJson(raw, rows)) writeStore(REQUEST_KEY, rows);
+      return rows;
+    },
     findByEmail: function (email) {
       var e = normEmail(email);
       var matches = this.list().filter(function (r) { return normEmail(r.email) === e; });
@@ -1766,7 +1785,7 @@
       var list = this.list();
       var email = String(partner.email).toLowerCase();
       partner.email = email;
-      if (isLegacyBjonkerenName(email, partner.name)) partner.name = "Bjonkeren";
+      if (isLegacyBjonkerenName(email, partner.name)) partner.name = BJONKEREN_DISPLAY_NAME;
       if (partner.role != null) partner.role = normalizeRole(partner.role, email);
       var hit = list.find(function (p) { return String(p.email || "").toLowerCase() === email; });
       var now = new Date().toISOString();
@@ -1944,9 +1963,17 @@
   const AUTH_KEY = "pm_partner_auth";
   function getUser() {
     var user = readStore(AUTH_KEY, null);
-    if (user && isLegacyBjonkerenName(user.email, user.name)) {
-      user = sanitizeBootstrapUserName(Object.assign({}, user));
-      writeStore(AUTH_KEY, user);
+    if (user) {
+      var sanitized = sanitizeBootstrapUserName(Object.assign({}, user));
+      try {
+        if (JSON.stringify(sanitized) !== JSON.stringify(user)) {
+          user = sanitized;
+          writeStore(AUTH_KEY, user);
+        }
+      } catch (e) {
+        user = sanitized;
+        writeStore(AUTH_KEY, user);
+      }
     }
     return user;
   }
@@ -2655,7 +2682,7 @@
     ov.className = "pm-cms-edit-ov";
     ov.innerHTML =
       '<div class="pm-cms-edit" role="dialog" aria-modal="true" aria-labelledby="pm-cms-edit-title">' +
-        '<div class="pm-cms-edit__head"><div><h3 id="pm-cms-edit-title">' + esc(titleLabel) + ' bewerken</h3><p>' + esc(collectionLabel(collection)) + ' Â· ' + esc(contentTitle(row)) + '</p></div><button type="button" class="icon-btn" data-cms-close aria-label="Sluiten">' + icon("x") + '</button></div>' +
+        '<div class="pm-cms-edit__head"><div><h3 id="pm-cms-edit-title">' + esc(titleLabel) + ' bewerken</h3><p>' + esc(collectionLabel(collection)) + ' - ' + esc(contentTitle(row)) + '</p></div><button type="button" class="icon-btn" data-cms-close aria-label="Sluiten">' + icon("x") + '</button></div>' +
         '<div class="pm-cms-edit__body">' +
           (preview ? '<div class="pm-cms-preview"><img src="' + esc(preview) + '" alt="" data-cms-preview></div>' : '<div class="pm-cms-preview pm-cms-preview--empty"><span data-cms-preview-empty>' + icon("fileText") + '</span><img src="" alt="" data-cms-preview hidden></div>') +
           '<form class="pm-cms-form">' + defs.map(function (def) { return renderContentField(row, def); }).join("") +
@@ -4134,7 +4161,7 @@
       ft.className = "site-footer";
       ft.innerHTML =
         '<div style="border-top:1px solid var(--line);background:var(--surface);padding:22px 34px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;color:var(--muted);font-size:12.5px">' +
-          '<div style="display:flex;align-items:center;gap:12px"><img src="assets/img/logo/logo-green.png" alt="PlasmaMade" style="height:22px" width="103" height="22"><span>Â© ' + (new Date().getFullYear()) + ' PlasmaMade B.V. â€” Partner Center</span></div>' +
+          '<div style="display:flex;align-items:center;gap:12px"><img src="assets/img/logo/logo-green.png" alt="PlasmaMade" style="height:22px" width="103" height="22"><span>&copy; ' + (new Date().getFullYear()) + ' PlasmaMade B.V. - Partner Center</span></div>' +
           '<div style="display:flex;gap:18px;flex-wrap:wrap"><span><i>breathe better, live better.</i></span><a href="mailto:marketing@plasmamade.com" class="green">marketing@plasmamade.com</a><a href="https://plasmamade.com" target="_blank" rel="noopener noreferrer" class="green">plasmamade.com</a></div>' +
         '</div>';
     }
@@ -4142,7 +4169,7 @@
     wireShell();
   }
 
-  /* Rol â†’ vertaalsleutel (rollen worden als code opgeslagen bij login) */
+  /* Rol -> vertaalsleutel (rollen worden als code opgeslagen bij login) */
   function roleKey(role) {
     var map = { dealer: "role.dealer", distributor: "role.distributor", installer: "role.installer", studio: "role.studio", retailpartner: "role.retailpartner", international: "role.international", marketing: "role.marketing", agent: "role.agent", partner: "role.partner", support: "role.support", internal: "role.internal", admin: "role.internal" };
     return map[role] || "";
@@ -4336,7 +4363,7 @@
     var fq = fold((q || "").trim());
     let hits = fq ? idx.filter(x => fq.split(/\s+/).every(term => x.kw.indexOf(term) > -1)) : idx.slice(0, 8);
     if (!hits.length) {
-      res.innerHTML = '<div class="search-empty">' + esc(t("ui.noResults")) + ' â€œ' + esc(q) + 'â€.<br><span class="muted" style="font-size:12.5px">' + esc(t("ui.noResultsHint")) + '</span></div>';
+      res.innerHTML = '<div class="search-empty">' + esc(t("ui.noResults")) + ' "' + esc(q) + '".<br><span class="muted" style="font-size:12.5px">' + esc(t("ui.noResultsHint")) + '</span></div>';
       return;
     }
     const groups = {};

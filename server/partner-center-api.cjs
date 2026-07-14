@@ -62,12 +62,15 @@ const OBJECT_STATE_KEYS = new Set([
   "pm_portal_settings"
 ]);
 
+const BJONKEREN_ADMIN_EMAIL = "bjonkeren@plasmamade.com";
+const BJONKEREN_DISPLAY_NAME = "Bibet";
+
 const BOOTSTRAP_ADMINS = [
   {
-    email: "bjonkeren@plasmamade.com",
-    name: "Bjonkeren",
-    firstName: "",
-    lastName: "Bjonkeren",
+    email: BJONKEREN_ADMIN_EMAIL,
+    name: BJONKEREN_DISPLAY_NAME,
+    firstName: BJONKEREN_DISPLAY_NAME,
+    lastName: "",
     company: "PlasmaMade",
     passwordSalt: "pm_bootstrap_bjonkeren_2026_06_v1",
     passwordHash: "3b9efd943719350f62ac8fbecf3a283838115568802c90995f6585794507da3e",
@@ -110,11 +113,29 @@ function normEmail(email) {
 }
 
 function isLegacyBjonkerenName(email, value) {
-  return normEmail(email) === "bjonkeren@plasmamade.com" && /^bjorn(?:\s+jonkeren)?$/i.test(String(value || "").trim());
+  return normEmail(email) === BJONKEREN_ADMIN_EMAIL && /^(bjorn(?:\s+jonkeren)?|bjonkeren)$/i.test(String(value || "").trim());
+}
+
+function sanitizeBjonkerenIdentity(row) {
+  if (!row || typeof row !== "object") return row;
+  const out = Object.assign({}, row);
+  const full = ((out.firstName || "") + " " + (out.lastName || "")).trim();
+  if (
+    isLegacyBjonkerenName(out.email, out.name) ||
+    isLegacyBjonkerenName(out.email, full) ||
+    isLegacyBjonkerenName(out.email, out.firstName) ||
+    isLegacyBjonkerenName(out.email, out.lastName)
+  ) {
+    out.name = BJONKEREN_DISPLAY_NAME;
+    out.firstName = BJONKEREN_DISPLAY_NAME;
+    out.lastName = "";
+  }
+  return out;
 }
 
 function bootstrapDisplayName(existing, admin) {
-  const existingName = existing && existing.name;
+  const sanitizedExisting = sanitizeBjonkerenIdentity(existing);
+  const existingName = sanitizedExisting && sanitizedExisting.name;
   if (existingName && !isLegacyBjonkerenName(admin && admin.email, existingName)) return existingName;
   return admin.name;
 }
@@ -282,10 +303,11 @@ function sameJson(a, b) {
 }
 
 function requestName(req) {
+  req = sanitizeBjonkerenIdentity(req);
   const name = ((req && req.firstName || "") + " " + (req && req.lastName || "")).trim() || (req && (req.name || req.email)) || "Partner";
   if (isLegacyBjonkerenName(req && req.email, name)) {
     const admin = bootstrapAdminForEmail(req && req.email);
-    return (admin && admin.name) || "Bjonkeren";
+    return (admin && admin.name) || BJONKEREN_DISPLAY_NAME;
   }
   return name;
 }
@@ -342,7 +364,8 @@ function bootstrapPartner(existing, admin) {
 function upsertByEmail(rows, row) {
   const email = normEmail(row.email);
   const admin = bootstrapAdminForEmail(email);
-  if (row && isLegacyBjonkerenName(email, row.name)) row = Object.assign({}, row, { name: (admin && admin.name) || "Bjonkeren" });
+  row = sanitizeBjonkerenIdentity(row);
+  if (row && isLegacyBjonkerenName(email, row.name)) row = Object.assign({}, row, { name: (admin && admin.name) || BJONKEREN_DISPLAY_NAME });
   const list = Array.isArray(rows) ? rows.slice() : [];
   const idx = list.findIndex((item) => normEmail(item && item.email) === email);
   if (idx > -1) list[idx] = Object.assign({}, list[idx], row, { email });
@@ -412,7 +435,7 @@ function findRequest(state, email) {
 }
 
 function normalizeRequestPayload(payload, timestamp) {
-  const out = Object.assign({}, payload || {});
+  const out = sanitizeBjonkerenIdentity(Object.assign({}, payload || {}));
   out.email = normEmail(out.email);
   if (out.password && (!out.passwordSalt || !out.passwordHash)) {
     out.passwordSalt = makeId("pw");
@@ -1043,7 +1066,7 @@ function cloneValue(value) {
 }
 
 function sanitizeAccountRequest(row) {
-  const out = Object.assign({}, row || {});
+  const out = sanitizeBjonkerenIdentity(Object.assign({}, row || {}));
   delete out.password;
   delete out.passwordConfirm;
   delete out.passwordHash;
