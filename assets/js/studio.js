@@ -312,13 +312,16 @@ var PMStudio = (function () {
   function cur() { return state.pages[state.page]; }
   function els() { return cur().elements; }
   function fmt() {
-    if (state.format === "custom") return { label: "Aangepast", w: state.customSize.w, h: state.customSize.h };
+    if (state.format === "custom") return { label: T("designs.format.custom"), w: state.customSize.w, h: state.customSize.h };
     return FORMATS[state.format];
   }
   function selEls() { return state.sel.map(function (id) { return els().find(function (e) { return e.id === id; }); }).filter(Boolean); }
   function statusText(status) {
     var map = (window.PM_DESIGNS && PM_DESIGNS.labels) || { draft: "Concept", submitted: "Ingediend", in_review: "In beoordeling", approved: "Goedgekeurd", rejected: "Afgewezen", changes_requested: "Aanpassing nodig", downloaded: "Gedownload" };
-    return map[status || "draft"] || status || "Concept";
+    var value = status || "draft";
+    var key = "designs.status." + value;
+    var translated = T(key);
+    return translated === key ? (map[value] || value || "Concept") : translated;
   }
   function statusTone(status) {
     if (status === "approved" || status === "downloaded") return "ok";
@@ -339,13 +342,9 @@ var PMStudio = (function () {
     d = d || {};
     var status = d.status || "draft";
     var feedback = d.feedback || "";
-    if (status === "changes_requested") return feedback ? "Feedback: " + feedback : "Aanpassing nodig. Er is nog geen toelichting ingevuld.";
-    if (status === "rejected") return feedback ? "Reden: " + feedback : "Niet goedgekeurd. Er is geen reden ingevuld.";
-    if (status === "approved") return "Goedgekeurd voor gebruik. Exporteren is beschikbaar.";
-    if (status === "downloaded") return "Goedgekeurd en gedownload. Je kunt opnieuw exporteren.";
-    if (status === "submitted") return "Ingediend. Wacht op beoordeling door PlasmaMade.";
-    if (status === "in_review") return "In beoordeling. Je ontvangt hier feedback of goedkeuring.";
-    return "Concept. Nog niet ingediend ter goedkeuring.";
+    if (status === "changes_requested" && feedback) return T("designs.feedback", { text: feedback });
+    if (status === "rejected" && feedback) return T("designs.reason", { text: feedback });
+    return T("designs.message." + status);
   }
   function reviewIcon(status) {
     return status === "rejected" ? "alert" : (status === "approved" || status === "downloaded" ? "shieldCheck" : "info");
@@ -364,14 +363,12 @@ var PMStudio = (function () {
       var merged = Object.assign({}, saved || {}, { status: status, feedback: (saved && saved.feedback) || state.feedback || "" });
       var date = reviewDate(merged);
       var title = statusText(status);
-      if (status === "submitted") title = "Aangevraagd";
-      if (status === "changes_requested") title = "Aanpassing nodig";
       detail.className = "st-status-detail show" + (toneClass ? " " + toneClass : "");
       detail.innerHTML = icn(reviewIcon(status)) +
         '<div><b>' + PM_escape(title) + '</b><br>' + PM_escape(reviewMessage(merged)) + (date ? '<br><span>' + PM_escape(fmtDateTime(date)) + '</span>' : '') + '</div>';
     }
     var ex = $("st-export-btn");
-    if (ex) ex.title = status === "approved" || status === "downloaded" ? "Download goedgekeurde versie" : "Download is beschikbaar na goedkeuring";
+    if (ex) ex.title = status === "approved" || status === "downloaded" ? T("studio.downloadApprovedTitle") : T("studio.downloadLockedTitle");
   }
   function markDraftAfterEdit() {
     if (["submitted", "in_review", "approved", "rejected", "changes_requested", "downloaded"].indexOf(state.status || "draft") === -1) return;
@@ -494,7 +491,7 @@ var PMStudio = (function () {
   }
 
   function fillToolbarIcons() {
-    var map = { "st-new": ["plus", T("studio.new")], "st-open": ["folder", T("studio.open")], "st-undo": ["undo", ""], "st-redo": ["redo", ""], "st-preview": ["eye", T("studio.preview")], "st-save": ["save", T("studio.save")], "st-submit": ["check", "Indienen"], "st-zoom-in": ["zoomIn", ""], "st-zoom-out": ["zoomOut", ""], "st-zoom-fit": ["fit", ""], "st-shortcuts": ["help", ""] };
+    var map = { "st-new": ["plus", T("studio.new")], "st-open": ["folder", T("studio.open")], "st-undo": ["undo", ""], "st-redo": ["redo", ""], "st-preview": ["eye", T("studio.preview")], "st-save": ["save", T("studio.save")], "st-submit": ["check", T("studio.submit")], "st-zoom-in": ["zoomIn", ""], "st-zoom-out": ["zoomOut", ""], "st-zoom-fit": ["fit", ""], "st-shortcuts": ["help", ""] };
     Object.keys(map).forEach(function (id) {
       var b = $(id); if (b) b.innerHTML = icn(map[id][0]) + (map[id][1] || "");
     });
@@ -2320,7 +2317,7 @@ var PMStudio = (function () {
     state.feedback = "";
     renderStatus();
     if (window.PM_SYNC && PM_SYNC.flushDirty) PM_SYNC.flushDirty({ timeout: 6500 });
-    PM_toast("Ontwerp ingediend ter goedkeuring");
+    PM_toast(T("studio.submittedForApproval"));
   }
   function migrate(d) {
     if (d.pages) return d;
@@ -2619,7 +2616,7 @@ var PMStudio = (function () {
     var approved = saved && (saved.status === "approved" || saved.status === "downloaded") && (state.status === "approved" || state.status === "downloaded");
     if (!approved) {
       saveDesign({ silent: true });
-      PM_toast("Download is beschikbaar nadat PlasmaMade dit ontwerp heeft goedgekeurd.");
+      PM_toast(T("studio.downloadLocked"));
       renderStatus();
       return;
     }

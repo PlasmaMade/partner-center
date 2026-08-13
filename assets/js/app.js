@@ -212,7 +212,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260813-kiosk-demo-tour-1";
+  const PORTAL_BUILD_VERSION = "20260813-retailer-demo-tour-5";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -4045,50 +4045,85 @@
   const DEMO_TOUR_STEP_MS = 4200;
   const DEMO_TOUR_NAV_MS = 1150;
   const DEMO_TOUR_SCROLL_MS = 620;
-  const DEMO_TOUR_MAX_TARGETS = 5;
+  const DEMO_TOUR_MAX_TARGETS = 4;
+  const DEMO_TOUR_LANGUAGE = "en";
   const DEMO_TOUR_ROUTE = [
-    { id: "dashboard", href: "dashboard.html" },
-    { id: "products", href: "products.html" },
-    { id: "finder", href: "filter-finder.html" },
-    { id: "knowledge", href: "knowledge.html" },
-    { id: "videos", href: "videos.html" },
-    { id: "marketing", href: "marketing.html" },
-    { id: "campaigns", href: "campaigns.html" },
-    { id: "sales", href: "sales-tools.html" },
-    { id: "designs", href: "designs.html" },
-    { id: "studio", href: "studio.html" },
-    { id: "brand", href: "brand-guidelines.html" },
-    { id: "downloads", href: "downloads.html" },
-    { id: "testdocs", href: "testdocuments.html" },
-    { id: "news", href: "news.html" },
-    { id: "support", href: "support.html" }
+    { id: "dashboard", href: "dashboard.html", title: "Home", steps: [
+      { selector: ".portal-hero", label: "Everything a retail partner needs, in one place." },
+      { selector: "#role-actions .portal-action:first-child", label: "Start with guided product advice for every customer." },
+      { selector: "#feat-products .product-card:first-child", label: "Explore key products and their strongest selling points." },
+      { selector: ".topbar__search", label: "Search the entire Partner Center from here." }
+    ] },
+    { id: "products", href: "products.html", title: "Products", steps: [
+      { selector: ".page-head", label: "Find the complete PlasmaMade product range." },
+      { selector: "#product-grid .product-card:first-child", label: "Open a product for specifications, benefits and applications." },
+      { selector: "#guide", label: "Compare the right solution for each kitchen situation." }
+    ] },
+    { id: "finder", href: "filter-finder.html", title: "Filter Finder", steps: [
+      { selector: ".page-head", label: "Turn a customer situation into a clear product recommendation." },
+      { selector: ".finder-card", label: "The guided flow keeps product advice simple and consistent." },
+      { selector: ".finder-opt:first-child", label: "Choose the setup that matches the customer's kitchen." }
+    ] },
+    { id: "sales", href: "sales-tools.html", title: "Sales Tools", steps: [
+      { selector: ".page-head", label: "Prepare every showroom conversation with proven sales support." },
+      { selector: "#tabs", label: "Switch between pitches, comparisons, objections and customer emails." },
+      { selector: "#p10", label: "Use ready-made pitches directly in a customer conversation." }
+    ] },
+    { id: "marketing", href: "marketing.html", title: "Marketing Library", steps: [
+      { selector: ".page-head", label: "Access approved PlasmaMade marketing materials." },
+      { selector: "#asset-grid .asset:first-child", label: "Preview the latest product and campaign assets." },
+      { selector: "#asset-grid .asset:first-child .asset__foot", label: "Download an asset or continue with it in the Design Studio." }
+    ] },
+    { id: "campaigns", href: "campaigns.html", title: "Campaigns", steps: [
+      { selector: ".page-head", label: "Discover current campaigns for showroom and local promotion." },
+      { selector: "#camp-grid .campaign-card:first-child", label: "Open a campaign for its message, audience and available assets." }
+    ] },
+    { id: "designs", href: "designs.html", title: "Saved Designs", steps: [
+      { selector: ".page-head", label: "See every saved design and its approval status at a glance." },
+      { selector: "#design-list .design-card:first-child", label: "Select a design to review its current status." },
+      { selector: "#design-detail .design-detail__message,#design-detail", label: "Feedback and required changes appear clearly in the detail panel." }
+    ] },
+    { id: "studio", href: "studio.html", title: "Design Studio", steps: [
+      { selector: ".studio__bar", label: "Create local, on-brand retailer material." },
+      { selector: "#st-stage", label: "Build and preview the design directly on the canvas." },
+      { selector: ".st-pbody", label: "Adjust content, products and styling with the studio tools." }
+    ] },
+    { id: "knowledge", href: "knowledge.html", title: "Knowledge Base", steps: [
+      { selector: ".page-head", label: "Strengthen product knowledge before speaking with customers." },
+      { selector: ".kb-card:first-child", label: "Open practical articles about products, installation and air quality." }
+    ] },
+    { id: "downloads", href: "downloads.html", title: "Downloads", steps: [
+      { selector: ".page-head", label: "Find current brochures, product sheets and supporting documents." },
+      { selector: "#cat-filter", label: "Browse documents by the category you need." },
+      { selector: "#dl-list .card:first-child", label: "Download the approved file for your customer or showroom." }
+    ] },
+    { id: "support", href: "support.html", title: "Support", steps: [
+      { selector: ".page-head", label: "Get help with products, marketing materials or designs." },
+      { selector: "#contact-cards .tile:first-child", label: "Contact PlasmaMade Marketing directly." },
+      { selector: "#support-form", label: "Submit a complete support request from the Partner Center." }
+    ] },
+    { id: "account", href: "account.html", title: "Account", steps: [
+      { selector: ".page-head", label: "Manage the retail partner account from one clear overview." },
+      { selector: ".acct-head", label: "Review the retailer profile and company details." },
+      { selector: "#acct-activity", label: "See recent designs, downloads and support activity." },
+      { selector: "#prefs", label: "Set language, start page and notification preferences." }
+    ] }
   ];
-  const DEMO_TOUR_TARGETS = [
-    { selector: ".sidebar .nav-item.active", label: "Actieve sectie" },
-    { selector: ".topbar__search", label: "Zoeken" },
-    { selector: ".portal-hero", label: "Partner Center" },
-    { selector: ".page-head", label: "Paginaoverzicht" },
-    { selector: "#role-actions .portal-action:first-child", label: "Aanbevolen actie" },
-    { selector: "#feat-products .product-card:first-child,.product-card:first-child", label: "Productinformatie" },
-    { selector: ".finder-card", label: "Filter Finder" },
-    { selector: ".finder-opt:first-child", label: "Advieskeuze" },
-    { selector: ".finder-result", label: "Filteradvies" },
-    { selector: ".toolbar,.designs-toolbar,.admin-toolbar", label: "Filters en opties" },
-    { selector: ".kb-card:first-child", label: "Kennisbank" },
-    { selector: ".video-thumb:first-child", label: "Video" },
-    { selector: ".campaign-card:first-child", label: "Campagne" },
-    { selector: ".asset:first-child", label: "Marketingbestand" },
-    { selector: ".portal-list__row:first-child", label: "Snelle toegang" },
-    { selector: ".design-card:first-child", label: "Ontwerpstatus" },
-    { selector: "#design-detail", label: "Status en feedback" },
-    { selector: ".studio__bar", label: "Design Studio" },
-    { selector: ".studio__canvas-wrap,#st-stage", label: "Ontwerpcanvas" },
-    { selector: ".st-pbody", label: "Studio tools" },
-    { selector: ".brand-grid,.grid--4,.admin-suite-grid", label: "Overzicht" },
-    { selector: ".btn--primary:first-of-type", label: "Primaire actie" }
-  ];
-  const DEMO_TOUR_BLOCKED_PAGES = { login: true, admin: true, account: true };
+  const DEMO_TOUR_BLOCKED_PAGES = { login: true, admin: true };
   var demoTourInstance = null;
+
+  function demoTourPreferenceEnabled() {
+    try {
+      var params = new URLSearchParams(location.search);
+      if (params.get("demo") === "off") return false;
+      if (params.get("demo") === "on") return true;
+      return localStorage.getItem("pm_demo_tour_disabled") !== "1";
+    } catch (e) {
+      return true;
+    }
+  }
+
+  window.PM_DEMO_TOUR_RETAILER = demoTourPreferenceEnabled();
 
   function demoClamp(n, min, max) {
     return Math.max(min, Math.min(max, n));
@@ -4132,6 +4167,11 @@
     return DEMO_TOUR_ROUTE.findIndex(function (item) { return item.id === page; });
   }
 
+  function demoCurrentRoute(page) {
+    var idx = demoCurrentRouteIndex(page);
+    return idx > -1 ? DEMO_TOUR_ROUTE[idx] : null;
+  }
+
   function demoNextRoute(page) {
     var user = getUser() || {};
     var start = demoCurrentRouteIndex(page);
@@ -4145,6 +4185,7 @@
 
   function demoFindNavLink(routeItem) {
     if (!routeItem) return null;
+    if (routeItem.id === "account") return document.querySelector('#pm-user[href="account.html"],.user-menu a[href="account.html"]');
     var links = Array.prototype.slice.call(document.querySelectorAll(".nav-item[href]"));
     return links.find(function (link) {
       return (link.getAttribute("href") || "").split("?")[0] === routeItem.href;
@@ -4153,9 +4194,13 @@
 
   function demoRouteLabel(routeItem) {
     if (!routeItem) return "";
-    var label = "";
-    try { label = t("nav." + routeItem.id); } catch (e) {}
-    return demoCleanText(label || routeItem.id || "");
+    return demoCleanText(routeItem.title || routeItem.id || "");
+  }
+
+  function demoRouteHref(routeItem) {
+    if (!routeItem) return "dashboard.html?lang=" + DEMO_TOUR_LANGUAGE;
+    var href = routeItem.href || "dashboard.html";
+    return href + (href.indexOf("?") > -1 ? "&" : "?") + "lang=" + encodeURIComponent(DEMO_TOUR_LANGUAGE);
   }
 
   function ensureDemoTourElements() {
@@ -4252,16 +4297,27 @@
     function collectTargets() {
       var seen = new Set();
       var result = [];
-      DEMO_TOUR_TARGETS.forEach(function (cfg) {
+      var route = demoCurrentRoute(page);
+      var configs = route && route.steps ? route.steps : [];
+      configs.forEach(function (cfg) {
         var nodes = [];
         try { nodes = Array.prototype.slice.call(document.querySelectorAll(cfg.selector)); } catch (e) {}
         nodes.forEach(function (el) {
           if (seen.has(el) || !demoElementVisible(el)) return;
           seen.add(el);
-          result.push({ el: el, label: demoLabelFor(el, cfg.label) });
+          result.push({
+            el: el,
+            label: demoLabelFor(el, cfg.label),
+            pageTitle: demoRouteLabel(route)
+          });
         });
       });
-      return result.slice(0, DEMO_TOUR_MAX_TARGETS);
+      result = result.slice(0, DEMO_TOUR_MAX_TARGETS);
+      result.forEach(function (target, index) {
+        target.step = index + 1;
+        target.total = result.length;
+      });
+      return result;
     }
 
     function renderTarget(target, clickPulse) {
@@ -4280,7 +4336,9 @@
       els.spotlight.style.width = Math.max(36, right - left) + "px";
       els.spotlight.style.height = Math.max(36, bottom - top) + "px";
       els.cursor.style.transform = "translate3d(" + x + "px," + y + "px,0)";
-      els.bubble.innerHTML = '<i aria-hidden="true"></i><span>' + esc(target.label) + '</span>';
+      var bubbleTitle = target.pageTitle || "Retail Partner Tour";
+      if (target.step && target.total) bubbleTitle += "  " + target.step + "/" + target.total;
+      els.bubble.innerHTML = '<i aria-hidden="true"></i><span><b>' + esc(bubbleTitle) + '</b><small>' + esc(target.label) + '</small></span>';
       els.bubble.style.left = "14px";
       els.bubble.style.top = "-200px";
       document.body.classList.remove("pm-demo-tour-paused");
@@ -4322,15 +4380,15 @@
       }
       var navLink = demoFindNavLink(next);
       if (navLink && demoElementVisible(navLink)) {
-        showTarget({ el: navLink, label: "Naar " + demoRouteLabel(next) }, true);
+        showTarget({ el: navLink, pageTitle: "Retail Partner Tour", label: "Next: " + demoRouteLabel(next) }, true);
         clearStepTimer();
         stepTimer = setTimeout(function () {
-          if (!destroyed && !paused) location.href = next.href;
+          if (!destroyed && !paused) location.href = demoRouteHref(next);
         }, DEMO_TOUR_NAV_MS);
       } else {
         clearStepTimer();
         stepTimer = setTimeout(function () {
-          if (!destroyed && !paused) location.href = next.href;
+          if (!destroyed && !paused) location.href = demoRouteHref(next);
         }, 260);
       }
     }
@@ -4421,6 +4479,11 @@
       if (params.get("demo") === "on") localStorage.removeItem("pm_demo_tour_disabled");
       if (localStorage.getItem("pm_demo_tour_disabled") === "1") return;
     } catch (e) {}
+    window.PM_DEMO_TOUR_RETAILER = true;
+    document.body.classList.add("pm-demo-tour-retailer");
+    if (window.PM_lang && PM_lang() !== DEMO_TOUR_LANGUAGE && window.PM_setLang) {
+      PM_setLang(DEMO_TOUR_LANGUAGE);
+    }
     if (demoTourInstance && demoTourInstance.destroy) demoTourInstance.destroy();
     demoTourInstance = createDemoTour(page);
     window.PM_DEMO_TOUR = demoTourInstance;
@@ -4435,6 +4498,8 @@
   function buildShell(page) {
     currentPage = page;
     const user = getUser() || { name: "Partner", role: "", company: "" };
+    const retailerDemo = window.PM_DEMO_TOUR_RETAILER === true;
+    const displayedRole = retailerDemo ? "studio" : user.role;
 
     // Skip-to-content link + main landmark (accessibility)
     var skip = document.querySelector(".skip-link");
@@ -4452,7 +4517,7 @@
     if (sb) {
       let nav = "";
       var navConfig = NAV.slice();
-      var customPages = window.PM_CUSTOM_PAGES ? PM_CUSTOM_PAGES.list().filter(function (p) {
+      var customPages = !retailerDemo && window.PM_CUSTOM_PAGES ? PM_CUSTOM_PAGES.list().filter(function (p) {
         if ((p.status || "published") !== "published") return false;
         if (isAdminUser(user) || !p.groups || !p.groups.length) return true;
         return p.groups.indexOf(normalizeRole(user.role, user.email)) > -1;
@@ -4467,14 +4532,14 @@
       }
       navConfig.forEach(g => {
         var items = g.items.filter(function (it) {
-          return (it.id !== "admin" || isAdminUser(user)) && (!window.PM_GROUPS || PM_GROUPS.canPage(it.id, user));
+          return (it.id !== "admin" || (!retailerDemo && isAdminUser(user))) && (!window.PM_GROUPS || PM_GROUPS.canPage(it.id, user));
         });
         if (!items.length) return;
         nav += '<div class="nav-group"><div class="nav-group__label">' + esc(g.label || t(g.key)) + '</div>';
         items.forEach(it => {
           const active = (page === it.id || (page === "product" && it.id === "products") || (page === "article" && it.id === "knowledge") || (page === "campaign" && it.id === "campaigns")) ? " active" : "";
           var itemBadge = it.badge || "";
-          if (it.id === "admin" && isAdminUser(user) && window.PM_ADMIN_NOTICES) {
+          if (it.id === "admin" && !retailerDemo && isAdminUser(user) && window.PM_ADMIN_NOTICES) {
             var navNotices = PM_ADMIN_NOTICES.counts();
             itemBadge = navNotices.total ? String(navNotices.total) : itemBadge;
           }
@@ -4498,11 +4563,11 @@
       const title = window.PM_PAGE_TITLE_OVERRIDE || (PAGE_TITLE_KEY[page] ? t(PAGE_TITLE_KEY[page]) : "Partner Center");
       const crumb = PAGE_GROUP_KEY[page] ? t(PAGE_GROUP_KEY[page]) : "PlasmaMade Partner Center";
       const cur = window.PM_I18N.meta(window.PM_lang());
-      const adminNotice = isAdminUser(user) && window.PM_ADMIN_NOTICES ? PM_ADMIN_NOTICES.counts() : { total: 0 };
+      const adminNotice = !retailerDemo && isAdminUser(user) && window.PM_ADMIN_NOTICES ? PM_ADMIN_NOTICES.counts() : { total: 0 };
       const noticeLabel = adminNotice.total
         ? "Adminmeldingen: " + adminNotice.total + " open"
         : "Adminmeldingen";
-      const adminBtns = isAdminUser(user)
+      const adminBtns = !retailerDemo && isAdminUser(user)
         ? '<a class="icon-btn pm-admin-notice" href="admin.html#account-requests" title="' + esc(noticeLabel) + '" aria-label="' + esc(noticeLabel) + '">' + icon(adminNotice.total ? "bellRing" : "bell") + (adminNotice.total ? '<span class="pm-admin-notice__count">' + esc(adminNotice.total) + '</span>' : '') + '</a>' +
           '<button class="icon-btn" id="pm-edit-page" type="button" title="Pagina bewerken" aria-label="Pagina bewerken" aria-pressed="false">' + icon("edit") + '</button>' +
           '<button class="icon-btn" id="pm-ai-coder-open" type="button" title="PlasmaMade Builder" aria-label="PlasmaMade Builder">' + icon("sparkles") + '</button>'
@@ -4526,7 +4591,7 @@
           '<div class="user-wrap">' +
             '<a class="user-chip" id="pm-user" href="account.html" aria-label="' + esc(t("ui.myAccount")) + '">' +
               '<div class="avatar" aria-hidden="true">' + avatarHtml(user) + '</div>' +
-              '<div class="user-chip__txt"><div class="u-name">' + esc(user.name || "Partner") + '</div><div class="u-role">' + esc(t(roleKey(user.role)) || user.role || "Partner") + '</div></div>' +
+              '<div class="user-chip__txt"><div class="u-name">' + esc(user.name || "Partner") + '</div><div class="u-role">' + esc(t(roleKey(displayedRole)) || displayedRole || "Partner") + '</div></div>' +
             '</a>' +
             '<button class="icon-btn user-menu-toggle" id="pm-user-menu-toggle" type="button" aria-label="' + esc(t("ui.accountMenu")) + '" aria-haspopup="menu" aria-expanded="false" aria-controls="pm-user-menu">' + icon("chevronRight") + '</button>' +
             '<div class="user-menu" id="pm-user-menu" role="menu" aria-label="' + esc(t("ui.accountMenu")) + '">' +

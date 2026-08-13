@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <meta name="description" content="Overzicht van opgeslagen PlasmaMade ontwerpen met status, feedback en goedkeuring.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260813-kiosk-demo-tour-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260813-retailer-demo-tour-5">
 </head>
 <body data-page="designs">
 <div class="layout">
@@ -16,26 +16,26 @@
     <div id="pm-topbar"></div>
     <main class="content">
       <section class="page-head">
-        <h2>Mijn ontwerpen</h2>
-        <p>Status, feedback en goedkeuring per opgeslagen ontwerp.</p>
+        <h2 data-i18n="nav.designs">Mijn ontwerpen</h2>
+        <p data-i18n="designs.intro">Status, feedback en goedkeuring per opgeslagen ontwerp.</p>
       </section>
 
-      <section class="designs-layout" aria-label="Mijn ontwerpen overzicht">
+      <section class="designs-layout" aria-label="Mijn ontwerpen overzicht" data-i18n-al="designs.overviewLabel">
         <div>
           <div class="designs-toolbar">
             <label class="search-box" for="design-search">
               <span id="design-search-icon" aria-hidden="true"></span>
-              <input id="design-search" type="search" placeholder="Zoek ontwerp">
+              <input id="design-search" type="search" placeholder="Zoek ontwerp" data-i18n-ph="designs.searchPh">
             </label>
             <select class="select" id="design-status-filter" aria-label="Status">
-              <option value="">Alle statussen</option>
-              <option value="changes_requested">Aanpassing nodig</option>
-              <option value="rejected">Afgewezen</option>
-              <option value="submitted">Aangevraagd</option>
-              <option value="in_review">In beoordeling</option>
-              <option value="approved">Goedgekeurd</option>
-              <option value="downloaded">Gedownload</option>
-              <option value="draft">Concept</option>
+              <option value="" data-i18n="designs.allStatuses">Alle statussen</option>
+              <option value="changes_requested" data-i18n="designs.status.changes_requested">Aanpassing nodig</option>
+              <option value="rejected" data-i18n="designs.status.rejected">Afgewezen</option>
+              <option value="submitted" data-i18n="designs.status.submitted">Aangevraagd</option>
+              <option value="in_review" data-i18n="designs.status.in_review">In beoordeling</option>
+              <option value="approved" data-i18n="designs.status.approved">Goedgekeurd</option>
+              <option value="downloaded" data-i18n="designs.status.downloaded">Gedownload</option>
+              <option value="draft" data-i18n="designs.status.draft">Concept</option>
             </select>
             <span class="design-count" id="design-count"></span>
           </div>
@@ -49,26 +49,28 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260813-kiosk-demo-tour-1"></script>
-<script src="assets/js/data.js?v=20260813-kiosk-demo-tour-1"></script>
+<script src="assets/js/i18n.js?v=20260813-retailer-demo-tour-5"></script>
+<script src="assets/js/data.js?v=20260813-retailer-demo-tour-5"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var esc = window.PM_escape || function (s) { return String(s == null ? "" : s); };
   var icon = window.PM_ICON || function () { return ""; };
+  var t = window.PM_t || function (key) { return key; };
   var user = window.PM_AUTH && PM_AUTH.getUser ? PM_AUTH.getUser() || {} : {};
   var selectedId = window.PM_param ? PM_param("design") : "";
+  document.title = t("nav.designs") + " - PlasmaMade Partner Center";
   var formats = {
-    "ig-square": { label: "Social vierkant", w: 1080, h: 1080 },
-    "ig-story": { label: "Story / Reel", w: 1080, h: 1920 },
-    "li-post": { label: "LinkedIn post", w: 1200, h: 628 },
-    "fb-post": { label: "Facebook", w: 1200, h: 630 },
-    "flyer-a4": { label: "Flyer A4", w: 794, h: 1123 },
-    "poster": { label: "Poster", w: 1080, h: 1350 },
-    "product-card": { label: "Productkaart", w: 1080, h: 1080 },
-    "dealer": { label: "Dealer advertentie", w: 1080, h: 1080 },
-    "banner": { label: "Banner", w: 1200, h: 300 },
-    "newsletter": { label: "Nieuwsbrief header", w: 1200, h: 500 },
-    "presentation": { label: "Presentatie 16:9", w: 1280, h: 720 }
+    "ig-square": { label: t("designs.format.ig-square"), w: 1080, h: 1080 },
+    "ig-story": { label: t("designs.format.ig-story"), w: 1080, h: 1920 },
+    "li-post": { label: t("designs.format.li-post"), w: 1200, h: 628 },
+    "fb-post": { label: t("designs.format.fb-post"), w: 1200, h: 630 },
+    "flyer-a4": { label: t("designs.format.flyer-a4"), w: 794, h: 1123 },
+    "poster": { label: t("designs.format.poster"), w: 1080, h: 1350 },
+    "product-card": { label: t("designs.format.product-card"), w: 1080, h: 1080 },
+    "dealer": { label: t("designs.format.dealer"), w: 1080, h: 1080 },
+    "banner": { label: t("designs.format.banner"), w: 1200, h: 300 },
+    "newsletter": { label: t("designs.format.newsletter"), w: 1200, h: 500 },
+    "presentation": { label: t("designs.format.presentation"), w: 1280, h: 720 }
   };
 
   var searchIcon = document.getElementById("design-search-icon");
@@ -93,7 +95,10 @@ window.PM_PAGE_INIT = function () {
   }
   function statusText(status) {
     var labels = window.PM_DESIGNS && PM_DESIGNS.labels ? PM_DESIGNS.labels : {};
-    return labels[status || "draft"] || status || "Concept";
+    var value = status || "draft";
+    var key = "designs.status." + value;
+    var translated = t(key);
+    return translated === key ? (labels[value] || value || t("designs.status.draft")) : translated;
   }
   function statusTone(status) {
     if (status === "approved" || status === "downloaded") return "ok";
@@ -114,22 +119,18 @@ window.PM_PAGE_INIT = function () {
   function formatOf(d) {
     if (d && d.format === "custom") {
       var c = d.customSize || { w: 1080, h: 1080 };
-      return { label: "Aangepast", w: c.w || 1080, h: c.h || 1080 };
+      return { label: t("designs.format.custom"), w: c.w || 1080, h: c.h || 1080 };
     }
-    return formats[d && d.format] || { label: "Ontwerp", w: 1080, h: 1080 };
+    return formats[d && d.format] || { label: t("designs.format.design"), w: 1080, h: 1080 };
   }
   function pageCount(d) { return d && Array.isArray(d.pages) && d.pages.length ? d.pages.length : 1; }
   function reviewMessage(d) {
     d = d || {};
     var status = d.status || "draft";
     var feedback = String(d.feedback || "").trim();
-    if (status === "changes_requested") return feedback ? "Feedback: " + feedback : "Aanpassing nodig. Er is nog geen toelichting ingevuld.";
-    if (status === "rejected") return feedback ? "Reden: " + feedback : "Niet goedgekeurd. Er is geen reden ingevuld.";
-    if (status === "approved") return "Goedgekeurd voor gebruik. Exporteren is beschikbaar in de Studio.";
-    if (status === "downloaded") return "Goedgekeurd en gedownload. Je kunt opnieuw exporteren in de Studio.";
-    if (status === "submitted") return "Ingediend. Wacht op beoordeling door PlasmaMade.";
-    if (status === "in_review") return "In beoordeling. Feedback of goedkeuring verschijnt hier.";
-    return "Concept. Nog niet ingediend ter goedkeuring.";
+    if (status === "changes_requested" && feedback) return t("designs.feedback", { text: feedback });
+    if (status === "rejected" && feedback) return t("designs.reason", { text: feedback });
+    return t("designs.message." + status);
   }
   function statusBadge(status) {
     var tone = statusTone(status);
@@ -137,12 +138,12 @@ window.PM_PAGE_INIT = function () {
   }
   function thumbHtml(d, cls) {
     var f = formatOf(d);
-    var label = esc(d.name || "Ontwerp");
+    var label = esc(d.name || t("designs.format.design"));
     return '<span class="' + cls + '" style="aspect-ratio:' + f.w + '/' + f.h + '">' +
       (d.thumb ? '<img src="' + esc(d.thumb) + '" alt="">' : '<span>' + label + '</span>') +
       '</span>';
   }
-  function countText(n) { return n === 1 ? "1 ontwerp" : n + " ontwerpen"; }
+  function countText(n) { return n === 1 ? t("designs.countOne") : t("designs.count", { n: n }); }
   function setParam(id) {
     try {
       var url = new URL(location.href);
@@ -168,7 +169,7 @@ window.PM_PAGE_INIT = function () {
     if (!box) return;
     var d = findSelected();
     if (!d) {
-      box.innerHTML = '<div class="design-detail__empty">Selecteer een ontwerp om status, feedback en goedkeuring te bekijken.</div>';
+      box.innerHTML = '<div class="design-detail__empty">' + esc(t("designs.select")) + '</div>';
       return;
     }
     var status = d.status || "draft";
@@ -180,19 +181,19 @@ window.PM_PAGE_INIT = function () {
       '<div class="design-detail__body">' +
         '<div class="design-detail__head">' +
           statusBadge(status) +
-          '<h3>' + esc(d.name || "Ontwerp") + '</h3>' +
+          '<h3>' + esc(d.name || t("designs.format.design")) + '</h3>' +
         '</div>' +
         '<div class="design-detail__message' + (tone ? " " + tone : "") + '">' + esc(reviewMessage(d)) + '</div>' +
         '<div class="design-detail__meta">' +
-          '<div><span>Status</span><b>' + esc(statusText(status)) + '</b></div>' +
-          (date ? '<div><span>Laatste update</span><b>' + esc(date) + '</b></div>' : '') +
-          '<div><span>Formaat</span><b>' + esc(fmt.label) + '</b></div>' +
-          '<div><span>Pagina&apos;s</span><b>' + pageCount(d) + '</b></div>' +
-          (d.ownerEmail ? '<div><span>Account</span><b>' + esc(d.ownerEmail) + '</b></div>' : '') +
+          '<div><span>' + esc(t("designs.meta.status")) + '</span><b>' + esc(statusText(status)) + '</b></div>' +
+          (date ? '<div><span>' + esc(t("designs.meta.updated")) + '</span><b>' + esc(date) + '</b></div>' : '') +
+          '<div><span>' + esc(t("designs.meta.format")) + '</span><b>' + esc(fmt.label) + '</b></div>' +
+          '<div><span>' + esc(t("designs.meta.pages")) + '</span><b>' + pageCount(d) + '</b></div>' +
+          (d.ownerEmail ? '<div><span>' + esc(t("designs.meta.account")) + '</span><b>' + esc(d.ownerEmail) + '</b></div>' : '') +
         '</div>' +
         '<div class="design-detail__actions">' +
-          '<a class="btn btn--primary" href="studio.html?design=' + encodeURIComponent(d.id) + '">' + icon("edit") + 'Bewerk in Studio</a>' +
-          '<a class="btn btn--ghost" href="studio.html">' + icon("plus") + 'Nieuw ontwerp</a>' +
+          '<a class="btn btn--primary" href="studio.html?design=' + encodeURIComponent(d.id) + '">' + icon("edit") + esc(t("designs.editStudio")) + '</a>' +
+          '<a class="btn btn--ghost" href="studio.html">' + icon("plus") + esc(t("designs.new")) + '</a>' +
         '</div>' +
       '</div>';
   }
@@ -203,7 +204,7 @@ window.PM_PAGE_INIT = function () {
     var rows = filteredDesigns();
     if (count) count.textContent = countText(rows.length);
     if (!rows.length) {
-      list.innerHTML = '<div class="design-empty">Geen opgeslagen ontwerpen gevonden.</div>';
+      list.innerHTML = '<div class="design-empty">' + esc(t("designs.empty")) + '</div>';
       renderDetail();
       return;
     }
@@ -215,7 +216,7 @@ window.PM_PAGE_INIT = function () {
         thumbHtml(d, "design-card__thumb") +
         '<span class="design-card__body">' +
           '<span class="design-card__top">' + statusBadge(status) + (date ? '<span class="design-card__meta">' + esc(date) + '</span>' : '') + '</span>' +
-          '<span class="design-card__title">' + esc(d.name || "Ontwerp") + '</span>' +
+          '<span class="design-card__title">' + esc(d.name || t("designs.format.design")) + '</span>' +
           '<span class="design-card__message">' + esc(reviewMessage(d)) + '</span>' +
         '</span>' +
         '<span class="design-card__go">' + icon("chevronRight") + '</span>' +
@@ -239,7 +240,7 @@ window.PM_PAGE_INIT = function () {
   renderList();
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260813-kiosk-demo-tour-1"></script>
-<script src="assets/js/app.js?v=20260813-kiosk-demo-tour-1"></script>
+<script src="assets/js/sync-config.js?v=20260813-retailer-demo-tour-5"></script>
+<script src="assets/js/app.js?v=20260813-retailer-demo-tour-5"></script>
 </body>
 </html>

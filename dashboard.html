@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 <meta name="description" content="Jouw startpunt in het PlasmaMade Partner Center: producten, marketing, kennis en tools.">
 <link rel="icon" href="assets/img/logo/logo-green.png">
 <link rel="stylesheet" href="ds-bundle/styles.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20260813-kiosk-demo-tour-1">
+<link rel="stylesheet" href="assets/css/style.css?v=20260813-retailer-demo-tour-5">
 </head>
 <body data-page="dashboard">
 <div class="layout">
@@ -45,7 +45,7 @@
           <div class="section-title"><h3 data-i18n="dash.quickDownloads">Meest gebruikt</h3><div class="line"></div></div>
           <div class="portal-list" id="quick-dl"></div>
 
-          <div class="section-title"><h3>Mijn ontwerpen</h3><div class="line"></div><a class="more" href="designs.html">Alle ontwerpen</a></div>
+          <div class="section-title"><h3 data-i18n="dash.myDesigns">Mijn ontwerpen</h3><div class="line"></div><a class="more" href="designs.html" data-i18n="dash.allDesigns">Alle ontwerpen</a></div>
           <div class="portal-list" id="design-status-list"></div>
 
           <div class="section-title"><h3 data-i18n="dash.latestNews">Partnerupdates</h3><div class="line"></div><a class="more" href="news.html" data-i18n="dash.allNews">Alles</a></div>
@@ -69,8 +69,8 @@
   </div>
 </div>
 
-<script src="assets/js/i18n.js?v=20260813-kiosk-demo-tour-1"></script>
-<script src="assets/js/data.js?v=20260813-kiosk-demo-tour-1"></script>
+<script src="assets/js/i18n.js?v=20260813-retailer-demo-tour-5"></script>
+<script src="assets/js/data.js?v=20260813-retailer-demo-tour-5"></script>
 <script>
 window.PM_PAGE_INIT = function () {
   var D = window.PM_DATA, t = window.PM_t, esc = window.PM_escape, lc = window.PM_lc;
@@ -98,8 +98,9 @@ window.PM_PAGE_INIT = function () {
   }
 
   // Rolgerichte aanbevelingen
-  var isAdmin = window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(user);
-  var role = isAdmin ? "internal" : (user.role && t("role." + user.role) !== "role." + user.role ? user.role : "dealer");
+  var retailerDemo = window.PM_DEMO_TOUR_RETAILER === true;
+  var isAdmin = !retailerDemo && window.PM_AUTH && PM_AUTH.isAdmin && PM_AUTH.isAdmin(user);
+  var role = retailerDemo ? "studio" : (isAdmin ? "internal" : (user.role && t("role." + user.role) !== "role." + user.role ? user.role : "dealer"));
   var roleTiles = {
     dealer: ["finder", "sales", "marketing", "products"],
     distributor: ["products", "finder", "downloads", "testdocs"],
@@ -186,21 +187,26 @@ window.PM_PAGE_INIT = function () {
     return !d.ownerEmail || !user.email || normEmail(d.ownerEmail) === normEmail(user.email);
   }).sort(function (a, b) { return (a.updated || "") < (b.updated || "") ? 1 : -1; }).slice(0, 4) : [];
   var designLabels = window.PM_DESIGNS ? PM_DESIGNS.labels : {};
+  function designStatusText(status) {
+    var key = "designs.status." + status;
+    var translated = t(key);
+    return translated === key ? (designLabels[status] || status) : translated;
+  }
   document.getElementById("design-status-list").innerHTML = myDesigns.length ? myDesigns.map(function (d) {
     var status = d.status || "draft";
-    var meta = designLabels[status] || status;
-    if (status === "approved" || status === "downloaded") meta += " - export beschikbaar";
-    if (status === "changes_requested") meta += d.feedback ? " - Feedback: " + d.feedback : " - feedback ontvangen";
-    if (status === "rejected") meta += d.feedback ? " - Reden: " + d.feedback : " - niet goedgekeurd";
-    if (status === "submitted" || status === "in_review") meta += " - wacht op beoordeling";
+    var meta = designStatusText(status);
+    if (status === "approved" || status === "downloaded") meta += " - " + t("designs.exportAvailable");
+    if (status === "changes_requested") meta += " - " + (d.feedback ? t("designs.feedback", { text: d.feedback }) : t("designs.feedbackReceived"));
+    if (status === "rejected") meta += " - " + (d.feedback ? t("designs.reason", { text: d.feedback }) : t("designs.notApproved"));
+    if (status === "submitted" || status === "in_review") meta += " - " + t("designs.waitingReview");
     return '<a href="designs.html?design=' + encodeURIComponent(d.id) + '" class="portal-list__row">' +
       '<span class="portal-list__icon">' + PM_ICON(status === "approved" || status === "downloaded" ? "shieldCheck" : "palette") + '</span>' +
       '<span class="portal-list__txt"><b>' + esc(d.name || "Ontwerp") + '</b><span>' + esc(meta) + '</span></span>' +
       '<span class="portal-list__go">' + PM_ICON("arrowRight") + '</span></a>';
-  }).join("") : '<div class="portal-list__empty">Nog geen ontwerpen. Open de Design Studio om materiaal te maken en ter goedkeuring in te dienen.</div>';
+  }).join("") : '<div class="portal-list__empty">' + esc(t("dash.noDesigns")) + '</div>';
 };
 </script>
-<script src="assets/js/sync-config.js?v=20260813-kiosk-demo-tour-1"></script>
-<script src="assets/js/app.js?v=20260813-kiosk-demo-tour-1"></script>
+<script src="assets/js/sync-config.js?v=20260813-retailer-demo-tour-5"></script>
+<script src="assets/js/app.js?v=20260813-retailer-demo-tour-5"></script>
 </body>
 </html>

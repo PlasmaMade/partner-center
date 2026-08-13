@@ -18,6 +18,14 @@
   ];
   var DEFAULT = "nl";
   var STORE_KEY = "pm_lang";
+  var CACHE_VERSION = "";
+  try {
+    CACHE_VERSION = new URL(document.currentScript && document.currentScript.src || "", location.href).searchParams.get("v") || "";
+  } catch (e) {}
+
+  function localeUrl(code) {
+    return "assets/i18n/" + code + ".js" + (CACHE_VERSION ? "?v=" + encodeURIComponent(CACHE_VERSION) : "");
+  }
 
   window.PM_LOCALES = window.PM_LOCALES || {};
 
@@ -190,7 +198,7 @@
     if (loading[code]) { loading[code].push(done); return; }
     loading[code] = [done];
     var s = document.createElement("script");
-    s.src = "assets/i18n/" + code + ".js";
+    s.src = localeUrl(code);
     s.onload = function () {
       var cbs = loading[code]; delete loading[code];
       cbs.forEach(function (cb) { cb(!!localeOf(code)); });
@@ -267,8 +275,8 @@
      document.write is hier bewust: parser-blocking zodat PM_t direct werkt
      zonder build-stap. */
   /* eslint-disable no-document-write */
-  document.write('<script src="assets/i18n/nl.js"><\/script>');
-  if (active !== DEFAULT) document.write('<script src="assets/i18n/' + active + '.js"><\/script>');
+  document.write('<script src="' + localeUrl(DEFAULT) + '"><\/script>');
+  if (active !== DEFAULT) document.write('<script src="' + localeUrl(active) + '"><\/script>');
   try {
     new MutationObserver(function () { scheduleProductAliases(document.body || document); })
       .observe(document.documentElement, { childList: true, subtree: true, characterData: true });
