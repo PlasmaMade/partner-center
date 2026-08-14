@@ -212,7 +212,7 @@
   ];
   const PUBLIC_SYNC_KEYS = ["pm_designs", "pm_support_tickets"];
   const SYNC_DIRTY_KEY = "pm_sync_dirty_keys";
-  const PORTAL_BUILD_VERSION = "20260813-retailer-demo-tour-5";
+  const PORTAL_BUILD_VERSION = "20260814-admin-functions-1";
   const PORTAL_BUILD_KEY = "pm_portal_build_version";
   const PORTAL_ARCHIVE_KEY = "pm_portal_archives";
   const PORTAL_LAST_RESET_KEY = "pm_portal_last_reset";
@@ -4117,9 +4117,10 @@
       var params = new URLSearchParams(location.search);
       if (params.get("demo") === "off") return false;
       if (params.get("demo") === "on") return true;
+      if (isAdminUser(getUser())) return false;
       return localStorage.getItem("pm_demo_tour_disabled") !== "1";
     } catch (e) {
-      return true;
+      return false;
     }
   }
 
@@ -4198,9 +4199,9 @@
   }
 
   function demoRouteHref(routeItem) {
-    if (!routeItem) return "dashboard.html?lang=" + DEMO_TOUR_LANGUAGE;
+    if (!routeItem) return "dashboard.html?lang=" + DEMO_TOUR_LANGUAGE + "&demo=on";
     var href = routeItem.href || "dashboard.html";
-    return href + (href.indexOf("?") > -1 ? "&" : "?") + "lang=" + encodeURIComponent(DEMO_TOUR_LANGUAGE);
+    return href + (href.indexOf("?") > -1 ? "&" : "?") + "lang=" + encodeURIComponent(DEMO_TOUR_LANGUAGE) + "&demo=on";
   }
 
   function ensureDemoTourElements() {
@@ -4477,7 +4478,7 @@
         return;
       }
       if (params.get("demo") === "on") localStorage.removeItem("pm_demo_tour_disabled");
-      if (localStorage.getItem("pm_demo_tour_disabled") === "1") return;
+      if (!demoTourPreferenceEnabled()) return;
     } catch (e) {}
     window.PM_DEMO_TOUR_RETAILER = true;
     document.body.classList.add("pm-demo-tour-retailer");
